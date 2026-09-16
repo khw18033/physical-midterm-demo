@@ -1,0 +1,17 @@
+# Go1 카메라 라이브 뷰어 (HW-R-07) — 나노 5대 H.264 를 브라우저로 무변환 중계
+# HTTP :8090 / HTTPS :8443. 로봇 없이도 서버는 뜨며, 나노 연결 시 스트림 표시.
+[Unit]
+Description=Go1 camera viewer (HW-R-07)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=physical
+WorkingDirectory=/home/physical/hw/pi
+ExecStart=/usr/bin/python3 -m bench.go1_cam_view 8090 8443
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target

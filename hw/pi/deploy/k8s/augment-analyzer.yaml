@@ -1,0 +1,58 @@
+# 증강 기능 워크로드 — 운영 형태 (HW-C-03)
+# ==========================================
+# 상황 발생 시 엣지 K3s 가 말단에 배포하고 종료 시 제거한다.
+# 여기 들어가는 것은 "없어도 안전 루프가 깨지지 않는" 기능뿐이다.
+# 계측·임계판정·하트비트·버퍼링은 systemd 층(sensor/robot/actuator node)이 담당한다.
+#
+# 배포:  kubectl apply  -f augment-analyzer.yaml
+# 제거:  kubectl delete -f augment-analyzer.yaml
+#
+# ⚠ image 를 반드시 **digest 로 고정**하고 사전에 pre-pull 한다.
+#   태그는 같은 이름으로 내용이 바뀔 수 있어 이벤트 시점에 예상과 다른 것이 뜬다.
+#   pull 이 필요하면 기동에 30~60초가 걸려 골든타임을 잡아먹는다(SRS §9.2).
+#   이미지 빌드: pi/augment/build.sh
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: augment-analyzer
+  labels: { app: augment-analyzer, tier: augmentation }
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: augment-analyzer }
+  template:
+    metadata:
+      labels: { app: augment-analyzer, tier: augmentation }
+    spec:
+      # 말단에서 돌아야 의미가 있다. 엣지에 스케줄되면 현장 데이터에 닿지 못한다.
+      nodeSelector:
+        kubernetes.io/hostname: pi7
+      # 말단의 증강 워크로드는 클러스터 서비스 탐색을 쓰지 않는다 — 브로커를 IP 로
+      # 직접 잡는다. 그래서 노드의 리졸버를 그대로 쓴다.
+      # 실무상 이게 더 튼튼하기도 하다: 제어평면과 말단이 다른 네트워크에 있으면
+      # 파드 간 오버레이(flannel VXLAN)가 통하지 않아 클러스터 DNS 가 죽는 경우가 있다
+      # (WSL 엣지에서 실측 확인 — docs/EDGE_SETUP.md §7).
+      dnsPolicy: Default
+      terminationGracePeriodSeconds: 10
+      containers:
+        - name: analyzer
+          # TODO: build.sh 가 출력한 digest 로 교체
+          image: REGISTRY/hw-augment@sha256:REPLACE_WITH_DIGEST
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: HW_BROKER_HOST
+              value: "192.168.50.244"
+            - name: HW_ZONE_ID
+              value: "zoneA"
+            - name: HW_NODE_ID
+              valueFrom: { fieldRef: { fieldPath: spec.nodeName } }
+          # 폭주 컨테이너가 안전 루프를 굶기지 못하게 상한을 건다.
+          # 상주 서비스 쪽에는 OOMScoreAdjust 로 우선순위를 따로 주었다(SDD §7.3).
+          resources:
+            requests: { cpu: "50m",  memory: "48Mi" }
+            limits:   { cpu: "500m", memory: "192Mi" }
+          livenessProbe:
+            exec:
+              command: ["/bin/sh", "-c", "pgrep -f augment.analyzer > /dev/null"]
+            initialDelaySeconds: 15
+            periodSeconds: 20

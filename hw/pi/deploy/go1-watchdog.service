@@ -1,0 +1,12 @@
+# Go1 카메라 프리즈 워치독 (HW-R-07) — 정지 감지 시 해당 나노 자동 재부팅(쿨다운 15분)
+# 5분 주기 타이머로 --once 실행. usb-nosuspend가 근본원인을 막고, 이건 시연 중 안전망.
+[Unit]
+Description=Go1 camera freeze watchdog (HW-R-07)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=physical
+WorkingDirectory=/home/physical/hw/pi
+ExecStart=/usr/bin/python3 -m bench.go1_watchdog --once

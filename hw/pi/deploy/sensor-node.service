@@ -1,0 +1,41 @@
+# 말단 센서 노드 부팅 자동 시작 (systemd)
+#
+# 설치:
+#   sudo cp pi/deploy/sensor-node.service /etc/systemd/system/
+#   sudo cp pi/deploy/hw-node.env.example /etc/hw-node.env   # 현장값 기입
+#   sudo systemctl daemon-reload && sudo systemctl enable --now sensor-node
+#   journalctl -u sensor-node -f
+#
+# 현장마다 달라지는 값(브로커 주소, 구역, 주기)은 이 파일이 아니라 /etc/hw-node.env 에
+# 둔다. 저장소에 현장 IP를 박아두면 안동 현장과 실험실 설정이 서로를 덮어쓴다.
+
+[Unit]
+Description=피지컬팀 mk2 말단 센서 노드 (수위센서)
+# 네트워크와 시각 동기(HW-S-08)가 선 뒤에 뜬다. 시각이 어긋난 채로 올라오면
+# 첫 계측 타임스탬프부터 신뢰할 수 없게 된다.
+After=network-online.target chrony.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=physical
+WorkingDirectory=/home/physical/hw/pi
+ExecStart=/home/physical/venv/bin/python3 -u -m sensor.sensor_node
+
+# 현장 설정 (없어도 기동 — 앞의 '-')
+EnvironmentFile=-/etc/hw-node.env
+
+# HW-R-09 버퍼 저장 위치. StateDirectory= 가 /var/lib/hw-node 를 만들고 권한까지 준다.
+StateDirectory=hw-node
+Environment=HW_SPOOL_PATH=/var/lib/hw-node/spool.jsonl
+Environment=PYTHONUNBUFFERED=1
+
+# 안전 루프가 폭주 컨테이너에 굶지 않도록 우선순위를 준다 (SDD 7.3)
+OOMScoreAdjust=-500
+
+# 죽으면 다시 띄운다. 재난 대응 노드가 예외 하나로 조용히 멈춰 있으면 안 된다.
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target

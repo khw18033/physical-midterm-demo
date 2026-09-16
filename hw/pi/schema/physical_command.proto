@@ -1,0 +1,105 @@
+// 물리 명령 통신 규약 — 말단 장치 ↔ 엣지
+//
+//   전송   MQTT 5 / payload = PhysicalCommandEnvelope 직렬화 바이트
+//   토픽   terminal/<device-id>/downlink  (엣지→장치)
+//          terminal/<device-id>/uplink    (장치→엣지)
+//          — 토픽에는 **방향만** 담는다. 메시지 종류는 봉투의 oneof body 가 정한다.
+//   QoS    1 (양방향)
+//   생사   MQTT LWT 로 다룬다. 봉투에 넣지 않는다.
+//
+// 이 파일은 pi/common/physical_command_pb2.py 에 박혀 있는 디스크립터와 **같은 것**이다
+// (FileDescriptorProto 를 되풀어 대조해 확인했다). 재생성:
+//   python -m grpc_tools.protoc -I schema --python_out=common schema/physical_command.proto
+
+syntax = "proto3";
+
+package physical;
+
+// 오가는 모든 메시지의 겉봉. 어느 방향으로 갈 수 있는지는 종류가 정한다.
+//   엣지→장치  command, cancel_request
+//   장치→엣지  acceptance, status, result, cancel_response, capability
+message PhysicalCommandEnvelope {
+  oneof body {
+    Command command = 1;
+    CancelCommandRequest cancel_request = 2;
+    CommandAcceptance acceptance = 3;
+    CommandStatus status = 4;
+    CommandResult result = 5;
+    CancelCommandResponse cancel_response = 6;
+    Capability capability = 7;
+  }
+}
+
+message Command {
+  string command_id = 1;              // 상위가 발급. 같은 id 재수신 = 재실행 아님(멱등)
+  string target = 2;                  // 장치 안의 대상(없으면 빈 문자열)
+  string action = 3;                  // Capability.actions 에 선언된 어휘만
+  // 값은 숫자만 실린다. 문자열이 필요한 어휘는 action 이름 자체로 가른다.
+  map<string, double> parameters = 4;
+  int64 deadline_unix_ms = 5;         // 0 = 기한 없음. 지난 뒤 오면 시작하지 않고 거부
+}
+
+message CancelCommandRequest {
+  string command_id = 1;
+}
+
+message Rejection {
+  string code = 1;                    // gRPC 상태 코드 어휘
+  string message = 2;
+}
+
+message Failure {
+  string code = 1;
+  string message = 2;
+}
+
+// 명령을 받았는가에 대한 답. 수행 결과가 아니다.
+message CommandAcceptance {
+  string command_id = 1;
+  bool accepted = 2;
+  Rejection rejection = 3;            // accepted=false 일 때만 채운다
+}
+
+message CommandStatus {
+  string command_id = 1;
+  string state = 2;                   // "EXECUTING"
+  // 진행 상세. 구조를 실을 자리가 없어 **JSON 문자열**로 넣는다 — 받는 쪽은
+  // JSON.parse(detail) 하면 된다. 로봇 임무 ACK 의 모양:
+  //   {"ack":3,"of":10,"event":"scan_turn","step":3,"steps":8,
+  //    "yaw_deg":131.0,"note":"ok"}
+  //   ack/of    이번 임무의 ACK 순번 / 총 ACK 수
+  //   event     scan_turn | door_turn | forward | aborted
+  //   step/steps 그 단계에서 몇 번째인가 (회전 3/8 의 3, 8)
+  //   yaw_deg   그 시점 방위(도). 모르면 null
+  //   note      ok | ok odo=1.00m cmd=1.00m | turn_timeout | robot_state_lost …
+  // detail 이 JSON 이 아닌 경우도 있다("executing", "state_changed" 같은 단계 이름).
+  string detail = 3;
+}
+
+message CommandResult {
+  string command_id = 1;
+  TerminalStatus status = 2;
+  // 값은 숫자만. **모르는 값은 키를 넣지 않는다** — 0 을 넣으면 "쟀더니 0" 과
+  // 구별되지 않는다(예: 이동거리를 모를 때 odo_m 키가 아예 없다).
+  map<string, double> result = 3;
+  Failure failure = 4;                // status=ABORTED 일 때만 채운다
+}
+
+message CancelCommandResponse {
+  string command_id = 1;
+  bool accepted = 2;                  // 취소 절차 진입을 받아들였는가
+}
+
+// 장치가 접속 직후 스스로 알리는 명령 어휘. 여기 없는 action 은 UNIMPLEMENTED 로 거부된다.
+message Capability {
+  string device_id = 1;
+  repeated string actions = 2;
+}
+
+// 명령 하나의 종착점. 하나만 온다.
+enum TerminalStatus {
+  TERMINAL_STATUS_UNSPECIFIED = 0;
+  SUCCEEDED = 1;
+  ABORTED = 2;
+  CANCELED = 3;
+}

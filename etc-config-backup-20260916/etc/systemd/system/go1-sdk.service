@@ -1,0 +1,41 @@
+# Go1 SDK PC 브리지 — Unity(디지털 트윈)·자율주행·텔레옵·문 탐색 미션 (HW-R-01/05/06)
+# 기동 시 로봇이 force-stand(기립)한다. 그래서 부팅 자동시작은 기본 비활성.
+#   수동 시작: sudo systemctl start go1-sdk   |  부팅 자동: sudo systemctl enable go1-sdk
+# 정적 링크 바이너리라 WorkingDirectory/rpath 의존 없음. unity_ip 는 Unity 호스트 PC.
+#
+# 인자 설명
+#   --ack_ip/--ack_port  문 탐색 미션 ACK(JSON)를 같은 파이의 robot-node 로 되돌린다.
+#                        규약 action `scan_mission` 이 이 ACK 를 CommandStatus 로 상위에 중계한다.
+#   --light_ip/--light_port  Go1 얼굴 라이트 브리지(헤드 Nano 192.168.123.13:7801).
+#                        브리지가 안 떠 있으면 패킷만 버려지고 미션은 그대로 돈다.
+#   --state_dead_restart 로봇 상태가 이 초 동안 안 오면 스스로 종료한다(systemd 가 재기동).
+#                        로봇 전원을 껐다 켜면 UDP 소켓이 막혀 상태를 못 받는데(실측),
+#                        프로세스를 새로 띄우는 것이 유일하게 확실한 복구다.
+#   --relay_ip/--robot_id  상태를 같은 파이의 robot-relay 로도 한 벌 더 보낸다(이중 발신).
+#                        릴레이가 신원(node_id/robot_type/robot_id)을 찍어 15201 로 넘긴다.
+#                        Unity 직결(15101)은 그대로 살아 있어 지금 동작은 바뀌지 않는다 —
+#                        나중에 릴레이 대상만 서버로 바꾸면 그대로 서버 경유가 된다
+#                        (docs/ARCHITECTURE_ALIGNMENT.md §2-3 1단계).
+[Unit]
+Description=Go1 SDK PC bridge (Unity/autonomy/teleop/mission)
+After=network-online.target
+Wants=network-online.target
+
+# 재시작 횟수 제한을 끈다.
+# 로봇 전원이 꺼져 있으면 이 프로세스가 스스로 나가고(--state_dead_restart) systemd 가
+# 다시 띄우는데, 기본값(10초에 5회)이면 systemd 가 곧 포기하고 서비스를 죽은 채로 둔다.
+# 실측(2026-09-10): 그 상태를 모르고 촬영 도구를 돌려 "키를 눌러도 로봇이 안 움직이는"
+# 상황이 됐다. 로봇이 돌아오면 저절로 붙는 편이 항상 낫다.
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+User=physical
+WorkingDirectory=/home/physical/go1sdk
+StandardInput=null
+ExecStart=/home/physical/go1sdk/go1_sdk_pc --robot_ip 192.168.123.161 --unity_ip 192.168.50.244 --ack_ip 127.0.0.1 --ack_port 15106 --light_ip 192.168.123.13 --light_port 7801 --state_dead_restart 30 --relay_ip 127.0.0.1 --relay_port 15200 --robot_id go1-1
+Restart=always
+RestartSec=2
+
+[Install]
+WantedBy=multi-user.target

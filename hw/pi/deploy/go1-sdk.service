@@ -1,0 +1,20 @@
+# Go1 SDK PC 브리지 — Unity(디지털 트윈)·자율주행·텔레옵 (HW-R-01/06)
+# 기동 시 로봇이 force-stand(기립)한다. 그래서 부팅 자동시작은 기본 비활성.
+#   수동 시작: sudo systemctl start go1-sdk   |  부팅 자동: sudo systemctl enable go1-sdk
+# 정적 링크 바이너리라 WorkingDirectory/rpath 의존 없음. unity_ip 는 Unity 호스트 PC.
+[Unit]
+Description=Go1 SDK PC bridge (Unity/autonomy/teleop)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=physical
+WorkingDirectory=/home/physical/go1sdk
+StandardInput=null
+ExecStart=/home/physical/go1sdk/go1_sdk_pc --robot_ip 192.168.123.161 --unity_ip 192.168.50.244
+Restart=always
+RestartSec=2
+
+[Install]
+WantedBy=multi-user.target

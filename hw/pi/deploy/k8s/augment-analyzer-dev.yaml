@@ -1,0 +1,69 @@
+# 증강 기능 워크로드 — 검증 형태 (레지스트리 없이 돌리기 위한 임시본)
+# =====================================================================
+# 운영본(augment-analyzer.yaml)과 하는 일은 같으나, 아직 이미지 레지스트리가 없어
+# ① 스톡 python 이미지를 쓰고 ② 코드를 hostPath 로 마운트하며 ③ 기동 시 paho 를 받는다.
+#
+# 이 형태를 현장에 쓰면 안 된다. 세 가지가 다 문제다:
+#   - 기동 시 pip 가 네트워크를 탄다 → 재난 시점에 링크가 불안정하면 안 뜬다
+#   - hostPath 는 말단의 파일 배치에 의존한다 → 노드마다 달라지면 조용히 실패한다
+#   - 이미지가 digest 로 고정되지 않는다
+# 레지스트리(또는 `k3s ctr images import`)가 준비되면 운영본으로 교체한다.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: augment-analyzer
+  labels: { app: augment-analyzer, tier: augmentation }
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: augment-analyzer }
+  template:
+    metadata:
+      labels: { app: augment-analyzer, tier: augmentation }
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: pi7
+      # 말단의 증강 워크로드는 클러스터 서비스 탐색을 쓰지 않는다 — 브로커를 IP 로
+      # 직접 잡는다. 그래서 노드의 리졸버를 그대로 쓴다.
+      # 실무상 이게 더 튼튼하기도 하다: 제어평면과 말단이 다른 네트워크에 있으면
+      # 파드 간 오버레이(flannel VXLAN)가 통하지 않아 클러스터 DNS 가 죽는 경우가 있다
+      # (WSL 엣지에서 실측 확인 — docs/EDGE_SETUP.md §7).
+      dnsPolicy: Default
+      terminationGracePeriodSeconds: 10
+      volumes:
+        - name: code
+          hostPath:
+            path: /home/physical/Physical-Project-mk2/pi
+            type: Directory
+      containers:
+        - name: analyzer
+          image: python:3.13-slim
+          imagePullPolicy: IfNotPresent
+          workingDir: /app
+          volumeMounts:
+            - { name: code, mountPath: /app, readOnly: true }
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              pip install --no-cache-dir --quiet --target /tmp/libs paho-mqtt==2.1.0
+              export PYTHONPATH=/tmp/libs:/app
+              exec python3 -u -m augment.analyzer   # -u: 로그가 즉시 보이도록
+          env:
+            - name: HW_BROKER_HOST
+              value: "192.168.50.244"
+            - name: HW_ZONE_ID
+              value: "zoneA"
+            - name: HW_NODE_ID
+              valueFrom: { fieldRef: { fieldPath: spec.nodeName } }
+            - name: HW_ANALYZER_PUBLISH_S
+              value: "15"
+            - name: PYTHONUNBUFFERED
+              value: "1"
+          resources:
+            requests: { cpu: "50m",  memory: "48Mi" }
+            limits:   { cpu: "500m", memory: "256Mi" }
+          livenessProbe:
+            exec:
+              command: ["/bin/sh", "-c", "pgrep -f augment.analyzer > /dev/null"]
+            initialDelaySeconds: 60
+            periodSeconds: 20

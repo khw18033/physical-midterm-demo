@@ -1,0 +1,11 @@
+# 백업 시점: 2026-09-16 15:05:26 KST  호스트: pi7
+# UNIT / enable상태 / 백업당시 실행상태
+
+detect-bridge.service    enabled    active
+go1-camview.service      enabled    active
+go1-sdk.service          disabled   inactive
+go1-watchdog.service     static     inactive
+go1-watchdog.timer       enabled    active
+robot-node.service       enabled    active
+robot-relay.service      enabled    active
+sensor-node.service      enabled    active

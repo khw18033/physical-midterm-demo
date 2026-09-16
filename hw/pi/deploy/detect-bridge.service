@@ -1,0 +1,33 @@
+# 스캔 → 객체탐지 연동 다리 (HW-R-05 / HW-R-07)
+#
+# 설치:
+#   sudo cp pi/deploy/detect-bridge.service /etc/systemd/system/
+#   echo 'HW_DETECT_URL=http://ubuntu3-15ug50p-gp55kn:8000' | sudo tee -a /etc/hw-robot.env
+#   sudo systemctl daemon-reload && sudo systemctl enable --now detect-bridge
+#
+# 로봇을 움직이지 않는다. 규약 uplink 를 구독해 스캔 임무를 따라가며 방향마다 사진을
+# 탐지 쪽으로 보내기만 한다. 탐지 노트북이 꺼져 있어도 임무는 그대로 돈다 —
+# 그래서 robot-node 와 별도 유닛이다(본업이 부업에 막히지 않게).
+[Unit]
+Description=피지컬팀 mk2 스캔 촬영 -> 객체탐지 송신
+After=network-online.target mosquitto.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=physical
+WorkingDirectory=/home/physical/hw/pi
+ExecStart=/home/physical/venv/bin/python3 -u -m robot.detect_bridge
+EnvironmentFile=-/etc/hw-node.env
+EnvironmentFile=-/etc/hw-robot.env
+Environment=PYTHONUNBUFFERED=1
+
+# ffmpeg 로 5fps 디코드를 상시 돌린다. 임무 시작 때 띄우면 첫 방향을 놓친다.
+# 상태 스트림(20Hz)보다 낮은 우선순위 — 촬영이 밀려도 임무 보고는 밀리면 안 된다.
+Nice=5
+
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

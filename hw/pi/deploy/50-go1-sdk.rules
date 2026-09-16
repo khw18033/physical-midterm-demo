@@ -1,0 +1,22 @@
+// 피지컬팀 mk2 — 로봇 노드가 구동 브리지를 온디맨드로 여닫게 허용 (HW-R-06)
+//
+//   설치: sudo cp pi/deploy/50-go1-sdk.rules /etc/polkit-1/rules.d/
+//         sudo systemctl restart polkit
+//
+// 왜 polkit 인가
+//   브리지(go1_sdk_pc)는 root 가 필요 없다 — 유닛도 User=physical 로 돈다.
+//   root 가 필요한 것은 systemd 에 start/stop 을 시키는 행위뿐이다. sudoers 로
+//   systemctl 전체를 여는 대신, **이 유닛 하나의 start/stop/restart 만** 연다.
+//
+// 여기서 허용하지 않는 것
+//   enable/disable 은 뺐다. 부팅 자동시작이 켜지면 아무도 없는 자리에서 로봇이
+//   일어선다 — 그건 사람이 직접 판단할 일이다.
+polkit.addRule(function(action, subject) {
+  if (action.id !== "org.freedesktop.systemd1.manage-units") return;
+  if (subject.user !== "physical") return;
+  if (action.lookup("unit") !== "go1-sdk.service") return;
+  var verb = action.lookup("verb");
+  if (verb === "start" || verb === "stop" || verb === "restart") {
+    return polkit.Result.YES;
+  }
+});
