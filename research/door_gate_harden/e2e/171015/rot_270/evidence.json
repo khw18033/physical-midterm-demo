@@ -1,0 +1,34 @@
+{
+  "frame": "rot_270.jpg",
+  "rotation_deg": 270.0,
+  "provider_timings_ms": {
+    "dictionary": 855.4,
+    "grounding_dino": 229.0,
+    "yolo_world": 332.5,
+    "fastsam": 20.9
+  },
+  "rpn_candidate_count": 47,
+  "searched_classes": [
+    "door",
+    "pedestal"
+  ],
+  "confirmed_classes": [
+    {
+      "class": "door",
+      "instance_count": 1,
+      "boxes": [
+        [
+          138.7,
+          83.4,
+          162.9,
+          142.5
+        ]
+      ]
+    },
+    {
+      "class": "pedestal",
+      "instance_count": 0,
+      "boxes": []
+    }
+  ]
+}

@@ -1,0 +1,2296 @@
+{
+ "BASE 현재 운영값": {
+  "config": "sim>=0.26(all8) asp>=1.5 color shape ref>=0.75 sat>=85.0 gd=0.15/0.15 yw=0.05",
+  "rot8_exact": 5,
+  "door_tp": 19,
+  "fp": 1,
+  "mean_iou": 0.893,
+  "detail": {
+   "orig": {
+    "rot8": {
+     "exact": true,
+     "tp": 2,
+     "fp": 0,
+     "ious": [
+      0.897,
+      0.838
+     ],
+     "missed": []
+    },
+    "robot": {
+     "exact": false,
+     "tp": 1,
+     "fp": 0,
+     "ious": [
+      0.969
+     ],
+     "missed": [
+      "000005"
+     ]
+    }
+   },
+   "dim": {
+    "rot8": {
+     "exact": false,
+     "tp": 0,
+     "fp": 0,
+     "ious": [],
+     "missed": [
+      "000113",
+      "000132"
+     ]
+    },
+    "robot": {
+     "exact": false,
+     "tp": 0,
+     "fp": 0,
+     "ious": [],
+     "missed": [
+      "000005",
+      "000006"
+     ]
+    }
+   },
+   "bright": {
+    "rot8": {
+     "exact": true,
+     "tp": 2,
+     "fp": 0,
+     "ious": [
+      0.804,
+      0.828
+     ],
+     "missed": []
+    },
+    "robot": {
+     "exact": false,
+     "tp": 1,
+     "fp": 0,
+     "ious": [
+      0.969
+     ],
+     "missed": [
+      "000005"
+     ]
+    }
+   },
+   "gamma_dark": {
+    "rot8": {
+     "exact": false,
+     "tp": 2,
+     "fp": 1,
+     "ious": [
+      0.856,
+      0.84
+     ],
+     "missed": []
+    },
+    "robot": {
+     "exact": true,
+     "tp": 2,
+     "fp": 0,
+     "ious": [
+      0.903,
+      0.957
+     ],
+     "missed": []
+    }
+   },
+   "gamma_light": {
+    "rot8": {
+     "exact": false,
+     "tp": 0,
+     "fp": 0,
+     "ious": [],
+     "missed": [
+      "000113",
+      "000132"
+     ]
+    },
+    "robot": {
+     "exact": false,
+     "tp": 0,
+     "fp": 0,
+     "ious": [],
+     "missed": [
+      "000005",
+      "000006"
+     ]
+    }
+   },
+   "low_contrast": {
+    "rot8": {
+     "exact": false,
+     "tp": 1,
+     "fp": 0,
+     "ious": [
+      0.83
+     ],
+     "missed": [
+      "000113"
+     ]
+    },
+    "robot": {
+     "exact": false,
+     "tp": 0,
+     "fp": 0,
+     "ious": [],
+     "missed": [
+      "000005",
+      "000006"
+     ]
+    }
+   },
+   "desat": {
+    "rot8": {
+     "exact": false,
+     "tp": 0,
+     "fp": 0,
+     "ious": [],
+     "missed": [
+      "000113",
+      "000132"
+     ]
+    },
+    "robot": {
+     "exact": false,
+     "tp": 0,
+     "fp": 0,
+     "ious": [],
+     "missed": [
+      "000005",
+      "000006"
+     ]
+    }
+   },
+   "warm": {
+    "rot8": {
+     "exact": false,
+     "tp": 0,
+     "fp": 0,
+     "ious": [],
+     "missed": [
+      "000113",
+      "000132"
+     ]
+    },
+    "robot": {
+     "exact": false,
+     "tp": 0,
+     "fp": 0,
+     "ious": [],
+     "missed": [
+      "000005",
+      "000006"
+     ]
+    }
+   },
+   "cool": {
+    "rot8": {
+     "exact": true,
+     "tp": 2,
+     "fp": 0,
+     "ious": [
+      0.848,
+      0.833
+     ],
+     "missed": []
+    },
+    "robot": {
+     "exact": false,
+     "tp": 1,
+     "fp": 0,
+     "ious": [
+      0.952
+     ],
+     "missed": [
+      "000005"
+     ]
+    }
+   },
+   "squash": {
+    "rot8": {
+     "exact": true,
+     "tp": 2,
+     "fp": 0,
+     "ious": [
+      0.876,
+      0.928
+     ],
+     "missed": []
+    },
+    "robot": {
+     "exact": false,
+     "tp": 0,
+     "fp": 0,
+     "ious": [],
+     "missed": [
+      "000005",
+      "000006"
+     ]
+    }
+   },
+   "stretch": {
+    "rot8": {
+     "exact": true,
+     "tp": 2,
+     "fp": 0,
+     "ious": [
+      0.966,
+      0.9
+     ],
+     "missed": []
+    },
+    "robot": {
+     "exact": false,
+     "tp": 1,
+     "fp": 0,
+     "ious": [
+      0.974
+     ],
+     "missed": [
+      "000005"
+     ]
+    }
+   }
+  }
+ },
+ "K0 참조이미지만 제외": {
+  "config": "sim>=0.26(all8) asp>=1.5 color shape ref:off sat>=85.0 gd=0.15/0.15 yw=0.05",
+  "rot8_exact": 5,
+  "door_tp": 19,
+  "fp": 1,
+  "mean_iou": 0.893,
+  "detail": {
+   "orig": {
+    "rot8": {
+     "exact": true,
+     "tp": 2,
+     "fp": 0,
+     "ious": [
+      0.897,
+      0.838
+     ],
+     "missed": []
+    },
+    "robot": {
+     "exact": false,
+     "tp": 1,
+     "fp": 0,
+     "ious": [
+      0.969
+     ],
+     "missed": [
+      "000005"
+     ]
+    }
+   },
+   "dim": {
+    "rot8": {
+     "exact": false,
+     "tp": 0,
+     "fp": 0,
+     "ious": [],
+     "missed": [
+      "000113",
+      "000132"
+     ]
+    },
+    "robot": {
+     "exact": false,
+     "tp": 0,
+     "fp": 0,
+     "ious": [],
+     "missed": [
+      "000005",
+      "000006"
+     ]
+    }
+   },
+   "bright": {
+    "rot8": {
+     "exact": true,
+     "tp": 2,
+     "fp": 0,
+     "ious": [
+      0.804,
+      0.828
+     ],
+     "missed": []
+    },
+    "robot": {
+     "exact": false,
+     "tp": 1,
+     "fp": 0,
+     "ious": [
+      0.969
+     ],
+     "missed": [
+      "000005"
+     ]
+    }
+   },
+   "gamma_dark": {
+    "rot8": {
+     "exact": false,
+     "tp": 2,
+     "fp": 1,
+     "ious": [
+      0.856,
+      0.84
+     ],
+     "missed": []
+    },
+    "robot": {
+     "exact": true,
+     "tp": 2,
+     "fp": 0,
+     "ious": [
+      0.903,
+      0.957
+     ],
+     "missed": []
+    }
+   },
+   "gamma_light": {
+    "rot8": {
+     "exact": false,
+     "tp": 0,
+     "fp": 0,
+     "ious": [],
+     "missed": [
+      "000113",
+      "000132"
+     ]
+    },
+    "robot": {
+     "exact": false,
+     "tp": 0,
+     "fp": 0,
+     "ious": [],
+     "missed": [
+      "000005",
+      "000006"
+     ]
+    }
+   },
+   "low_contrast": {
+    "rot8": {
+     "exact": false,
+     "tp": 1,
+     "fp": 0,
+     "ious": [
+      0.83
+     ],
+     "missed": [
+      "000113"
+     ]
+    },
+    "robot": {
+     "exact": false,
+     "tp": 0,
+     "fp": 0,
+     "ious": [],
+     "missed": [
+      "000005",
+      "000006"
+     ]
+    }
+   },
+   "desat": {
+    "rot8": {
+     "exact": false,
+     "tp": 0,
+     "fp": 0,
+     "ious": [],
+     "missed": [
+      "000113",
+      "000132"
+     ]
+    },
+    "robot": {
+     "exact": false,
+     "tp": 0,
+     "fp": 0,
+     "ious": [],
+     "missed": [
+      "000005",
+      "000006"
+     ]
+    }
+   },
+   "warm": {
+    "rot8": {
+     "exact": false,
+     "tp": 0,
+     "fp": 0,
+     "ious": [],
+     "missed": [
+      "000113",
+      "000132"
+     ]
+    },
+    "robot": {
+     "exact": false,
+     "tp": 0,
+     "fp": 0,
+     "ious": [],
+     "missed": [
+      "000005",
+      "000006"
+     ]
+    }
+   },
+   "cool": {
+    "rot8": {
+     "exact": true,
+     "tp": 2,
+     "fp": 0,
+     "ious": [
+      0.848,
+      0.833
+     ],
+     "missed": []
+    },
+    "robot": {
+     "exact": false,
+     "tp": 1,
+     "fp": 0,
+     "ious": [
+      0.952
+     ],
+     "missed": [
+      "000005"
+     ]
+    }
+   },
+   "squash": {
+    "rot8": {
+     "exact": true,
+     "tp": 2,
+     "fp": 0,
+     "ious": [
+      0.876,
+      0.928
+     ],
+     "missed": []
+    },
+    "robot": {
+     "exact": false,
+     "tp": 0,
+     "fp": 0,
+     "ious": [],
+     "missed": [
+      "000005",
+      "000006"
+     ]
+    }
+   },
+   "stretch": {
+    "rot8": {
+     "exact": true,
+     "tp": 2,
+     "fp": 0,
+     "ious": [
+      0.966,
+      0.9
+     ],
+     "missed": []
+    },
+    "robot": {
+     "exact": false,
+     "tp": 1,
+     "fp": 0,
+     "ious": [
+      0.974
+     ],
+     "missed": [
+      "000005"
+     ]
+    }
+   }
+  }
+ },
+ "K1 게이트 유지·기준 완화": {
+  "config": "sim>=0.24(all8) asp>=1.3 color±0.012 shape±0.005 ref:off sat>=75.0 gd=0.15/0.15 yw=0.05",
+  "rot8_exact": 2,
+  "door_tp": 36,
+  "fp": 33,
+  "mean_iou": 0.866,
+  "detail": {
+   "orig": {
+    "rot8": {
+     "exact": false,
+     "tp": 2,
+     "fp": 2,
+     "ious": [
+      0.811,
+      0.813
+     ],
+     "missed": []
+    },
+    "robot": {
+     "exact": false,
+     "tp": 2,
+     "fp": 1,
+     "ious": [
+      0.786,
+      0.715
+     ],
+     "missed": []
+    }
+   },
+   "dim": {
+    "rot8": {
+     "exact": false,
+     "tp": 2,
+     "fp": 3,
+     "ious": [
+      0.766,
+      0.859
+     ],
+     "missed": []
+    },
+    "robot": {
+     "exact": false,
+     "tp": 1,
+     "fp": 0,
+     "ious": [
+      0.961
+     ],
+     "missed": [
+      "000005"
+     ]
+    }
+   },
+   "bright": {
+    "rot8": {
+     "exact": false,
+     "tp": 2,
+     "fp": 2,
+     "ious": [
+      0.804,
+      0.828
+     ],
+     "missed": []
+    },
+    "robot": {
+     "exact": true,
+     "tp": 2,
+     "fp": 0,
+     "ious": [
+      0.917,
+      0.969
+     ],
+     "missed": []
+    }
+   },
+   "gamma_dark": {
+    "rot8": {
+     "exact": false,
+     "tp": 2,
+     "fp": 3,
+     "ious": [
+      0.856,
+      0.774
+     ],
+     "missed": []
+    },
+    "robot": {
+     "exact": false,
+     "tp": 2,
+     "fp": 1,
+     "ious": [
+      0.903,
+      0.957
+     ],
+     "missed": []
+    }
+   },
+   "gamma_light": {
+    "rot8": {
+     "exact": false,
+     "tp": 2,
+     "fp": 1,
+     "ious": [
+      0.895,
+      0.83
+     ],
+     "missed": []
+    },
+    "robot": {
+     "exact": false,
+     "tp": 1,
+     "fp": 0,
+     "ious": [
+      0.916
+     ],
+     "missed": [
+      "000006"
+     ]
+    }
+   },
+   "low_contrast": {
+    "rot8": {
+     "exact": true,
+     "tp": 2,
+     "fp": 0,
+     "ious": [
+      0.84,
+      0.83
+     ],
+     "missed": []
+    },
+    "robot": {
+     "exact": false,
+     "tp": 1,
+     "fp": 0,
+     "ious": [
+      0.925
+     ],
+     "missed": [
+      "000006"
+     ]
+    }
+   },
+   "desat": {
+    "rot8": {
+     "exact": true,
+     "tp": 2,
+     "fp": 0,
+     "ious": [
+      0.873,
+      0.841
+     ],
+     "missed": []
+    },
+    "robot": {
+     "exact": false,
+     "tp": 0,
+     "fp": 0,
+     "ious": [],
+     "missed": [
+      "000005",
+      "000006"
+     ]
+    }
+   },
+   "warm": {
+    "rot8": {
+     "exact": false,
+     "tp": 2,
+     "fp": 2,
+     "ious": [
+      0.812,
+      0.896
+     ],
+     "missed": []
+    },
+    "robot": {
+     "exact": false,
+     "tp": 0,
+     "fp": 0,
+     "ious": [],
+     "missed": [
+      "000005",
+      "000006"
+     ]
+    }
+   },
+   "cool": {
+    "rot8": {
+     "exact": false,
+     "tp": 2,
+     "fp": 4,
+     "ious": [
+      0.848,
+      0.833
+     ],
+     "missed": []
+    },
+    "robot": {
+     "exact": false,
+     "tp": 2,
+     "fp": 4,
+     "ious": [
+      0.909,
+      0.952
+     ],
+     "missed": []
+    }
+   },
+   "squash": {
+    "rot8": {
+     "exact": false,
+     "tp": 2,
+     "fp": 4,
+     "ious": [
+      0.876,
+      0.928
+     ],
+     "missed": []
+    },
+    "robot": {
+     "exact": false,
+     "tp": 1,
+     "fp": 1,
+     "ious": [
+      0.834
+     ],
+     "missed": [
+      "000006"
+     ]
+    }
+   },
+   "stretch": {
+    "rot8": {
+     "exact": false,
+     "tp": 2,
+     "fp": 3,
+     "ious": [
+      0.966,
+      0.9
+     ],
+     "missed": []
+    },
+    "robot": {
+     "exact": false,
+     "tp": 2,
+     "fp": 2,
+     "ious": [
+      0.909,
+      0.843
+     ],
+     "missed": []
+    }
+   }
+  }
+ },
+ "K1b K1인데 sim 0.26 유지(provider 현재값)": {
+  "config": "sim>=0.26(all8) asp>=1.3 color±0.012 shape±0.005 ref:off sat>=75.0 gd=0.15/0.15 yw=0.05",
+  "rot8_exact": 6,
+  "door_tp": 28,
+  "fp": 5,
+  "mean_iou": 0.862,
+  "detail": {
+   "orig": {
+    "rot8": {
+     "exact": false,
+     "tp": 2,
+     "fp": 1,
+     "ious": [
+      0.811,
+      0.838
+     ],
+     "missed": []
+    },
+    "robot": {
+     "exact": true,
+     "tp": 2,
+     "fp": 0,
+     "ious": [
+      0.736,
+      0.715
+     ],
+     "missed": []
+    }
+   },
+   "dim": {
+    "rot8": {
+     "exact": false,
+     "tp": 0,
+     "fp": 0,
+     "ious": [],
+     "missed": [
+      "000113",
+      "000132"
+     ]
+    },
+    "robot": {
+     "exact": false,
+     "tp": 0,
+     "fp": 0,
+     "ious": [],
+     "missed": [
+      "000005",
+      "000006"
+     ]
+    }
+   },
+   "bright": {
+    "rot8": {
+     "exact": false,
+     "tp": 2,
+     "fp": 1,
+     "ious": [
+      0.804,
+      0.828
+     ],
+     "missed": []
+    },
+    "robot": {
+     "exact": true,
+     "tp": 2,
+     "fp": 0,
+     "ious": [
+      0.917,
+      0.969
+     ],
+     "missed": []
+    }
+   },
+   "gamma_dark": {
+    "rot8": {
+     "exact": false,
+     "tp": 2,
+     "fp": 1,
+     "ious": [
+      0.856,
+      0.84
+     ],
+     "missed": []
+    },
+    "robot": {
+     "exact": true,
+     "tp": 2,
+     "fp": 0,
+     "ious": [
+      0.903,
+      0.957
+     ],
+     "missed": []
+    }
+   },
+   "gamma_light": {
+    "rot8": {
+     "exact": true,
+     "tp": 2,
+     "fp": 0,
+     "ious": [
+      0.895,
+      0.83
+     ],
+     "missed": []
+    },
+    "robot": {
+     "exact": false,
+     "tp": 0,
+     "fp": 0,
+     "ious": [],
+     "missed": [
+      "000005",
+      "000006"
+     ]
+    }
+   },
+   "low_contrast": {
+    "rot8": {
+     "exact": true,
+     "tp": 2,
+     "fp": 0,
+     "ious": [
+      0.84,
+      0.83
+     ],
+     "missed": []
+    },
+    "robot": {
+     "exact": false,
+     "tp": 0,
+     "fp": 0,
+     "ious": [],
+     "missed": [
+      "000005",
+      "000006"
+     ]
+    }
+   },
+   "desat": {
+    "rot8": {
+     "exact": true,
+     "tp": 2,
+     "fp": 0,
+     "ious": [
+      0.873,
+      0.841
+     ],
+     "missed": []
+    },
+    "robot": {
+     "exact": false,
+     "tp": 0,
+     "fp": 0,
+     "ious": [],
+     "missed": [
+      "000005",
+      "000006"
+     ]
+    }
+   },
+   "warm": {
+    "rot8": {
+     "exact": false,
+     "tp": 2,
+     "fp": 1,
+     "ious": [
+      0.812,
+      0.896
+     ],
+     "missed": []
+    },
+    "robot": {
+     "exact": false,
+     "tp": 0,
+     "fp": 0,
+     "ious": [],
+     "missed": [
+      "000005",
+      "000006"
+     ]
+    }
+   },
+   "cool": {
+    "rot8": {
+     "exact": true,
+     "tp": 2,
+     "fp": 0,
+     "ious": [
+      0.848,
+      0.833
+     ],
+     "missed": []
+    },
+    "robot": {
+     "exact": false,
+     "tp": 1,
+     "fp": 0,
+     "ious": [
+      0.952
+     ],
+     "missed": [
+      "000005"
+     ]
+    }
+   },
+   "squash": {
+    "rot8": {
+     "exact": true,
+     "tp": 2,
+     "fp": 0,
+     "ious": [
+      0.876,
+      0.928
+     ],
+     "missed": []
+    },
+    "robot": {
+     "exact": false,
+     "tp": 0,
+     "fp": 0,
+     "ious": [],
+     "missed": [
+      "000005",
+      "000006"
+     ]
+    }
+   },
+   "stretch": {
+    "rot8": {
+     "exact": true,
+     "tp": 2,
+     "fp": 0,
+     "ious": [
+      0.966,
+      0.9
+     ],
+     "missed": []
+    },
+    "robot": {
+     "exact": false,
+     "tp": 1,
+     "fp": 1,
+     "ious": [
+      0.843
+     ],
+     "missed": [
+      "000005"
+     ]
+    }
+   }
+  }
+ },
+ "K2 K1 + door 전용 GDINO": {
+  "config": "sim>=0.24(all8) asp>=1.3 color±0.012 shape±0.005 ref:off sat>=75.0 gd=0.25/0.15/exact yw=0.05",
+  "rot8_exact": 9,
+  "door_tp": 36,
+  "fp": 7,
+  "mean_iou": 0.867,
+  "detail": {
+   "orig": {
+    "rot8": {
+     "exact": true,
+     "tp": 2,
+     "fp": 0,
+     "ious": [
+      0.811,
+      0.81
+     ],
+     "missed": []
+    },
+    "robot": {
+     "exact": true,
+     "tp": 2,
+     "fp": 0,
+     "ious": [
+      0.786,
+      0.715
+     ],
+     "missed": []
+    }
+   },
+   "dim": {
+    "rot8": {
+     "exact": true,
+     "tp": 2,
+     "fp": 0,
+     "ious": [
+      0.773,
+      0.859
+     ],
+     "missed": []
+    },
+    "robot": {
+     "exact": false,
+     "tp": 1,
+     "fp": 0,
+     "ious": [
+      0.961
+     ],
+     "missed": [
+      "000005"
+     ]
+    }
+   },
+   "bright": {
+    "rot8": {
+     "exact": true,
+     "tp": 2,
+     "fp": 0,
+     "ious": [
+      0.804,
+      0.826
+     ],
+     "missed": []
+    },
+    "robot": {
+     "exact": true,
+     "tp": 2,
+     "fp": 0,
+     "ious": [
+      0.917,
+      0.969
+     ],
+     "missed": []
+    }
+   },
+   "gamma_dark": {
+    "rot8": {
+     "exact": false,
+     "tp": 2,
+     "fp": 1,
+     "ious": [
+      0.856,
+      0.842
+     ],
+     "missed": []
+    },
+    "robot": {
+     "exact": false,
+     "tp": 2,
+     "fp": 1,
+     "ious": [
+      0.903,
+      0.957
+     ],
+     "missed": []
+    }
+   },
+   "gamma_light": {
+    "rot8": {
+     "exact": true,
+     "tp": 2,
+     "fp": 0,
+     "ious": [
+      0.895,
+      0.825
+     ],
+     "missed": []
+    },
+    "robot": {
+     "exact": false,
+     "tp": 1,
+     "fp": 0,
+     "ious": [
+      0.916
+     ],
+     "missed": [
+      "000006"
+     ]
+    }
+   },
+   "low_contrast": {
+    "rot8": {
+     "exact": true,
+     "tp": 2,
+     "fp": 0,
+     "ious": [
+      0.84,
+      0.829
+     ],
+     "missed": []
+    },
+    "robot": {
+     "exact": false,
+     "tp": 1,
+     "fp": 0,
+     "ious": [
+      0.925
+     ],
+     "missed": [
+      "000006"
+     ]
+    }
+   },
+   "desat": {
+    "rot8": {
+     "exact": true,
+     "tp": 2,
+     "fp": 0,
+     "ious": [
+      0.873,
+      0.858
+     ],
+     "missed": []
+    },
+    "robot": {
+     "exact": false,
+     "tp": 0,
+     "fp": 0,
+     "ious": [],
+     "missed": [
+      "000005",
+      "000006"
+     ]
+    }
+   },
+   "warm": {
+    "rot8": {
+     "exact": true,
+     "tp": 2,
+     "fp": 0,
+     "ious": [
+      0.812,
+      0.906
+     ],
+     "missed": []
+    },
+    "robot": {
+     "exact": false,
+     "tp": 0,
+     "fp": 0,
+     "ious": [],
+     "missed": [
+      "000005",
+      "000006"
+     ]
+    }
+   },
+   "cool": {
+    "rot8": {
+     "exact": false,
+     "tp": 2,
+     "fp": 2,
+     "ious": [
+      0.848,
+      0.843
+     ],
+     "missed": []
+    },
+    "robot": {
+     "exact": false,
+     "tp": 2,
+     "fp": 2,
+     "ious": [
+      0.909,
+      0.952
+     ],
+     "missed": []
+    }
+   },
+   "squash": {
+    "rot8": {
+     "exact": true,
+     "tp": 2,
+     "fp": 0,
+     "ious": [
+      0.876,
+      0.928
+     ],
+     "missed": []
+    },
+    "robot": {
+     "exact": false,
+     "tp": 1,
+     "fp": 1,
+     "ious": [
+      0.821
+     ],
+     "missed": [
+      "000006"
+     ]
+    }
+   },
+   "stretch": {
+    "rot8": {
+     "exact": true,
+     "tp": 2,
+     "fp": 0,
+     "ious": [
+      0.966,
+      0.9
+     ],
+     "missed": []
+    },
+    "robot": {
+     "exact": true,
+     "tp": 2,
+     "fp": 0,
+     "ious": [
+      0.859,
+      0.843
+     ],
+     "missed": []
+    }
+   }
+  }
+ },
+ "K2a K2인데 종횡비 1.5 유지": {
+  "config": "sim>=0.24(all8) asp>=1.5 color±0.012 shape±0.005 ref:off sat>=75.0 gd=0.25/0.15/exact yw=0.05",
+  "rot8_exact": 9,
+  "door_tp": 36,
+  "fp": 7,
+  "mean_iou": 0.879,
+  "detail": {
+   "orig": {
+    "rot8": {
+     "exact": true,
+     "tp": 2,
+     "fp": 0,
+     "ious": [
+      0.897,
+      0.81
+     ],
+     "missed": []
+    },
+    "robot": {
+     "exact": true,
+     "tp": 2,
+     "fp": 0,
+     "ious": [
+      0.786,
+      0.969
+     ],
+     "missed": []
+    }
+   },
+   "dim": {
+    "rot8": {
+     "exact": true,
+     "tp": 2,
+     "fp": 0,
+     "ious": [
+      0.773,
+      0.859
+     ],
+     "missed": []
+    },
+    "robot": {
+     "exact": false,
+     "tp": 1,
+     "fp": 0,
+     "ious": [
+      0.961
+     ],
+     "missed": [
+      "000005"
+     ]
+    }
+   },
+   "bright": {
+    "rot8": {
+     "exact": true,
+     "tp": 2,
+     "fp": 0,
+     "ious": [
+      0.804,
+      0.826
+     ],
+     "missed": []
+    },
+    "robot": {
+     "exact": true,
+     "tp": 2,
+     "fp": 0,
+     "ious": [
+      0.917,
+      0.969
+     ],
+     "missed": []
+    }
+   },
+   "gamma_dark": {
+    "rot8": {
+     "exact": false,
+     "tp": 2,
+     "fp": 1,
+     "ious": [
+      0.856,
+      0.842
+     ],
+     "missed": []
+    },
+    "robot": {
+     "exact": false,
+     "tp": 2,
+     "fp": 1,
+     "ious": [
+      0.903,
+      0.957
+     ],
+     "missed": []
+    }
+   },
+   "gamma_light": {
+    "rot8": {
+     "exact": true,
+     "tp": 2,
+     "fp": 0,
+     "ious": [
+      0.895,
+      0.825
+     ],
+     "missed": []
+    },
+    "robot": {
+     "exact": false,
+     "tp": 1,
+     "fp": 0,
+     "ious": [
+      0.916
+     ],
+     "missed": [
+      "000006"
+     ]
+    }
+   },
+   "low_contrast": {
+    "rot8": {
+     "exact": true,
+     "tp": 2,
+     "fp": 0,
+     "ious": [
+      0.84,
+      0.829
+     ],
+     "missed": []
+    },
+    "robot": {
+     "exact": false,
+     "tp": 1,
+     "fp": 0,
+     "ious": [
+      0.925
+     ],
+     "missed": [
+      "000006"
+     ]
+    }
+   },
+   "desat": {
+    "rot8": {
+     "exact": true,
+     "tp": 2,
+     "fp": 0,
+     "ious": [
+      0.873,
+      0.858
+     ],
+     "missed": []
+    },
+    "robot": {
+     "exact": false,
+     "tp": 0,
+     "fp": 0,
+     "ious": [],
+     "missed": [
+      "000005",
+      "000006"
+     ]
+    }
+   },
+   "warm": {
+    "rot8": {
+     "exact": true,
+     "tp": 2,
+     "fp": 0,
+     "ious": [
+      0.915,
+      0.906
+     ],
+     "missed": []
+    },
+    "robot": {
+     "exact": false,
+     "tp": 0,
+     "fp": 0,
+     "ious": [],
+     "missed": [
+      "000005",
+      "000006"
+     ]
+    }
+   },
+   "cool": {
+    "rot8": {
+     "exact": false,
+     "tp": 2,
+     "fp": 2,
+     "ious": [
+      0.848,
+      0.843
+     ],
+     "missed": []
+    },
+    "robot": {
+     "exact": false,
+     "tp": 2,
+     "fp": 2,
+     "ious": [
+      0.909,
+      0.952
+     ],
+     "missed": []
+    }
+   },
+   "squash": {
+    "rot8": {
+     "exact": true,
+     "tp": 2,
+     "fp": 0,
+     "ious": [
+      0.876,
+      0.928
+     ],
+     "missed": []
+    },
+    "robot": {
+     "exact": false,
+     "tp": 1,
+     "fp": 1,
+     "ious": [
+      0.821
+     ],
+     "missed": [
+      "000006"
+     ]
+    }
+   },
+   "stretch": {
+    "rot8": {
+     "exact": true,
+     "tp": 2,
+     "fp": 0,
+     "ious": [
+      0.966,
+      0.9
+     ],
+     "missed": []
+    },
+    "robot": {
+     "exact": true,
+     "tp": 2,
+     "fp": 0,
+     "ious": [
+      0.859,
+      0.843
+     ],
+     "missed": []
+    }
+   }
+  }
+ },
+ "K4 추천: K2a인데 sim 0.25": {
+  "config": "sim>=0.25(all8) asp>=1.5 color±0.012 shape±0.005 ref:off sat>=75.0 gd=0.25/0.15/exact yw=0.05",
+  "rot8_exact": 11,
+  "door_tp": 34,
+  "fp": 2,
+  "mean_iou": 0.878,
+  "detail": {
+   "orig": {
+    "rot8": {
+     "exact": true,
+     "tp": 2,
+     "fp": 0,
+     "ious": [
+      0.897,
+      0.81
+     ],
+     "missed": []
+    },
+    "robot": {
+     "exact": true,
+     "tp": 2,
+     "fp": 0,
+     "ious": [
+      0.786,
+      0.969
+     ],
+     "missed": []
+    }
+   },
+   "dim": {
+    "rot8": {
+     "exact": true,
+     "tp": 2,
+     "fp": 0,
+     "ious": [
+      0.801,
+      0.859
+     ],
+     "missed": []
+    },
+    "robot": {
+     "exact": false,
+     "tp": 1,
+     "fp": 0,
+     "ious": [
+      0.961
+     ],
+     "missed": [
+      "000005"
+     ]
+    }
+   },
+   "bright": {
+    "rot8": {
+     "exact": true,
+     "tp": 2,
+     "fp": 0,
+     "ious": [
+      0.804,
+      0.826
+     ],
+     "missed": []
+    },
+    "robot": {
+     "exact": true,
+     "tp": 2,
+     "fp": 0,
+     "ious": [
+      0.917,
+      0.969
+     ],
+     "missed": []
+    }
+   },
+   "gamma_dark": {
+    "rot8": {
+     "exact": true,
+     "tp": 2,
+     "fp": 0,
+     "ious": [
+      0.856,
+      0.842
+     ],
+     "missed": []
+    },
+    "robot": {
+     "exact": true,
+     "tp": 2,
+     "fp": 0,
+     "ious": [
+      0.903,
+      0.957
+     ],
+     "missed": []
+    }
+   },
+   "gamma_light": {
+    "rot8": {
+     "exact": true,
+     "tp": 2,
+     "fp": 0,
+     "ious": [
+      0.895,
+      0.825
+     ],
+     "missed": []
+    },
+    "robot": {
+     "exact": false,
+     "tp": 0,
+     "fp": 0,
+     "ious": [],
+     "missed": [
+      "000005",
+      "000006"
+     ]
+    }
+   },
+   "low_contrast": {
+    "rot8": {
+     "exact": true,
+     "tp": 2,
+     "fp": 0,
+     "ious": [
+      0.84,
+      0.829
+     ],
+     "missed": []
+    },
+    "robot": {
+     "exact": false,
+     "tp": 0,
+     "fp": 0,
+     "ious": [],
+     "missed": [
+      "000005",
+      "000006"
+     ]
+    }
+   },
+   "desat": {
+    "rot8": {
+     "exact": true,
+     "tp": 2,
+     "fp": 0,
+     "ious": [
+      0.873,
+      0.858
+     ],
+     "missed": []
+    },
+    "robot": {
+     "exact": false,
+     "tp": 0,
+     "fp": 0,
+     "ious": [],
+     "missed": [
+      "000005",
+      "000006"
+     ]
+    }
+   },
+   "warm": {
+    "rot8": {
+     "exact": true,
+     "tp": 2,
+     "fp": 0,
+     "ious": [
+      0.915,
+      0.906
+     ],
+     "missed": []
+    },
+    "robot": {
+     "exact": false,
+     "tp": 0,
+     "fp": 0,
+     "ious": [],
+     "missed": [
+      "000005",
+      "000006"
+     ]
+    }
+   },
+   "cool": {
+    "rot8": {
+     "exact": true,
+     "tp": 2,
+     "fp": 0,
+     "ious": [
+      0.848,
+      0.843
+     ],
+     "missed": []
+    },
+    "robot": {
+     "exact": false,
+     "tp": 2,
+     "fp": 2,
+     "ious": [
+      0.909,
+      0.952
+     ],
+     "missed": []
+    }
+   },
+   "squash": {
+    "rot8": {
+     "exact": true,
+     "tp": 2,
+     "fp": 0,
+     "ious": [
+      0.876,
+      0.928
+     ],
+     "missed": []
+    },
+    "robot": {
+     "exact": false,
+     "tp": 1,
+     "fp": 0,
+     "ious": [
+      0.821
+     ],
+     "missed": [
+      "000006"
+     ]
+    }
+   },
+   "stretch": {
+    "rot8": {
+     "exact": true,
+     "tp": 2,
+     "fp": 0,
+     "ious": [
+      0.966,
+      0.9
+     ],
+     "missed": []
+    },
+    "robot": {
+     "exact": true,
+     "tp": 2,
+     "fp": 0,
+     "ious": [
+      0.859,
+      0.843
+     ],
+     "missed": []
+    }
+   }
+  }
+ },
+ "K3 더 완화 + door 전용 GDINO": {
+  "config": "sim>=0.22(all8) asp>=1.2 color±0.012 shape±0.01 ref:off sat>=65.0 gd=0.25/0.15/exact yw=0.05",
+  "rot8_exact": 7,
+  "door_tp": 37,
+  "fp": 16,
+  "mean_iou": 0.85,
+  "detail": {
+   "orig": {
+    "rot8": {
+     "exact": true,
+     "tp": 2,
+     "fp": 0,
+     "ious": [
+      0.811,
+      0.81
+     ],
+     "missed": []
+    },
+    "robot": {
+     "exact": true,
+     "tp": 2,
+     "fp": 0,
+     "ious": [
+      0.786,
+      0.715
+     ],
+     "missed": []
+    }
+   },
+   "dim": {
+    "rot8": {
+     "exact": false,
+     "tp": 2,
+     "fp": 1,
+     "ious": [
+      0.773,
+      0.796
+     ],
+     "missed": []
+    },
+    "robot": {
+     "exact": false,
+     "tp": 1,
+     "fp": 0,
+     "ious": [
+      0.961
+     ],
+     "missed": [
+      "000005"
+     ]
+    }
+   },
+   "bright": {
+    "rot8": {
+     "exact": true,
+     "tp": 2,
+     "fp": 0,
+     "ious": [
+      0.804,
+      0.826
+     ],
+     "missed": []
+    },
+    "robot": {
+     "exact": true,
+     "tp": 2,
+     "fp": 0,
+     "ious": [
+      0.917,
+      0.969
+     ],
+     "missed": []
+    }
+   },
+   "gamma_dark": {
+    "rot8": {
+     "exact": false,
+     "tp": 2,
+     "fp": 2,
+     "ious": [
+      0.741,
+      0.842
+     ],
+     "missed": []
+    },
+    "robot": {
+     "exact": false,
+     "tp": 1,
+     "fp": 2,
+     "ious": [
+      0.702
+     ],
+     "missed": [
+      "000005"
+     ]
+    }
+   },
+   "gamma_light": {
+    "rot8": {
+     "exact": true,
+     "tp": 2,
+     "fp": 0,
+     "ious": [
+      0.895,
+      0.825
+     ],
+     "missed": []
+    },
+    "robot": {
+     "exact": true,
+     "tp": 2,
+     "fp": 0,
+     "ious": [
+      0.797,
+      0.963
+     ],
+     "missed": []
+    }
+   },
+   "low_contrast": {
+    "rot8": {
+     "exact": true,
+     "tp": 2,
+     "fp": 0,
+     "ious": [
+      0.84,
+      0.829
+     ],
+     "missed": []
+    },
+    "robot": {
+     "exact": true,
+     "tp": 2,
+     "fp": 0,
+     "ious": [
+      0.925,
+      0.965
+     ],
+     "missed": []
+    }
+   },
+   "desat": {
+    "rot8": {
+     "exact": true,
+     "tp": 2,
+     "fp": 0,
+     "ious": [
+      0.873,
+      0.839
+     ],
+     "missed": []
+    },
+    "robot": {
+     "exact": false,
+     "tp": 1,
+     "fp": 0,
+     "ious": [
+      0.965
+     ],
+     "missed": [
+      "000005"
+     ]
+    }
+   },
+   "warm": {
+    "rot8": {
+     "exact": true,
+     "tp": 2,
+     "fp": 0,
+     "ious": [
+      0.812,
+      0.906
+     ],
+     "missed": []
+    },
+    "robot": {
+     "exact": false,
+     "tp": 0,
+     "fp": 1,
+     "ious": [],
+     "missed": [
+      "000005",
+      "000006"
+     ]
+    }
+   },
+   "cool": {
+    "rot8": {
+     "exact": false,
+     "tp": 2,
+     "fp": 2,
+     "ious": [
+      0.848,
+      0.843
+     ],
+     "missed": []
+    },
+    "robot": {
+     "exact": false,
+     "tp": 1,
+     "fp": 5,
+     "ious": [
+      0.909
+     ],
+     "missed": [
+      "000006"
+     ]
+    }
+   },
+   "squash": {
+    "rot8": {
+     "exact": true,
+     "tp": 2,
+     "fp": 0,
+     "ious": [
+      0.84,
+      0.928
+     ],
+     "missed": []
+    },
+    "robot": {
+     "exact": false,
+     "tp": 1,
+     "fp": 2,
+     "ious": [
+      0.821
+     ],
+     "missed": [
+      "000006"
+     ]
+    }
+   },
+   "stretch": {
+    "rot8": {
+     "exact": false,
+     "tp": 2,
+     "fp": 1,
+     "ious": [
+      0.966,
+      0.9
+     ],
+     "missed": []
+    },
+    "robot": {
+     "exact": true,
+     "tp": 2,
+     "fp": 0,
+     "ious": [
+      0.661,
+      0.843
+     ],
+     "missed": []
+    }
+   }
+  }
+ },
+ "R2b 색·모양·참조 끔(앞 실험)": {
+  "config": "sim>=0.22(all8) asp>=1.5 color:off shape:off ref:off sat>=85.0 gd=0.25/0.15/exact yw=0.05",
+  "rot8_exact": 5,
+  "door_tp": 30,
+  "fp": 10,
+  "mean_iou": 0.88,
+  "detail": {
+   "orig": {
+    "rot8": {
+     "exact": true,
+     "tp": 2,
+     "fp": 0,
+     "ious": [
+      0.897,
+      0.81
+     ],
+     "missed": []
+    },
+    "robot": {
+     "exact": true,
+     "tp": 2,
+     "fp": 0,
+     "ious": [
+      0.786,
+      0.969
+     ],
+     "missed": []
+    }
+   },
+   "dim": {
+    "rot8": {
+     "exact": true,
+     "tp": 2,
+     "fp": 0,
+     "ious": [
+      0.801,
+      0.859
+     ],
+     "missed": []
+    },
+    "robot": {
+     "exact": true,
+     "tp": 2,
+     "fp": 0,
+     "ious": [
+      0.928,
+      0.961
+     ],
+     "missed": []
+    }
+   },
+   "bright": {
+    "rot8": {
+     "exact": true,
+     "tp": 2,
+     "fp": 0,
+     "ious": [
+      0.804,
+      0.826
+     ],
+     "missed": []
+    },
+    "robot": {
+     "exact": true,
+     "tp": 2,
+     "fp": 0,
+     "ious": [
+      0.917,
+      0.969
+     ],
+     "missed": []
+    }
+   },
+   "gamma_dark": {
+    "rot8": {
+     "exact": false,
+     "tp": 2,
+     "fp": 1,
+     "ious": [
+      0.856,
+      0.842
+     ],
+     "missed": []
+    },
+    "robot": {
+     "exact": false,
+     "tp": 2,
+     "fp": 3,
+     "ious": [
+      0.903,
+      0.957
+     ],
+     "missed": []
+    }
+   },
+   "gamma_light": {
+    "rot8": {
+     "exact": false,
+     "tp": 1,
+     "fp": 0,
+     "ious": [
+      0.825
+     ],
+     "missed": [
+      "000113"
+     ]
+    },
+    "robot": {
+     "exact": false,
+     "tp": 1,
+     "fp": 0,
+     "ious": [
+      0.916
+     ],
+     "missed": [
+      "000006"
+     ]
+    }
+   },
+   "low_contrast": {
+    "rot8": {
+     "exact": false,
+     "tp": 1,
+     "fp": 0,
+     "ious": [
+      0.829
+     ],
+     "missed": [
+      "000113"
+     ]
+    },
+    "robot": {
+     "exact": false,
+     "tp": 0,
+     "fp": 0,
+     "ious": [],
+     "missed": [
+      "000005",
+      "000006"
+     ]
+    }
+   },
+   "desat": {
+    "rot8": {
+     "exact": false,
+     "tp": 0,
+     "fp": 0,
+     "ious": [],
+     "missed": [
+      "000113",
+      "000132"
+     ]
+    },
+    "robot": {
+     "exact": false,
+     "tp": 0,
+     "fp": 0,
+     "ious": [],
+     "missed": [
+      "000005",
+      "000006"
+     ]
+    }
+   },
+   "warm": {
+    "rot8": {
+     "exact": false,
+     "tp": 0,
+     "fp": 0,
+     "ious": [],
+     "missed": [
+      "000113",
+      "000132"
+     ]
+    },
+    "robot": {
+     "exact": false,
+     "tp": 0,
+     "fp": 2,
+     "ious": [],
+     "missed": [
+      "000005",
+      "000006"
+     ]
+    }
+   },
+   "cool": {
+    "rot8": {
+     "exact": false,
+     "tp": 2,
+     "fp": 2,
+     "ious": [
+      0.848,
+      0.843
+     ],
+     "missed": []
+    },
+    "robot": {
+     "exact": false,
+     "tp": 2,
+     "fp": 1,
+     "ious": [
+      0.909,
+      0.952
+     ],
+     "missed": []
+    }
+   },
+   "squash": {
+    "rot8": {
+     "exact": true,
+     "tp": 2,
+     "fp": 0,
+     "ious": [
+      0.876,
+      0.928
+     ],
+     "missed": []
+    },
+    "robot": {
+     "exact": false,
+     "tp": 1,
+     "fp": 1,
+     "ious": [
+      0.821
+     ],
+     "missed": [
+      "000006"
+     ]
+    }
+   },
+   "stretch": {
+    "rot8": {
+     "exact": true,
+     "tp": 2,
+     "fp": 0,
+     "ious": [
+      0.966,
+      0.9
+     ],
+     "missed": []
+    },
+    "robot": {
+     "exact": true,
+     "tp": 2,
+     "fp": 0,
+     "ious": [
+      0.859,
+      0.843
+     ],
+     "missed": []
+    }
+   }
+  }
+ }
+}

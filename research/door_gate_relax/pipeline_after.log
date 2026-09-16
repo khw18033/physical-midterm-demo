@@ -1,0 +1,180 @@
+﻿Cannot import NystromAttention, you can not run original UniDepth. UniDepthV2 is available.
+[class_finder] class_discovery(door) 처리 완료, 이번 명령의 탐색 클래스=['door', 'pedestal'] (6585.6ms, 모델 로드 포함 가능)
+[class_finder] frame#0(frame_000001.jpg, 0.0도): RPN 후보=62개 provider 처리시간(ms)={'dictionary': 1237.4, 'grounding_dino': 377.0, 'yolo_world': 2266.6, 'fastsam': 177.4}
+[class_finder] frame#0(frame_000001.jpg, 0.0도): 검출개수={'door': 0, 'pedestal': 0}
+[class_finder] frame#1(frame_000020.jpg, 45.0도): RPN 후보=58개 provider 처리시간(ms)={'dictionary': 904.4, 'grounding_dino': 318.1, 'yolo_world': 114.2, 'fastsam': 17.0}
+[class_finder] frame#1(frame_000020.jpg, 45.0도): 검출개수={'door': 0, 'pedestal': 0}
+[class_finder] frame#2(frame_000039.jpg, 90.0도): RPN 후보=74개 provider 처리시간(ms)={'dictionary': 1126.9, 'grounding_dino': 222.5, 'yolo_world': 128.1, 'fastsam': 15.7}
+[class_finder] frame#2(frame_000039.jpg, 90.0도): 검출개수={'door': 0, 'pedestal': 1}
+[class_finder] frame#3(frame_000057.jpg, 135.0도): RPN 후보=81개 provider 처리시간(ms)={'dictionary': 1316.3, 'grounding_dino': 219.8, 'yolo_world': 117.6, 'fastsam': 15.5}
+[class_finder] frame#3(frame_000057.jpg, 135.0도): 검출개수={'door': 0, 'pedestal': 1}
+[class_finder] frame#4(frame_000076.jpg, 180.0도): RPN 후보=70개 provider 처리시간(ms)={'dictionary': 1088.6, 'grounding_dino': 219.6, 'yolo_world': 116.5, 'fastsam': 16.1}
+[class_finder] frame#4(frame_000076.jpg, 180.0도): 검출개수={'door': 0, 'pedestal': 0}
+[class_finder] frame#5(frame_000095.jpg, 225.0도): RPN 후보=79개 provider 처리시간(ms)={'dictionary': 1142.5, 'grounding_dino': 219.2, 'yolo_world': 114.9, 'fastsam': 17.2}
+[class_finder] frame#5(frame_000095.jpg, 225.0도): 검출개수={'door': 0, 'pedestal': 0}
+[class_finder] frame#6(frame_000113.jpg, 270.0도): RPN 후보=58개 provider 처리시간(ms)={'dictionary': 950.2, 'grounding_dino': 215.8, 'yolo_world': 118.5, 'fastsam': 17.2}
+[class_finder] frame#6(frame_000113.jpg, 270.0도): 검출개수={'door': 1, 'pedestal': 0}
+[class_finder] frame#7(frame_000132.jpg, 315.0도): RPN 후보=55개 provider 처리시간(ms)={'dictionary': 881.9, 'grounding_dino': 229.0, 'yolo_world': 129.9, 'fastsam': 16.8}
+[class_finder] frame#7(frame_000132.jpg, 315.0도): 검출개수={'door': 1, 'pedestal': 0}
+Not loading pretrained weights for backbone
+EdgeGuidedLocalSSI reverts to a non cuda-optimized operation, you will experince large slowdown, please install it:  `cd ./unidepth/ops/extract_patches && bash compile.sh`
+[navigate] frame_000039.jpg(회전 90.0도) 단상: rel_depth=1.171 -> 30.2cm
+[navigate] frame_000057.jpg(회전 135.0도) 단상: rel_depth=1.212 -> 34.4cm
+[navigate] 로봇 위치(cm): [238.0, 127.4], 현재 방위각 오프셋: 83.8도
+[navigate] Saved C:\Users\user\Desktop\khw\Physical-project-mk2\physical_demo\research\door_gate_relax\pipeline\after\rot8\navigation\target_summary.json
+[navigate] 지시: 왼쪽(반시계)으로 74.7도 회전 -> 633.6cm 직진 (door 80cm 앞 정지)
+[navigate] Saved to C:\Users\user\Desktop\khw\Physical-project-mk2\physical_demo\research\door_gate_relax\pipeline\after\rot8\navigation: path_overlay.jpg, evidence.json
+[class_finder] class_discovery(door) 처리 완료, 이번 명령의 탐색 클래스=['door', 'pedestal'] (1.5ms, 모델 로드 포함 가능)
+[class_finder] frame#0(frame_000000.jpg, 0.0도): RPN 후보=88개 provider 처리시간(ms)={'dictionary': 1473.9, 'grounding_dino': 225.7, 'yolo_world': 140.1, 'fastsam': 17.6}
+[class_finder] frame#0(frame_000000.jpg, 0.0도): 검출개수={'door': 0, 'pedestal': 0}
+[class_finder] frame#1(frame_000001.jpg, 45.0도): RPN 후보=83개 provider 처리시간(ms)={'dictionary': 1265.2, 'grounding_dino': 222.2, 'yolo_world': 126.0, 'fastsam': 20.8}
+[class_finder] frame#1(frame_000001.jpg, 45.0도): 검출개수={'door': 0, 'pedestal': 0}
+[class_finder] frame#2(frame_000002.jpg, 90.0도): RPN 후보=63개 provider 처리시간(ms)={'dictionary': 1035.4, 'grounding_dino': 220.2, 'yolo_world': 121.6, 'fastsam': 27.4}
+[class_finder] frame#2(frame_000002.jpg, 90.0도): 검출개수={'door': 0, 'pedestal': 0}
+[class_finder] frame#3(frame_000003.jpg, 135.0도): RPN 후보=59개 provider 처리시간(ms)={'dictionary': 1066.9, 'grounding_dino': 225.1, 'yolo_world': 152.6, 'fastsam': 18.1}
+[class_finder] frame#3(frame_000003.jpg, 135.0도): 검출개수={'door': 0, 'pedestal': 0}
+[class_finder] frame#4(frame_000004.jpg, 180.0도): RPN 후보=36개 provider 처리시간(ms)={'dictionary': 697.3, 'grounding_dino': 234.1, 'yolo_world': 270.6, 'fastsam': 15.2}
+[class_finder] frame#4(frame_000004.jpg, 180.0도): 검출개수={'door': 0, 'pedestal': 0}
+[class_finder] frame#5(frame_000005.jpg, 225.0도): RPN 후보=58개 provider 처리시간(ms)={'dictionary': 907.5, 'grounding_dino': 222.0, 'yolo_world': 146.6, 'fastsam': 16.4}
+[class_finder] frame#5(frame_000005.jpg, 225.0도): 검출개수={'door': 1, 'pedestal': 0}
+[class_finder] frame#6(frame_000006.jpg, 270.0도): RPN 후보=64개 provider 처리시간(ms)={'dictionary': 1029.2, 'grounding_dino': 219.9, 'yolo_world': 115.9, 'fastsam': 16.6}
+[class_finder] frame#6(frame_000006.jpg, 270.0도): 검출개수={'door': 1, 'pedestal': 0}
+[class_finder] frame#7(frame_000007.jpg, 315.0도): RPN 후보=60개 provider 처리시간(ms)={'dictionary': 998.5, 'grounding_dino': 239.8, 'yolo_world': 168.2, 'fastsam': 23.1}
+[class_finder] frame#7(frame_000007.jpg, 315.0도): 검출개수={'door': 0, 'pedestal': 0}
+[navigate] A(단상) 실패: pedestal이 어느 프레임에서도 검출되지 않아 로봇 위치를 추정할 수 없음 -- B(문만으로 위치 추정) 시도
+Not loading pretrained weights for backbone
+EdgeGuidedLocalSSI reverts to a non cuda-optimized operation, you will experince large slowdown, please install it:  `cd ./unidepth/ops/extract_patches && bash compile.sh`
+[navigate] B(문만) 위치(cm): [300.0, 145.6], 방위 오프셋 119.2도
+[navigate] Saved C:\Users\user\Desktop\khw\Physical-project-mk2\physical_demo\research\door_gate_relax\pipeline\after\robot\navigation\target_summary.json
+[navigate] 지시: 왼쪽(반시계)으로 102.9도 회전 -> 568.9cm 직진 (door 80cm 앞 정지)
+[navigate] Saved to C:\Users\user\Desktop\khw\Physical-project-mk2\physical_demo\research\door_gate_relax\pipeline\after\robot\navigation: path_overlay.jpg, evidence.json
+{
+ "rot8": {
+  "detections": {
+   "door": {
+    "270.0": [
+     [
+      140.2,
+      91.2,
+      161.1,
+      143.8
+     ]
+    ],
+    "315.0": [
+     [
+      32.3,
+      93.5,
+      52.3,
+      139.3
+     ]
+    ]
+   },
+   "pedestal": {
+    "90.0": [
+     [
+      75.9,
+      0.1,
+      221.7,
+      227.0
+     ]
+    ],
+    "135.0": [
+     [
+      -0.0,
+      109.3,
+      87.6,
+      225.0
+     ]
+    ]
+   }
+  },
+  "navigation": {
+   "ok": true,
+   "path_mode": "map",
+   "localization_method": "pedestal",
+   "robot_position_cm": [
+    238.0,
+    127.4
+   ],
+   "current_heading_map_deg": 83.8,
+   "turn_deg": -74.7,
+   "distance_to_target_cm": 713.6,
+   "forward_distance_m": 6.336,
+   "reason": null
+  },
+  "fallback_chain": [
+   "A_pedestal:ok 단상 관측 2프레임",
+   "path_map:ok 도면 기반 경로 산출"
+  ],
+  "robot_command": {
+   "turn": {
+    "deg": -74.7
+   },
+   "move_forward": {
+    "distance_m": 6.336
+   },
+   "distance_m_in_range": true,
+   "accepted_range_m": [
+    0.05,
+    10.0
+   ],
+   "note": "turn.deg는 오른쪽이 +(왼쪽이 음수). move_forward.distance_m에는 standoff가 이미 반영돼 있다 -- 또 빼지 말 것."
+  }
+ },
+ "robot": {
+  "detections": {
+   "door": {
+    "225.0": [
+     [
+      188.8,
+      84.2,
+      221.4,
+      146.4
+     ]
+    ],
+    "270.0": [
+     [
+      92.7,
+      88.2,
+      113.9,
+      143.7
+     ]
+    ]
+   },
+   "pedestal": {}
+  },
+  "navigation": {
+   "ok": true,
+   "path_mode": "map",
+   "localization_method": "door_only",
+   "robot_position_cm": [
+    300.0,
+    145.6
+   ],
+   "current_heading_map_deg": 119.2,
+   "turn_deg": -102.9,
+   "distance_to_target_cm": 648.9,
+   "forward_distance_m": 5.689,
+   "reason": null
+  },
+  "fallback_chain": [
+   "A_pedestal:X pedestal이 어느 프레임에서도 검출되지 않아 로봇 위치를 추정할 수 없음",
+   "B_door_only:ok 문 거리 648.9cm(겉보기 크기) · 문 방위 257.1도(bearing_refinement)",
+   "path_map:ok 도면 기반 경로 산출"
+  ],
+  "robot_command": {
+   "turn": {
+    "deg": -102.9
+   },
+   "move_forward": {
+    "distance_m": 5.689
+   },
+   "distance_m_in_range": true,
+   "accepted_range_m": [
+    0.05,
+    10.0
+   ],
+   "note": "turn.deg는 오른쪽이 +(왼쪽이 음수). move_forward.distance_m에는 standoff가 이미 반영돼 있다 -- 또 빼지 말 것."
+  }
+ }
+}

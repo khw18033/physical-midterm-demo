@@ -1,0 +1,130 @@
+{
+ "rot8": {
+  "detections": {
+   "door": {
+    "270.0": [
+     [
+      140.2,
+      91.2,
+      161.1,
+      143.8
+     ]
+    ],
+    "315.0": [
+     [
+      32.3,
+      93.5,
+      52.3,
+      139.3
+     ]
+    ]
+   },
+   "pedestal": {
+    "90.0": [
+     [
+      75.9,
+      0.1,
+      221.7,
+      227.0
+     ]
+    ],
+    "135.0": [
+     [
+      -0.0,
+      109.3,
+      87.6,
+      225.0
+     ]
+    ]
+   }
+  },
+  "navigation": {
+   "ok": true,
+   "path_mode": "map",
+   "localization_method": "pedestal",
+   "robot_position_cm": [
+    238.0,
+    127.4
+   ],
+   "current_heading_map_deg": 83.8,
+   "turn_deg": -74.7,
+   "distance_to_target_cm": 713.6,
+   "forward_distance_m": 6.336,
+   "reason": null
+  },
+  "fallback_chain": [
+   "A_pedestal:ok 단상 관측 2프레임",
+   "path_map:ok 도면 기반 경로 산출"
+  ],
+  "robot_command": {
+   "turn": {
+    "deg": -74.7
+   },
+   "move_forward": {
+    "distance_m": 6.336
+   },
+   "distance_m_in_range": true,
+   "accepted_range_m": [
+    0.05,
+    10.0
+   ],
+   "note": "turn.deg는 오른쪽이 +(왼쪽이 음수). move_forward.distance_m에는 standoff가 이미 반영돼 있다 -- 또 빼지 말 것."
+  }
+ },
+ "robot": {
+  "detections": {
+   "door": {
+    "225.0": [
+     [
+      188.8,
+      84.2,
+      221.4,
+      146.4
+     ]
+    ],
+    "270.0": [
+     [
+      92.7,
+      88.2,
+      113.9,
+      143.7
+     ]
+    ]
+   },
+   "pedestal": {}
+  },
+  "navigation": {
+   "ok": true,
+   "path_mode": "map",
+   "localization_method": "door_only",
+   "robot_position_cm": [
+    300.0,
+    145.6
+   ],
+   "current_heading_map_deg": 119.2,
+   "turn_deg": -102.9,
+   "distance_to_target_cm": 648.9,
+   "forward_distance_m": 5.689,
+   "reason": null
+  },
+  "fallback_chain": [
+   "A_pedestal:X pedestal이 어느 프레임에서도 검출되지 않아 로봇 위치를 추정할 수 없음",
+   "B_door_only:ok 문 거리 648.9cm(겉보기 크기) · 문 방위 257.1도(bearing_refinement)",
+   "path_map:ok 도면 기반 경로 산출"
+  ],
+  "robot_command": {
+   "turn": {
+    "deg": -102.9
+   },
+   "move_forward": {
+    "distance_m": 5.689
+   },
+   "distance_m_in_range": true,
+   "accepted_range_m": [
+    0.05,
+    10.0
+   ],
+   "note": "turn.deg는 오른쪽이 +(왼쪽이 음수). move_forward.distance_m에는 standoff가 이미 반영돼 있다 -- 또 빼지 말 것."
+  }
+ }
+}

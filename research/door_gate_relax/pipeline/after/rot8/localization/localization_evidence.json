@@ -1,0 +1,153 @@
+{
+  "ok": true,
+  "method": "pedestal",
+  "method_words": "A -- 단상 관측(거리·방위)으로 위치와 방위를 추정",
+  "fallback_chain": [
+    {
+      "step": "A_pedestal",
+      "ok": true,
+      "detail": "단상 관측 2프레임"
+    }
+  ],
+  "rotation_sequence": {
+    "description": "로봇이 오른쪽(시계) 방향으로 정확히 45도씩 회전하며 촬영한 8개 프레임(0/45/90/135/180/225/270/315도).",
+    "rotation_direction": "clockwise (오른쪽)",
+    "nominal_step_deg": 45.0,
+    "frames": [
+      {
+        "frame": "frame_000001.jpg",
+        "rotation_deg": 0.0
+      },
+      {
+        "frame": "frame_000020.jpg",
+        "rotation_deg": 45.0
+      },
+      {
+        "frame": "frame_000039.jpg",
+        "rotation_deg": 90.0
+      },
+      {
+        "frame": "frame_000057.jpg",
+        "rotation_deg": 135.0
+      },
+      {
+        "frame": "frame_000076.jpg",
+        "rotation_deg": 180.0
+      },
+      {
+        "frame": "frame_000095.jpg",
+        "rotation_deg": 225.0
+      },
+      {
+        "frame": "frame_000113.jpg",
+        "rotation_deg": 270.0
+      },
+      {
+        "frame": "frame_000132.jpg",
+        "rotation_deg": 315.0
+      }
+    ]
+  },
+  "observations": {
+    "door": [
+      {
+        "frame": "frame_000113.jpg",
+        "rotation_deg": 270.0,
+        "instance_count": 1,
+        "clip_score": 1.068,
+        "original_image": "C:\\Users\\user\\Desktop\\khw\\Physical-project-mk2\\physical_demo\\research\\door_gate_relax\\pipeline\\after\\rot8\\frame_000113\\original.jpg",
+        "rpn_overlay_image": "C:\\Users\\user\\Desktop\\khw\\Physical-project-mk2\\physical_demo\\research\\door_gate_relax\\pipeline\\after\\rot8\\frame_000113\\rpn_overlay.jpg",
+        "confirmed_overlay_image": "C:\\Users\\user\\Desktop\\khw\\Physical-project-mk2\\physical_demo\\research\\door_gate_relax\\pipeline\\after\\rot8\\frame_000113\\confirmed_overlay.jpg",
+        "target_overlay_image": "C:\\Users\\user\\Desktop\\khw\\Physical-project-mk2\\physical_demo\\research\\door_gate_relax\\pipeline\\after\\rot8\\frame_000113\\door\\target_overlay.jpg",
+        "absolute_bearing_deg": 353.8,
+        "absolute_bearing_formula": "absolute_bearing_deg = (rotation_deg + current_heading_map_deg) mod 360"
+      },
+      {
+        "frame": "frame_000132.jpg",
+        "rotation_deg": 315.0,
+        "instance_count": 1,
+        "clip_score": 1.2973,
+        "original_image": "C:\\Users\\user\\Desktop\\khw\\Physical-project-mk2\\physical_demo\\research\\door_gate_relax\\pipeline\\after\\rot8\\frame_000132\\original.jpg",
+        "rpn_overlay_image": "C:\\Users\\user\\Desktop\\khw\\Physical-project-mk2\\physical_demo\\research\\door_gate_relax\\pipeline\\after\\rot8\\frame_000132\\rpn_overlay.jpg",
+        "confirmed_overlay_image": "C:\\Users\\user\\Desktop\\khw\\Physical-project-mk2\\physical_demo\\research\\door_gate_relax\\pipeline\\after\\rot8\\frame_000132\\confirmed_overlay.jpg",
+        "target_overlay_image": "C:\\Users\\user\\Desktop\\khw\\Physical-project-mk2\\physical_demo\\research\\door_gate_relax\\pipeline\\after\\rot8\\frame_000132\\door\\target_overlay.jpg",
+        "absolute_bearing_deg": 38.8,
+        "absolute_bearing_formula": "absolute_bearing_deg = (rotation_deg + current_heading_map_deg) mod 360"
+      }
+    ],
+    "pedestal": [
+      {
+        "frame": "frame_000039.jpg",
+        "rotation_deg": 90.0,
+        "clip_score": 0.7372,
+        "rel_depth": 1.1707181930541992,
+        "distance_cm": 30.238077978332917,
+        "in_valid_calibration_range": true,
+        "instance_count_this_frame": 1,
+        "original_image": "C:\\Users\\user\\Desktop\\khw\\Physical-project-mk2\\physical_demo\\research\\door_gate_relax\\pipeline\\after\\rot8\\frame_000039\\original.jpg",
+        "rpn_overlay_image": "C:\\Users\\user\\Desktop\\khw\\Physical-project-mk2\\physical_demo\\research\\door_gate_relax\\pipeline\\after\\rot8\\frame_000039\\rpn_overlay.jpg",
+        "confirmed_overlay_image": "C:\\Users\\user\\Desktop\\khw\\Physical-project-mk2\\physical_demo\\research\\door_gate_relax\\pipeline\\after\\rot8\\frame_000039\\confirmed_overlay.jpg",
+        "target_overlay_image": "C:\\Users\\user\\Desktop\\khw\\Physical-project-mk2\\physical_demo\\research\\door_gate_relax\\pipeline\\after\\rot8\\frame_000039\\pedestal\\target_overlay.jpg",
+        "absolute_bearing_deg": 173.8,
+        "absolute_bearing_formula": "absolute_bearing_deg = (rotation_deg + current_heading_map_deg) mod 360"
+      },
+      {
+        "frame": "frame_000057.jpg",
+        "rotation_deg": 135.0,
+        "clip_score": 0.6275,
+        "rel_depth": 1.2123875617980957,
+        "distance_cm": 34.36211184498384,
+        "in_valid_calibration_range": true,
+        "instance_count_this_frame": 1,
+        "original_image": "C:\\Users\\user\\Desktop\\khw\\Physical-project-mk2\\physical_demo\\research\\door_gate_relax\\pipeline\\after\\rot8\\frame_000057\\original.jpg",
+        "rpn_overlay_image": "C:\\Users\\user\\Desktop\\khw\\Physical-project-mk2\\physical_demo\\research\\door_gate_relax\\pipeline\\after\\rot8\\frame_000057\\rpn_overlay.jpg",
+        "confirmed_overlay_image": "C:\\Users\\user\\Desktop\\khw\\Physical-project-mk2\\physical_demo\\research\\door_gate_relax\\pipeline\\after\\rot8\\frame_000057\\confirmed_overlay.jpg",
+        "target_overlay_image": "C:\\Users\\user\\Desktop\\khw\\Physical-project-mk2\\physical_demo\\research\\door_gate_relax\\pipeline\\after\\rot8\\frame_000057\\pedestal\\target_overlay.jpg",
+        "absolute_bearing_deg": 218.8,
+        "absolute_bearing_formula": "absolute_bearing_deg = (rotation_deg + current_heading_map_deg) mod 360"
+      }
+    ]
+  },
+  "pedestal_distance_avg_cm": 32.3,
+  "pedestal_distance_avg_formula": {
+    "formula": "pedestal_distance_avg_cm = mean(distance_cm_i for i in pedestal_observations)",
+    "substituted": "mean(30.2, 34.4) = 32.3"
+  },
+  "pedestal_bearing_rotation_frame_deg": 112.5,
+  "pedestal_bearing_formula": {
+    "formula": "pedestal_bearing_rotation_frame_deg = mean(rotation_deg_i for i in pedestal_observations)",
+    "substituted": "mean(90.0, 135.0) = 112.5"
+  },
+  "pedestal_surface_point_cm": [
+    207.0,
+    118.3
+  ],
+  "door_position_cm_fixed_from_gt": [
+    922.8,
+    327.8
+  ],
+  "robot_position_cm": [
+    238.0,
+    127.4
+  ],
+  "map_bearing_to_pedestal_deg": 196.3,
+  "current_heading_map_deg": 83.8,
+  "rotation_calculation": {
+    "step1_map_bearing_to_pedestal": {
+      "formula": "atan2(pedestal_surface_point_cm.y - robot_position_cm.y, pedestal_surface_point_cm.x - robot_position_cm.x) mod 360",
+      "substituted": "atan2(118.3 - 127.4, 207.0 - 238.0) mod 360 = 196.3"
+    },
+    "step2_pedestal_bearing_rotation_frame": {
+      "formula": "pedestal_bearing_rotation_frame_deg = mean(rotation_deg_i for i in pedestal_observations)",
+      "substituted": "mean(90.0, 135.0) = 112.5"
+    },
+    "step3_current_heading_map_deg": {
+      "formula": "current_heading_map_deg = (map_bearing_to_pedestal_deg - pedestal_bearing_rotation_frame_deg) mod 360",
+      "substituted": "(196.3 - 112.5) mod 360 = 83.8",
+      "note": "문 자신의 관측각으로 오프셋을 구하면 순환 논리가 되므로(실측으로 확인됨) 단상 관측각으로 교차검증한다."
+    },
+    "step4_absolute_bearing_per_observation": {
+      "formula": "absolute_bearing_deg = (rotation_deg + current_heading_map_deg) mod 360"
+    }
+  }
+}

@@ -1,0 +1,96 @@
+{
+  "target_class": "pedestal",
+  "frame": "frame_000039.png",
+  "rotation_deg": 90.0,
+  "provider_timings_ms": {
+    "dictionary": 1323.0,
+    "grounding_dino": 236.9,
+    "yolo_world": 168.7,
+    "fastsam": 24.0
+  },
+  "instance_count": 1,
+  "instances": [
+    {
+      "index": 0,
+      "box_xyxy": [
+        76.1,
+        0.1,
+        218.6,
+        220.5
+      ],
+      "semantic_class": "pedestal",
+      "lifecycle": "CONFIRMED",
+      "final_score": 0.7559,
+      "supporting_sources": {
+        "dictionary": "CLIP",
+        "grounding_dino": "OVD"
+      },
+      "evidence_trail": [
+        {
+          "source": "grounding_dino",
+          "source_category": "OVD",
+          "arrived_at_ms": 236.9,
+          "semantic_class": "pedestal",
+          "supporting_groups": [
+            "grounding_dino"
+          ],
+          "lifecycle": "PROVISIONAL",
+          "box_xyxy": [
+            74.5,
+            0.1,
+            215.9,
+            224.3
+          ],
+          "geometry_source": "box_weighted_avg"
+        },
+        {
+          "source": "dictionary",
+          "source_category": "CLIP",
+          "arrived_at_ms": 1323.0,
+          "semantic_class": "pedestal",
+          "supporting_groups": [
+            "dictionary",
+            "grounding_dino"
+          ],
+          "lifecycle": "CONFIRMED",
+          "box_xyxy": [
+            76.1,
+            0.1,
+            218.6,
+            220.5
+          ],
+          "geometry_source": "box_weighted_avg",
+          "clip_detail": {
+            "compared_features": {
+              "a pedestal's flat top surface": 0.2327,
+              "a pedestal's vertical upright body": 0.2455,
+              "a pedestal's a small circular button": 0.2277,
+              "a pedestal's a dark base trim": 0.2294,
+              "a pedestal's cream white and dark two-tone finish": 0.2214,
+              "a pedestal's smooth curved vertical surface": 0.239,
+              "a pedestal's dark base trim": 0.2307,
+              "a pedestal's a small black circular button": 0.2291
+            },
+            "gates": {
+              "reference_image": {
+                "passed": true,
+                "similarity": 0.9543,
+                "threshold_min": 0.93
+              },
+              "saturation": {
+                "passed": true,
+                "median_saturation": 16.0,
+                "max_saturation": 30
+              },
+              "aspect_ratio": {
+                "passed": true,
+                "h_over_w": 1.466,
+                "min_required": 1.0
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+﻿
+[aug_e2e] rot8: 문 2 오탐 0 (오프라인 2/0) 일치
+[aug_e2e] robot: 문 2 오탐 0 (오프라인 2/0) 일치
+[aug_e2e] rot8@dim: 문 2 오탐 0 (오프라인 2/0) 일치
+[aug_e2e] robot@dim: 문 1 오탐 0 (오프라인 1/0) 일치
+[aug_e2e] rot8@bright: 문 2 오탐 0 (오프라인 2/0) 일치
+[aug_e2e] robot@bright: 문 2 오탐 0 (오프라인 2/0) 일치
+[aug_e2e] rot8@gamma_dark: 문 2 오탐 0 (오프라인 2/0) 일치
+[aug_e2e] robot@gamma_dark: 문 2 오탐 0 (오프라인 2/0) 일치
+[aug_e2e] rot8@gamma_light: 문 2 오탐 0 (오프라인 2/0) 일치
+[aug_e2e] robot@gamma_light: 문 0 오탐 0 (오프라인 0/0) 일치
+[aug_e2e] rot8@low_contrast: 문 2 오탐 0 (오프라인 2/0) 일치
+[aug_e2e] robot@low_contrast: 문 0 오탐 0 (오프라인 0/0) 일치
+[aug_e2e] rot8@desat: 문 2 오탐 0 (오프라인 2/0) 일치
+[aug_e2e] robot@desat: 문 0 오탐 0 (오프라인 0/0) 일치
+[aug_e2e] rot8@warm: 문 2 오탐 0 (오프라인 2/0) 일치
+[aug_e2e] robot@warm: 문 0 오탐 0 (오프라인 0/0) 일치
+[aug_e2e] rot8@cool: 문 2 오탐 0 (오프라인 2/0) 일치
+[aug_e2e] robot@cool: 문 2 오탐 2 (오프라인 2/2) 일치
+[aug_e2e] rot8@squash: 문 2 오탐 0 (오프라인 2/0) 일치
+[aug_e2e] robot@squash: 문 1 오탐 0 (오프라인 1/0) 일치
+[aug_e2e] rot8@stretch: 문 2 오탐 0 (오프라인 2/0) 일치
+[aug_e2e] robot@stretch: 문 2 오탐 0 (오프라인 2/0) 일치
+[aug_e2e] 합계: 문 검출 34/44, 오탐 2 | 불일치 0건
+
+

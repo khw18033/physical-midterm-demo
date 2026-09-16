@@ -1,0 +1,13 @@
+{
+  "target_class": "pedestal",
+  "frame": "frame_000020.png",
+  "rotation_deg": 45.0,
+  "provider_timings_ms": {
+    "dictionary": 973.7,
+    "grounding_dino": 222.7,
+    "yolo_world": 260.0,
+    "fastsam": 18.4
+  },
+  "instance_count": 0,
+  "instances": []
+}

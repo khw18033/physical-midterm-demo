@@ -1,0 +1,4 @@
+__pycache__/
+*.pyc
+demo/test/try1/
+venv/

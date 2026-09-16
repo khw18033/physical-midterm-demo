@@ -1,0 +1,91 @@
+{
+  "target_class": "door",
+  "frame": "frame_000006.jpg",
+  "rotation_deg": 270.0,
+  "provider_timings_ms": {
+    "dictionary": 968.6,
+    "grounding_dino": 237.8,
+    "yolo_world": 134.5,
+    "fastsam": 16.6
+  },
+  "instance_count": 1,
+  "instances": [
+    {
+      "index": 1,
+      "box_xyxy": [
+        92.7,
+        88.2,
+        113.9,
+        143.7
+      ],
+      "semantic_class": "door",
+      "lifecycle": "CONFIRMED",
+      "final_score": 0.7345,
+      "supporting_sources": {
+        "dictionary": "CLIP",
+        "grounding_dino": "OVD"
+      },
+      "evidence_trail": [
+        {
+          "source": "grounding_dino",
+          "source_category": "OVD",
+          "arrived_at_ms": 237.8,
+          "semantic_class": "door",
+          "supporting_groups": [
+            "grounding_dino"
+          ],
+          "lifecycle": "PROVISIONAL",
+          "box_xyxy": [
+            93.0,
+            88.5,
+            114.0,
+            144.1
+          ],
+          "geometry_source": "box_weighted_avg"
+        },
+        {
+          "source": "dictionary",
+          "source_category": "CLIP",
+          "arrived_at_ms": 968.6,
+          "semantic_class": "door",
+          "supporting_groups": [
+            "dictionary",
+            "grounding_dino"
+          ],
+          "lifecycle": "CONFIRMED",
+          "box_xyxy": [
+            92.7,
+            88.2,
+            113.9,
+            143.7
+          ],
+          "geometry_source": "box_weighted_avg",
+          "clip_detail": {
+            "compared_features": {
+              "a door's handle": 0.2498,
+              "a door's hinge": 0.2501,
+              "a door's lock": 0.2478,
+              "a door's threshold": 0.2496,
+              "a door's light blue color": 0.2634,
+              "a door's round metal knob": 0.2403,
+              "a door's closer device at the top": 0.2437,
+              "a door's glossy surface": 0.2593
+            },
+            "gates": {
+              "saturation": {
+                "passed": true,
+                "median_saturation": 104.0,
+                "min_saturation": 85
+              },
+              "aspect_ratio": {
+                "passed": true,
+                "h_over_w": 2.561,
+                "min_required": 1.5
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

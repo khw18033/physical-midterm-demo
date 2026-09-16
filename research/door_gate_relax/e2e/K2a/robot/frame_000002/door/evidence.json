@@ -1,0 +1,13 @@
+{
+  "target_class": "door",
+  "frame": "frame_000002.jpg",
+  "rotation_deg": 90.0,
+  "provider_timings_ms": {
+    "dictionary": 1501.1,
+    "grounding_dino": 381.7,
+    "yolo_world": 179.4,
+    "fastsam": 28.4
+  },
+  "instance_count": 0,
+  "instances": []
+}

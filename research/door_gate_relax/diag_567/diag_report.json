@@ -1,0 +1,836 @@
+{
+ "gate_analysis": {
+  "frame_000005.jpg": {
+   "목재 문/장(가운데 오른쪽)": {
+    "box": [
+     150,
+     74,
+     190,
+     145
+    ],
+    "rpn": [
+     {
+      "box": [
+       151,
+       75,
+       191,
+       146
+      ],
+      "iou": 0.92,
+      "cover": 0.96,
+      "OLD": [
+       "target_sim 0.2527<0.26",
+       "색 차이 -0.0450<-0.0(1등 brown color)"
+      ],
+      "NEW": [
+       "색 차이 -0.0450<-0.012(1등 brown color)"
+      ],
+      "measures": {
+       "target_sim": 0.2527,
+       "best_feature": "a door's glossy surface",
+       "color_gap": -0.045,
+       "color_winner": "brown color",
+       "shape_gap": 0.0028,
+       "aspect": 1.7829,
+       "sat": 126.0,
+       "ref_sim": 0.7526
+      }
+     },
+     {
+      "box": [
+       150,
+       74,
+       237,
+       146
+      ],
+      "iou": 0.45,
+      "cover": 1.0,
+      "OLD": [
+       "target_sim 0.2544<0.26",
+       "종횡비 0.83<1.5",
+       "색 차이 -0.0324<-0.0(1등 brown color)",
+       "참조이미지 0.687<0.75",
+       "채도 26<85"
+      ],
+      "NEW": [
+       "종횡비 0.83<1.5",
+       "색 차이 -0.0324<-0.012(1등 brown color)",
+       "채도 26<75"
+      ],
+      "measures": {
+       "target_sim": 0.2544,
+       "best_feature": "a door's handle",
+       "color_gap": -0.0324,
+       "color_winner": "brown color",
+       "shape_gap": 0.0137,
+       "aspect": 0.8334,
+       "sat": 26.0,
+       "ref_sim": 0.687
+      }
+     }
+    ],
+    "gdino": [
+     {
+      "box_xyxy": [
+       150.57,
+       74.08,
+       192.1,
+       145.04
+      ],
+      "score": 0.3588,
+      "label": "door pedestal",
+      "iou": 0.94,
+      "OLD": true,
+      "NEW": false
+     },
+     {
+      "box_xyxy": [
+       150.51,
+       74.13,
+       192.19,
+       145.08
+      ],
+      "score": 0.1926,
+      "label": "pedestal",
+      "iou": 0.93,
+      "OLD": false,
+      "NEW": false
+     }
+    ]
+   },
+   "복도 끝 먼 문(작음)": {
+    "box": [
+     112,
+     108,
+     122,
+     138
+    ],
+    "rpn": [
+     {
+      "box": [
+       95,
+       103,
+       123,
+       138
+      ],
+      "iou": 0.31,
+      "cover": 0.99,
+      "OLD": [
+       "종횡비 1.26<1.5",
+       "색 차이 -0.0074<-0.0(1등 gray color)",
+       "채도 17<85"
+      ],
+      "NEW": [
+       "종횡비 1.26<1.5",
+       "채도 17<75"
+      ],
+      "measures": {
+       "target_sim": 0.263,
+       "best_feature": "a door's light blue color",
+       "color_gap": -0.0074,
+       "color_winner": "gray color",
+       "shape_gap": 0.0003,
+       "aspect": 1.2642,
+       "sat": 17.0,
+       "ref_sim": 0.8334
+      }
+     }
+    ],
+    "gdino": []
+   }
+  },
+  "frame_000006.jpg": {
+   "파란 문": {
+    "box": [
+     150,
+     50,
+     190,
+     146
+    ],
+    "rpn": [
+     {
+      "box": [
+       147,
+       48,
+       190,
+       147
+      ],
+      "iou": 0.89,
+      "cover": 1.0,
+      "OLD": [
+       "색 차이 -0.0041<-0.0(1등 gray color)"
+      ],
+      "NEW": [],
+      "measures": {
+       "target_sim": 0.2798,
+       "best_feature": "a door's closer device at the top",
+       "color_gap": -0.0041,
+       "color_winner": "gray color",
+       "shape_gap": 0.0151,
+       "aspect": 2.2525,
+       "sat": 105.0,
+       "ref_sim": 0.7836
+      }
+     },
+     {
+      "box": [
+       148,
+       66,
+       189,
+       112
+      ],
+      "iou": 0.45,
+      "cover": 0.46,
+      "OLD": [
+       "종횡비 1.13<1.5",
+       "색 차이 -0.0021<-0.0(1등 white color)",
+       "참조이미지 0.734<0.75"
+      ],
+      "NEW": [
+       "종횡비 1.13<1.5"
+      ],
+      "measures": {
+       "target_sim": 0.2775,
+       "best_feature": "a door's closer device at the top",
+       "color_gap": -0.0021,
+       "color_winner": "white color",
+       "shape_gap": 0.0129,
+       "aspect": 1.1304,
+       "sat": 99.0,
+       "ref_sim": 0.7345
+      }
+     },
+     {
+      "box": [
+       147,
+       43,
+       236,
+       147
+      ],
+      "iou": 0.41,
+      "cover": 1.0,
+      "OLD": [
+       "target_sim 0.2543<0.26",
+       "종횡비 1.16<1.5",
+       "색 차이 -0.0100<-0.0(1등 white color)",
+       "참조이미지 0.660<0.75",
+       "채도 20<85"
+      ],
+      "NEW": [
+       "종횡비 1.16<1.5",
+       "채도 20<75"
+      ],
+      "measures": {
+       "target_sim": 0.2543,
+       "best_feature": "a door's closer device at the top",
+       "color_gap": -0.01,
+       "color_winner": "white color",
+       "shape_gap": 0.0074,
+       "aspect": 1.1622,
+       "sat": 20.0,
+       "ref_sim": 0.6601
+      }
+     }
+    ],
+    "gdino": [
+     {
+      "box_xyxy": [
+       149.2,
+       66.98,
+       191.12,
+       147.68
+      ],
+      "score": 0.5553,
+      "label": "door",
+      "iou": 0.78,
+      "OLD": true,
+      "NEW": true
+     },
+     {
+      "box_xyxy": [
+       146.58,
+       47.61,
+       191.67,
+       147.99
+      ],
+      "score": 0.2083,
+      "label": "door",
+      "iou": 0.85,
+      "OLD": true,
+      "NEW": false
+     }
+    ]
+   },
+   "목재 문/장(왼쪽)": {
+    "box": [
+     65,
+     82,
+     98,
+     143
+    ],
+    "rpn": [
+     {
+      "box": [
+       63,
+       82,
+       100,
+       144
+      ],
+      "iou": 0.88,
+      "cover": 1.0,
+      "OLD": [
+       "target_sim 0.2478<0.26",
+       "색 차이 -0.0444<-0.0(1등 brown color)"
+      ],
+      "NEW": [
+       "target_sim 0.2478<0.25",
+       "색 차이 -0.0444<-0.012(1등 brown color)"
+      ],
+      "measures": {
+       "target_sim": 0.2478,
+       "best_feature": "a door's glossy surface",
+       "color_gap": -0.0444,
+       "color_winner": "brown color",
+       "shape_gap": 0.0066,
+       "aspect": 1.7101,
+       "sat": 130.0,
+       "ref_sim": 0.7578
+      }
+     }
+    ],
+    "gdino": [
+     {
+      "box_xyxy": [
+       63.36,
+       81.31,
+       99.43,
+       144.08
+      ],
+      "score": 0.2818,
+      "label": "door pedestal",
+      "iou": 0.89,
+      "OLD": true,
+      "NEW": false
+     }
+    ]
+   }
+  },
+  "frame_000007.jpg": {
+   "파란 문": {
+    "box": [
+     27,
+     55,
+     62,
+     147
+    ],
+    "rpn": [
+     {
+      "box": [
+       25,
+       69,
+       62,
+       148
+      ],
+      "iou": 0.8,
+      "cover": 0.84,
+      "OLD": [
+       "색 차이 -0.0030<-0.0(1등 white color)"
+      ],
+      "NEW": [],
+      "measures": {
+       "target_sim": 0.2685,
+       "best_feature": "a door's glossy surface",
+       "color_gap": -0.003,
+       "color_winner": "white color",
+       "shape_gap": 0.01,
+       "aspect": 2.1689,
+       "sat": 104.0,
+       "ref_sim": 0.7795
+      }
+     },
+     {
+      "box": [
+       25,
+       57,
+       64,
+       228
+      ],
+      "iou": 0.47,
+      "cover": 0.98,
+      "OLD": [
+       "채도 60<85"
+      ],
+      "NEW": [
+       "채도 60<75"
+      ],
+      "measures": {
+       "target_sim": 0.2728,
+       "best_feature": "a door's light blue color",
+       "color_gap": 0.0052,
+       "color_winner": "light blue color",
+       "shape_gap": 0.0094,
+       "aspect": 4.386,
+       "sat": 60.0,
+       "ref_sim": 0.8155
+      }
+     },
+     {
+      "box": [
+       24,
+       55,
+       103,
+       147
+      ],
+      "iou": 0.44,
+      "cover": 1.0,
+      "OLD": [
+       "종횡비 1.17<1.5",
+       "색 차이 -0.0180<-0.0(1등 white color)",
+       "참조이미지 0.698<0.75",
+       "채도 33<85"
+      ],
+      "NEW": [
+       "종횡비 1.17<1.5",
+       "색 차이 -0.0180<-0.012(1등 white color)",
+       "채도 33<75"
+      ],
+      "measures": {
+       "target_sim": 0.2642,
+       "best_feature": "a door's hinge",
+       "color_gap": -0.018,
+       "color_winner": "white color",
+       "shape_gap": 0.0105,
+       "aspect": 1.1704,
+       "sat": 33.0,
+       "ref_sim": 0.6976
+      }
+     },
+     {
+      "box": [
+       27,
+       76,
+       62,
+       105
+      ],
+      "iou": 0.31,
+      "cover": 0.31,
+      "OLD": [
+       "종횡비 0.82<1.5",
+       "색 차이 -0.0055<-0.0(1등 black color)"
+      ],
+      "NEW": [
+       "종횡비 0.82<1.5"
+      ],
+      "measures": {
+       "target_sim": 0.2621,
+       "best_feature": "a door's closer device at the top",
+       "color_gap": -0.0055,
+       "color_winner": "black color",
+       "shape_gap": 0.01,
+       "aspect": 0.8243,
+       "sat": 91.0,
+       "ref_sim": 0.7956
+      }
+     }
+    ],
+    "gdino": [
+     {
+      "box_xyxy": [
+       25.66,
+       74.23,
+       61.3,
+       147.21
+      ],
+      "score": 0.4554,
+      "label": "door",
+      "iou": 0.75,
+      "OLD": true,
+      "NEW": true
+     },
+     {
+      "box_xyxy": [
+       25.28,
+       55.81,
+       62.32,
+       147.4
+      ],
+      "score": 0.3217,
+      "label": "door",
+      "iou": 0.93,
+      "OLD": true,
+      "NEW": true
+     }
+    ]
+   },
+   "엘리베이터 문": {
+    "box": [
+     100,
+     76,
+     126,
+     140
+    ],
+    "rpn": [
+     {
+      "box": [
+       97,
+       74,
+       126,
+       142
+      ],
+      "iou": 0.84,
+      "cover": 1.0,
+      "OLD": [
+       "target_sim 0.2598<0.26",
+       "색 차이 -0.0191<-0.0(1등 gray color)",
+       "채도 18<85"
+      ],
+      "NEW": [
+       "색 차이 -0.0191<-0.012(1등 gray color)",
+       "채도 18<75"
+      ],
+      "measures": {
+       "target_sim": 0.2598,
+       "best_feature": "a door's glossy surface",
+       "color_gap": -0.0191,
+       "color_winner": "gray color",
+       "shape_gap": 0.0091,
+       "aspect": 2.3497,
+       "sat": 18.0,
+       "ref_sim": 0.7842
+      }
+     },
+     {
+      "box": [
+       106,
+       96,
+       123,
+       141
+      ],
+      "iou": 0.46,
+      "cover": 0.46,
+      "OLD": [
+       "target_sim 0.2530<0.26",
+       "색 차이 -0.0212<-0.0(1등 gray color)",
+       "채도 16<85"
+      ],
+      "NEW": [
+       "색 차이 -0.0212<-0.012(1등 gray color)",
+       "채도 16<75"
+      ],
+      "measures": {
+       "target_sim": 0.253,
+       "best_feature": "a door's glossy surface",
+       "color_gap": -0.0212,
+       "color_winner": "gray color",
+       "shape_gap": 0.0056,
+       "aspect": 2.6378,
+       "sat": 16.0,
+       "ref_sim": 0.8109
+      }
+     },
+     {
+      "box": [
+       95,
+       90,
+       116,
+       142
+      ],
+      "iou": 0.41,
+      "cover": 0.48,
+      "OLD": [
+       "target_sim 0.2461<0.26",
+       "색 차이 -0.0142<-0.0(1등 white color)",
+       "채도 6<85"
+      ],
+      "NEW": [
+       "target_sim 0.2461<0.25",
+       "색 차이 -0.0142<-0.012(1등 white color)",
+       "채도 6<75"
+      ],
+      "measures": {
+       "target_sim": 0.2461,
+       "best_feature": "a door's glossy surface",
+       "color_gap": -0.0142,
+       "color_winner": "white color",
+       "shape_gap": 0.0044,
+       "aspect": 2.4831,
+       "sat": 6.0,
+       "ref_sim": 0.7885
+      }
+     }
+    ],
+    "gdino": [
+     {
+      "box_xyxy": [
+       98.09,
+       74.98,
+       127.2,
+       142.6
+      ],
+      "score": 0.2256,
+      "label": "door",
+      "iou": 0.85,
+      "OLD": true,
+      "NEW": false
+     },
+     {
+      "box_xyxy": [
+       99.28,
+       86.0,
+       125.49,
+       141.61
+      ],
+      "score": 0.2285,
+      "label": "door",
+      "iou": 0.79,
+      "OLD": true,
+      "NEW": false
+     }
+    ]
+   },
+   "파란 테 유리문": {
+    "box": [
+     176,
+     98,
+     191,
+     137
+    ],
+    "rpn": [
+     {
+      "box": [
+       176,
+       98,
+       199,
+       137
+      ],
+      "iou": 0.63,
+      "cover": 1.0,
+      "OLD": [
+       "색 차이 -0.0077<-0.0(1등 gray color)",
+       "채도 28<85"
+      ],
+      "NEW": [
+       "채도 28<75"
+      ],
+      "measures": {
+       "target_sim": 0.2652,
+       "best_feature": "a door's glossy surface",
+       "color_gap": -0.0077,
+       "color_winner": "gray color",
+       "shape_gap": 0.0062,
+       "aspect": 1.6993,
+       "sat": 28.0,
+       "ref_sim": 0.7978
+      }
+     },
+     {
+      "box": [
+       167,
+       108,
+       191,
+       138
+      ],
+      "iou": 0.5,
+      "cover": 0.74,
+      "OLD": [
+       "target_sim 0.2410<0.26",
+       "종횡비 1.24<1.5",
+       "색 차이 -0.0043<-0.0(1등 white color)",
+       "채도 25<85"
+      ],
+      "NEW": [
+       "target_sim 0.2410<0.25",
+       "종횡비 1.24<1.5",
+       "채도 25<75"
+      ],
+      "measures": {
+       "target_sim": 0.241,
+       "best_feature": "a door's light blue color",
+       "color_gap": -0.0043,
+       "color_winner": "white color",
+       "shape_gap": 0.0097,
+       "aspect": 1.2433,
+       "sat": 25.0,
+       "ref_sim": 0.7564
+      }
+     },
+     {
+      "box": [
+       154,
+       96,
+       191,
+       138
+      ],
+      "iou": 0.38,
+      "cover": 1.0,
+      "OLD": [
+       "target_sim 0.2504<0.26",
+       "종횡비 1.14<1.5",
+       "색 차이 -0.0102<-0.0(1등 white color)",
+       "참조이미지 0.738<0.75",
+       "채도 23<85"
+      ],
+      "NEW": [
+       "종횡비 1.14<1.5",
+       "채도 23<75"
+      ],
+      "measures": {
+       "target_sim": 0.2504,
+       "best_feature": "a door's hinge",
+       "color_gap": -0.0102,
+       "color_winner": "white color",
+       "shape_gap": 0.0125,
+       "aspect": 1.1356,
+       "sat": 23.0,
+       "ref_sim": 0.7381
+      }
+     }
+    ],
+    "gdino": []
+   },
+   "목재 문/장(오른쪽 끝)": {
+    "box": [
+     200,
+     100,
+     228,
+     140
+    ],
+    "rpn": [
+     {
+      "box": [
+       198,
+       99,
+       231,
+       140
+      ],
+      "iou": 0.84,
+      "cover": 1.0,
+      "OLD": [
+       "target_sim 0.2455<0.26",
+       "종횡비 1.28<1.5",
+       "색 차이 -0.0247<-0.0(1등 brown color)",
+       "참조이미지 0.744<0.75"
+      ],
+      "NEW": [
+       "target_sim 0.2455<0.25",
+       "종횡비 1.28<1.5",
+       "색 차이 -0.0247<-0.012(1등 brown color)"
+      ],
+      "measures": {
+       "target_sim": 0.2455,
+       "best_feature": "a door's glossy surface",
+       "color_gap": -0.0247,
+       "color_winner": "brown color",
+       "shape_gap": 0.002,
+       "aspect": 1.2756,
+       "sat": 101.0,
+       "ref_sim": 0.7442
+      }
+     },
+     {
+      "box": [
+       176,
+       97,
+       227,
+       139
+      ],
+      "iou": 0.48,
+      "cover": 0.94,
+      "OLD": [
+       "target_sim 0.2526<0.26",
+       "종횡비 0.82<1.5",
+       "색 차이 -0.0166<-0.0(1등 gray color)",
+       "채도 56<85"
+      ],
+      "NEW": [
+       "종횡비 0.82<1.5",
+       "색 차이 -0.0166<-0.012(1등 gray color)",
+       "채도 56<75"
+      ],
+      "measures": {
+       "target_sim": 0.2526,
+       "best_feature": "a door's glossy surface",
+       "color_gap": -0.0166,
+       "color_winner": "gray color",
+       "shape_gap": 0.0043,
+       "aspect": 0.8205,
+       "sat": 56.0,
+       "ref_sim": 0.7586
+      }
+     },
+     {
+      "box": [
+       213,
+       113,
+       236,
+       139
+      ],
+      "iou": 0.3,
+      "cover": 0.36,
+      "OLD": [
+       "target_sim 0.2445<0.26",
+       "종횡비 1.16<1.5",
+       "색 차이 -0.0196<-0.0(1등 gray color)"
+      ],
+      "NEW": [
+       "target_sim 0.2445<0.25",
+       "종횡비 1.16<1.5",
+       "색 차이 -0.0196<-0.012(1등 gray color)"
+      ],
+      "measures": {
+       "target_sim": 0.2445,
+       "best_feature": "a door's glossy surface",
+       "color_gap": -0.0196,
+       "color_winner": "gray color",
+       "shape_gap": 0.0066,
+       "aspect": 1.1612,
+       "sat": 91.0,
+       "ref_sim": 0.7613
+      }
+     }
+    ],
+    "gdino": [
+     {
+      "box_xyxy": [
+       198.11,
+       100.41,
+       227.77,
+       139.9
+      ],
+      "score": 0.182,
+      "label": "pedestal",
+      "iou": 0.92,
+      "OLD": false,
+      "NEW": false
+     }
+    ]
+   }
+  }
+ },
+ "final": {
+  "OLD": {
+   "frame_000005.jpg": [],
+   "frame_000006.jpg": [],
+   "frame_000007.jpg": []
+  },
+  "NEW": {
+   "frame_000005.jpg": [],
+   "frame_000006.jpg": [
+    [
+     148.4,
+     60.7,
+     190.9,
+     147.3
+    ]
+   ],
+   "frame_000007.jpg": [
+    [
+     25.4,
+     66.6,
+     61.8,
+     147.5
+    ]
+   ]
+  }
+ }
+}

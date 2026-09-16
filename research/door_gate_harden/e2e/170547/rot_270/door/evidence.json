@@ -1,0 +1,154 @@
+{
+  "target_class": "door",
+  "frame": "rot_270.jpg",
+  "rotation_deg": 270.0,
+  "provider_timings_ms": {
+    "dictionary": 905.5,
+    "grounding_dino": 245.0,
+    "yolo_world": 188.6,
+    "fastsam": 22.7
+  },
+  "instance_count": 1,
+  "instances": [
+    {
+      "index": 0,
+      "box_xyxy": [
+        164.5,
+        86.7,
+        186.6,
+        141.8
+      ],
+      "semantic_class": "door",
+      "lifecycle": "CONFIRMED",
+      "final_score": 1.0729,
+      "supporting_sources": {
+        "dictionary": "CLIP",
+        "grounding_dino": "OVD"
+      },
+      "evidence_trail": [
+        {
+          "source": "grounding_dino",
+          "source_category": "OVD",
+          "arrived_at_ms": 245.0,
+          "semantic_class": "door",
+          "supporting_groups": [
+            "grounding_dino"
+          ],
+          "lifecycle": "PROVISIONAL",
+          "box_xyxy": [
+            164.6,
+            89.3,
+            186.8,
+            141.7
+          ],
+          "geometry_source": "box_weighted_avg",
+          "dictionary_ovd_iou": {
+            "value": 0.0,
+            "min_required": 0.42
+          }
+        },
+        {
+          "source": "grounding_dino",
+          "source_category": "OVD",
+          "arrived_at_ms": 245.0,
+          "semantic_class": "door",
+          "supporting_groups": [
+            "grounding_dino"
+          ],
+          "lifecycle": "PROVISIONAL",
+          "box_xyxy": [
+            164.2,
+            85.4,
+            186.9,
+            141.8
+          ],
+          "geometry_source": "box_weighted_avg",
+          "dictionary_ovd_iou": {
+            "value": 0.0,
+            "min_required": 0.42
+          }
+        },
+        {
+          "source": "dictionary",
+          "source_category": "CLIP",
+          "arrived_at_ms": 905.5,
+          "semantic_class": "door",
+          "supporting_groups": [
+            "dictionary",
+            "grounding_dino"
+          ],
+          "lifecycle": "CONFIRMED",
+          "box_xyxy": [
+            164.5,
+            86.7,
+            186.6,
+            141.8
+          ],
+          "geometry_source": "box_weighted_avg",
+          "dictionary_ovd_iou": {
+            "value": 0.902,
+            "min_required": 0.42
+          },
+          "clip_detail": {
+            "compared_features": {
+              "a door's handle": 0.2317,
+              "a door's hinge": 0.2353,
+              "a door's lock": 0.233,
+              "a door's threshold": 0.2351,
+              "a door's light blue color": 0.2791,
+              "a door's round metal knob": 0.2179,
+              "a door's closer device at the top": 0.2339,
+              "a door's glossy surface": 0.2478
+            },
+            "gates": {
+              "color": {
+                "passed": true,
+                "winning_color": "a door's light blue color",
+                "target_color_gap": 0.0198,
+                "tolerance": 0.012,
+                "candidates": {
+                  "a door's light blue color": 0.2788,
+                  "a door's white color": 0.2531,
+                  "a door's gray color": 0.2591,
+                  "a door's black color": 0.2505,
+                  "a door's brown color": 0.2453,
+                  "a door's red color": 0.2468,
+                  "a door's yellow color": 0.2354,
+                  "a door's green color": 0.2503
+                }
+              },
+              "shape": {
+                "passed": true,
+                "winning_shape": "a rectangular shape",
+                "positive_minus_negative": 0.0029,
+                "tolerance": 0.005,
+                "candidates": {
+                  "a rectangular shape": 0.2405,
+                  "a square shape": 0.2381,
+                  "a round shape": 0.2254,
+                  "an irregular shape": 0.2376
+                }
+              },
+              "saturation": {
+                "passed": true,
+                "median_saturation": 141.5,
+                "min_saturation": 75
+              },
+              "hue": {
+                "passed": true,
+                "median_hue": 102.0,
+                "min_median_hue": 85,
+                "max_median_hue": 112
+              },
+              "aspect_ratio": {
+                "passed": true,
+                "h_over_w": 2.482,
+                "min_required": 1.5
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

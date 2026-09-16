@@ -1,0 +1,1436 @@
+{
+ "144522": {
+  "ok": true,
+  "doors": "2/2",
+  "fp": 0,
+  "found_rotations": [
+   90,
+   135
+  ],
+  "gt_rotations": [
+   90,
+   135
+  ],
+  "rows": [
+   {
+    "rotation_deg": 0.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 45.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 90.0,
+    "gt": [
+     90.0,
+     23.9,
+     154.1,
+     159.0
+    ],
+    "instances": [
+     {
+      "box": [
+       90.0,
+       23.9,
+       154.1,
+       159.0
+      ],
+      "sources": [
+       "dictionary",
+       "grounding_dino",
+       "yolo_world"
+      ],
+      "iou_gt": 1.0,
+      "iou_amb": null,
+      "dictionary_ovd_iou": {
+       "value": 0.948,
+       "min_required": 0.42
+      }
+     }
+    ]
+   },
+   {
+    "rotation_deg": 135.0,
+    "gt": [
+     1.1,
+     20.9,
+     70.3,
+     161.4
+    ],
+    "instances": [
+     {
+      "box": [
+       1.1,
+       20.9,
+       70.3,
+       161.4
+      ],
+      "sources": [
+       "dictionary",
+       "grounding_dino",
+       "yolo_world"
+      ],
+      "iou_gt": 1.0,
+      "iou_amb": null,
+      "dictionary_ovd_iou": {
+       "value": 0.861,
+       "min_required": 0.42
+      }
+     }
+    ]
+   },
+   {
+    "rotation_deg": 180.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 225.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 270.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 315.0,
+    "gt": null,
+    "instances": []
+   }
+  ]
+ },
+ "161113": {
+  "ok": true,
+  "doors": "0/0",
+  "fp": 0,
+  "found_rotations": [],
+  "gt_rotations": [],
+  "rows": [
+   {
+    "rotation_deg": 0.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 45.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 90.0,
+    "gt": null,
+    "instances": []
+   }
+  ]
+ },
+ "161605": {
+  "ok": true,
+  "doors": "2/2",
+  "fp": 0,
+  "found_rotations": [
+   270,
+   315
+  ],
+  "gt_rotations": [
+   270,
+   315
+  ],
+  "rows": [
+   {
+    "rotation_deg": 0.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 45.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 90.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 135.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 180.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 225.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 270.0,
+    "gt": [
+     148.1,
+     86.5,
+     172.4,
+     142.1
+    ],
+    "instances": [
+     {
+      "box": [
+       148.1,
+       86.5,
+       172.4,
+       142.1
+      ],
+      "sources": [
+       "dictionary",
+       "grounding_dino"
+      ],
+      "iou_gt": 1.0,
+      "iou_amb": null,
+      "dictionary_ovd_iou": {
+       "value": 0.707,
+       "min_required": 0.42
+      }
+     }
+    ]
+   },
+   {
+    "rotation_deg": 315.0,
+    "gt": [
+     59.8,
+     89.8,
+     81.6,
+     142.3
+    ],
+    "instances": [
+     {
+      "box": [
+       59.8,
+       89.8,
+       81.6,
+       142.3
+      ],
+      "sources": [
+       "dictionary",
+       "grounding_dino"
+      ],
+      "iou_gt": 1.0,
+      "iou_amb": null,
+      "dictionary_ovd_iou": {
+       "value": 0.791,
+       "min_required": 0.42
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "161822": {
+  "ok": true,
+  "doors": "1/1",
+  "fp": 0,
+  "found_rotations": [
+   270
+  ],
+  "gt_rotations": [
+   270
+  ],
+  "rows": [
+   {
+    "rotation_deg": 0.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 45.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 90.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 135.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 180.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 225.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 270.0,
+    "gt": [
+     143.8,
+     90.3,
+     169.2,
+     142.0
+    ],
+    "instances": [
+     {
+      "box": [
+       143.8,
+       90.3,
+       169.2,
+       142.0
+      ],
+      "sources": [
+       "dictionary",
+       "grounding_dino"
+      ],
+      "iou_gt": 1.0,
+      "iou_amb": null,
+      "dictionary_ovd_iou": {
+       "value": 0.953,
+       "min_required": 0.42
+      }
+     }
+    ]
+   },
+   {
+    "rotation_deg": 315.0,
+    "gt": null,
+    "instances": []
+   }
+  ]
+ },
+ "164044": {
+  "ok": true,
+  "doors": "1/1",
+  "fp": 0,
+  "found_rotations": [
+   315
+  ],
+  "gt_rotations": [
+   315
+  ],
+  "rows": [
+   {
+    "rotation_deg": 0.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 45.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 90.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 135.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 180.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 225.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 270.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 315.0,
+    "gt": [
+     120.1,
+     89.5,
+     141.5,
+     140.5
+    ],
+    "instances": [
+     {
+      "box": [
+       120.1,
+       89.5,
+       141.5,
+       140.5
+      ],
+      "sources": [
+       "dictionary",
+       "grounding_dino"
+      ],
+      "iou_gt": 1.0,
+      "iou_amb": null,
+      "dictionary_ovd_iou": {
+       "value": 0.69,
+       "min_required": 0.42
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "164242": {
+  "ok": true,
+  "doors": "1/1",
+  "fp": 0,
+  "found_rotations": [
+   315
+  ],
+  "gt_rotations": [
+   315
+  ],
+  "rows": [
+   {
+    "rotation_deg": 0.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 45.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 90.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 135.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 180.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 225.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 270.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 315.0,
+    "gt": [
+     102.9,
+     91.9,
+     124.3,
+     142.5
+    ],
+    "instances": [
+     {
+      "box": [
+       102.9,
+       91.9,
+       124.3,
+       142.5
+      ],
+      "sources": [
+       "dictionary",
+       "grounding_dino"
+      ],
+      "iou_gt": 1.0,
+      "iou_amb": null,
+      "dictionary_ovd_iou": {
+       "value": 0.725,
+       "min_required": 0.42
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "164814": {
+  "ok": true,
+  "doors": "2/2",
+  "fp": 0,
+  "found_rotations": [
+   270,
+   315
+  ],
+  "gt_rotations": [
+   270,
+   315
+  ],
+  "rows": [
+   {
+    "rotation_deg": 45.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 90.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 135.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 180.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 225.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 270.0,
+    "gt": [
+     188.5,
+     82.5,
+     209.0,
+     141.6
+    ],
+    "instances": [
+     {
+      "box": [
+       188.5,
+       82.5,
+       209.0,
+       141.6
+      ],
+      "sources": [
+       "dictionary",
+       "grounding_dino"
+      ],
+      "iou_gt": 1.0,
+      "iou_amb": null,
+      "dictionary_ovd_iou": {
+       "value": 0.777,
+       "min_required": 0.42
+      }
+     }
+    ]
+   },
+   {
+    "rotation_deg": 315.0,
+    "gt": [
+     61.1,
+     89.3,
+     83.3,
+     142.4
+    ],
+    "instances": [
+     {
+      "box": [
+       61.1,
+       89.3,
+       83.3,
+       142.4
+      ],
+      "sources": [
+       "dictionary",
+       "grounding_dino"
+      ],
+      "iou_gt": 1.0,
+      "iou_amb": null,
+      "dictionary_ovd_iou": {
+       "value": 0.506,
+       "min_required": 0.42
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "164923": {
+  "ok": true,
+  "doors": "2/2",
+  "fp": 0,
+  "found_rotations": [
+   270,
+   315
+  ],
+  "gt_rotations": [
+   270,
+   315
+  ],
+  "rows": [
+   {
+    "rotation_deg": 0.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 45.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 90.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 135.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 180.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 225.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 270.0,
+    "gt": [
+     172.7,
+     85.5,
+     191.7,
+     140.3
+    ],
+    "instances": [
+     {
+      "box": [
+       172.7,
+       85.5,
+       191.7,
+       140.3
+      ],
+      "sources": [
+       "dictionary",
+       "grounding_dino"
+      ],
+      "iou_gt": 1.0,
+      "iou_amb": null,
+      "dictionary_ovd_iou": {
+       "value": 0.952,
+       "min_required": 0.42
+      }
+     }
+    ]
+   },
+   {
+    "rotation_deg": 315.0,
+    "gt": [
+     61.9,
+     90.7,
+     79.0,
+     142.2
+    ],
+    "instances": [
+     {
+      "box": [
+       61.9,
+       90.7,
+       79.0,
+       142.2
+      ],
+      "sources": [
+       "dictionary",
+       "grounding_dino"
+      ],
+      "iou_gt": 1.0,
+      "iou_amb": null,
+      "dictionary_ovd_iou": {
+       "value": 0.855,
+       "min_required": 0.42
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "165143": {
+  "ok": true,
+  "doors": "2/2",
+  "fp": 0,
+  "found_rotations": [
+   270,
+   315
+  ],
+  "gt_rotations": [
+   270,
+   315
+  ],
+  "rows": [
+   {
+    "rotation_deg": 0.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 45.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 90.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 135.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 180.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 225.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 270.0,
+    "gt": [
+     154.0,
+     90.3,
+     174.0,
+     141.8
+    ],
+    "instances": [
+     {
+      "box": [
+       154.0,
+       90.3,
+       174.0,
+       141.8
+      ],
+      "sources": [
+       "dictionary",
+       "grounding_dino"
+      ],
+      "iou_gt": 1.0,
+      "iou_amb": null,
+      "dictionary_ovd_iou": {
+       "value": 0.955,
+       "min_required": 0.42
+      }
+     }
+    ]
+   },
+   {
+    "rotation_deg": 315.0,
+    "gt": [
+     73.1,
+     91.1,
+     91.0,
+     141.7
+    ],
+    "instances": [
+     {
+      "box": [
+       73.1,
+       91.1,
+       91.0,
+       141.7
+      ],
+      "sources": [
+       "dictionary",
+       "grounding_dino"
+      ],
+      "iou_gt": 1.0,
+      "iou_amb": null,
+      "dictionary_ovd_iou": {
+       "value": 0.803,
+       "min_required": 0.42
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "165313": {
+  "ok": true,
+  "doors": "2/2",
+  "fp": 0,
+  "found_rotations": [
+   270,
+   315
+  ],
+  "gt_rotations": [
+   270,
+   315
+  ],
+  "rows": [
+   {
+    "rotation_deg": 0.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 45.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 90.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 135.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 180.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 225.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 270.0,
+    "gt": [
+     139.2,
+     88.9,
+     158.6,
+     142.1
+    ],
+    "instances": [
+     {
+      "box": [
+       139.2,
+       88.9,
+       158.6,
+       142.1
+      ],
+      "sources": [
+       "dictionary",
+       "grounding_dino"
+      ],
+      "iou_gt": 1.0,
+      "iou_amb": null,
+      "dictionary_ovd_iou": {
+       "value": 0.911,
+       "min_required": 0.42
+      }
+     }
+    ]
+   },
+   {
+    "rotation_deg": 315.0,
+    "gt": [
+     51.9,
+     91.5,
+     70.8,
+     142.3
+    ],
+    "instances": [
+     {
+      "box": [
+       51.9,
+       91.5,
+       70.8,
+       142.3
+      ],
+      "sources": [
+       "dictionary",
+       "grounding_dino"
+      ],
+      "iou_gt": 1.0,
+      "iou_amb": null,
+      "dictionary_ovd_iou": {
+       "value": 0.784,
+       "min_required": 0.42
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "165734": {
+  "ok": true,
+  "doors": "0/0",
+  "fp": 0,
+  "found_rotations": [],
+  "gt_rotations": [],
+  "rows": [
+   {
+    "rotation_deg": 0.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 45.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 90.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 135.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 180.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 225.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 270.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 315.0,
+    "gt": null,
+    "instances": []
+   }
+  ]
+ },
+ "170547": {
+  "ok": true,
+  "doors": "2/2",
+  "fp": 0,
+  "found_rotations": [
+   270,
+   315
+  ],
+  "gt_rotations": [
+   270,
+   315
+  ],
+  "rows": [
+   {
+    "rotation_deg": 0.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 45.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 90.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 135.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 180.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 225.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 270.0,
+    "gt": [
+     164.5,
+     86.7,
+     186.6,
+     141.8
+    ],
+    "instances": [
+     {
+      "box": [
+       164.5,
+       86.7,
+       186.6,
+       141.8
+      ],
+      "sources": [
+       "dictionary",
+       "grounding_dino"
+      ],
+      "iou_gt": 1.0,
+      "iou_amb": null,
+      "dictionary_ovd_iou": {
+       "value": 0.902,
+       "min_required": 0.42
+      }
+     }
+    ]
+   },
+   {
+    "rotation_deg": 315.0,
+    "gt": [
+     72.7,
+     89.3,
+     92.8,
+     142.2
+    ],
+    "instances": [
+     {
+      "box": [
+       72.7,
+       89.3,
+       92.8,
+       142.2
+      ],
+      "sources": [
+       "dictionary",
+       "grounding_dino"
+      ],
+      "iou_gt": 1.0,
+      "iou_amb": null,
+      "dictionary_ovd_iou": {
+       "value": 0.781,
+       "min_required": 0.42
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "170907": {
+  "ok": true,
+  "doors": "2/2",
+  "fp": 0,
+  "found_rotations": [
+   270,
+   315
+  ],
+  "gt_rotations": [
+   270,
+   315
+  ],
+  "rows": [
+   {
+    "rotation_deg": 0.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 45.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 90.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 135.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 180.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 225.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 270.0,
+    "gt": [
+     161.6,
+     86.9,
+     185.8,
+     144.8
+    ],
+    "instances": [
+     {
+      "box": [
+       161.6,
+       86.9,
+       185.8,
+       144.8
+      ],
+      "sources": [
+       "dictionary",
+       "grounding_dino"
+      ],
+      "iou_gt": 1.0,
+      "iou_amb": null,
+      "dictionary_ovd_iou": {
+       "value": 0.857,
+       "min_required": 0.42
+      }
+     }
+    ]
+   },
+   {
+    "rotation_deg": 315.0,
+    "gt": [
+     57.1,
+     86.9,
+     79.3,
+     143.8
+    ],
+    "instances": [
+     {
+      "box": [
+       57.1,
+       86.9,
+       79.3,
+       143.8
+      ],
+      "sources": [
+       "dictionary",
+       "grounding_dino"
+      ],
+      "iou_gt": 1.0,
+      "iou_amb": null,
+      "dictionary_ovd_iou": {
+       "value": 0.781,
+       "min_required": 0.42
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "171015": {
+  "ok": true,
+  "doors": "2/2",
+  "fp": 0,
+  "found_rotations": [
+   270,
+   315
+  ],
+  "gt_rotations": [
+   270,
+   315
+  ],
+  "rows": [
+   {
+    "rotation_deg": 0.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 45.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 90.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 135.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 180.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 225.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 270.0,
+    "gt": [
+     138.7,
+     83.4,
+     162.9,
+     142.5
+    ],
+    "instances": [
+     {
+      "box": [
+       138.7,
+       83.4,
+       162.9,
+       142.5
+      ],
+      "sources": [
+       "dictionary",
+       "grounding_dino"
+      ],
+      "iou_gt": 1.0,
+      "iou_amb": null,
+      "dictionary_ovd_iou": {
+       "value": 0.741,
+       "min_required": 0.42
+      }
+     }
+    ]
+   },
+   {
+    "rotation_deg": 315.0,
+    "gt": [
+     56.7,
+     85.1,
+     78.7,
+     142.1
+    ],
+    "instances": [
+     {
+      "box": [
+       56.7,
+       85.1,
+       78.7,
+       142.1
+      ],
+      "sources": [
+       "dictionary",
+       "grounding_dino"
+      ],
+      "iou_gt": 1.0,
+      "iou_amb": null,
+      "dictionary_ovd_iou": {
+       "value": 0.742,
+       "min_required": 0.42
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "rot8": {
+  "ok": true,
+  "doors": "2/2",
+  "fp": 0,
+  "found_rotations": [
+   270,
+   315
+  ],
+  "gt_rotations": [
+   270,
+   315
+  ],
+  "rows": [
+   {
+    "rotation_deg": 0.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 45.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 90.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 135.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 180.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 225.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 270.0,
+    "gt": [
+     139.6,
+     87.8,
+     161.4,
+     144.0
+    ],
+    "instances": [
+     {
+      "box": [
+       140.2,
+       91.2,
+       161.1,
+       143.8
+      ],
+      "sources": [
+       "dictionary",
+       "grounding_dino"
+      ],
+      "iou_gt": 0.897,
+      "iou_amb": null,
+      "dictionary_ovd_iou": {
+       "value": 0.89,
+       "min_required": 0.42
+      }
+     }
+    ]
+   },
+   {
+    "rotation_deg": 315.0,
+    "gt": [
+     31.9,
+     87.4,
+     52.5,
+     142.3
+    ],
+    "instances": [
+     {
+      "box": [
+       32.3,
+       93.5,
+       52.3,
+       139.3
+      ],
+      "sources": [
+       "dictionary",
+       "grounding_dino"
+      ],
+      "iou_gt": 0.81,
+      "iou_amb": null,
+      "dictionary_ovd_iou": {
+       "value": 0.844,
+       "min_required": 0.42
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "robot": {
+  "ok": true,
+  "doors": "2/2",
+  "fp": 0,
+  "found_rotations": [
+   225,
+   270
+  ],
+  "gt_rotations": [
+   225,
+   270
+  ],
+  "rows": [
+   {
+    "rotation_deg": 0.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 45.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 90.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 135.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 180.0,
+    "gt": null,
+    "instances": []
+   },
+   {
+    "rotation_deg": 225.0,
+    "gt": [
+     188.5,
+     82.0,
+     215.5,
+     146.7
+    ],
+    "instances": [
+     {
+      "box": [
+       188.8,
+       84.2,
+       221.4,
+       146.4
+      ],
+      "sources": [
+       "dictionary",
+       "grounding_dino"
+      ],
+      "iou_gt": 0.786,
+      "iou_amb": null,
+      "dictionary_ovd_iou": {
+       "value": 0.53,
+       "min_required": 0.42
+      }
+     }
+    ]
+   },
+   {
+    "rotation_deg": 270.0,
+    "gt": [
+     93.0,
+     88.5,
+     114.0,
+     144.1
+    ],
+    "instances": [
+     {
+      "box": [
+       92.7,
+       88.2,
+       113.9,
+       143.7
+      ],
+      "sources": [
+       "dictionary",
+       "grounding_dino"
+      ],
+      "iou_gt": 0.969,
+      "iou_amb": null,
+      "dictionary_ovd_iou": {
+       "value": 0.921,
+       "min_required": 0.42
+      }
+     }
+    ]
+   },
+   {
+    "rotation_deg": 315.0,
+    "gt": null,
+    "instances": []
+   }
+  ]
+ }
+}

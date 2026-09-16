@@ -1,0 +1,27 @@
+{
+  "frame": "frame_000000.png",
+  "rotation_deg": 0.0,
+  "provider_timings_ms": {
+    "dictionary": 1523.5,
+    "grounding_dino": 218.3,
+    "yolo_world": 145.3,
+    "fastsam": 19.0
+  },
+  "rpn_candidate_count": 88,
+  "searched_classes": [
+    "door",
+    "pedestal"
+  ],
+  "confirmed_classes": [
+    {
+      "class": "door",
+      "instance_count": 0,
+      "boxes": []
+    },
+    {
+      "class": "pedestal",
+      "instance_count": 0,
+      "boxes": []
+    }
+  ]
+}

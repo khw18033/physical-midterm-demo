@@ -1,0 +1,116 @@
+{
+  "target_class": "pedestal",
+  "frame": "frame_000039.png",
+  "rotation_deg": 90.0,
+  "provider_timings_ms": {
+    "dictionary": 1316.9,
+    "grounding_dino": 260.4,
+    "yolo_world": 170.0,
+    "fastsam": 22.7
+  },
+  "instance_count": 1,
+  "instances": [
+    {
+      "index": 0,
+      "box_xyxy": [
+        67.5,
+        1.0,
+        235.0,
+        222.0
+      ],
+      "semantic_class": "pedestal",
+      "lifecycle": "CONFIRMED",
+      "final_score": 0.9188,
+      "supporting_sources": {
+        "dictionary": "CLIP",
+        "grounding_dino": "OVD",
+        "yolo_world": "OVD"
+      },
+      "evidence_trail": [
+        {
+          "source": "yolo_world",
+          "source_category": "OVD",
+          "arrived_at_ms": 170.0,
+          "semantic_class": "pedestal",
+          "supporting_groups": [
+            "yolo_world"
+          ],
+          "lifecycle": "PROVISIONAL",
+          "box_xyxy": [
+            67.7,
+            5.9,
+            237.0,
+            225.2
+          ],
+          "geometry_source": "box_weighted_avg"
+        },
+        {
+          "source": "grounding_dino",
+          "source_category": "OVD",
+          "arrived_at_ms": 260.4,
+          "semantic_class": "pedestal",
+          "supporting_groups": [
+            "grounding_dino",
+            "yolo_world"
+          ],
+          "lifecycle": "PROVISIONAL",
+          "box_xyxy": [
+            67.2,
+            1.2,
+            235.5,
+            224.4
+          ],
+          "geometry_source": "box_weighted_avg"
+        },
+        {
+          "source": "dictionary",
+          "source_category": "CLIP",
+          "arrived_at_ms": 1316.9,
+          "semantic_class": "pedestal",
+          "supporting_groups": [
+            "dictionary",
+            "grounding_dino",
+            "yolo_world"
+          ],
+          "lifecycle": "CONFIRMED",
+          "box_xyxy": [
+            67.5,
+            1.0,
+            235.0,
+            222.0
+          ],
+          "geometry_source": "box_weighted_avg",
+          "clip_detail": {
+            "compared_features": {
+              "a pedestal's flat top surface": 0.2208,
+              "a pedestal's vertical upright body": 0.2404,
+              "a pedestal's a small circular button": 0.2229,
+              "a pedestal's a dark base trim": 0.2215,
+              "a pedestal's cream white and dark two-tone finish": 0.2025,
+              "a pedestal's smooth curved vertical surface": 0.2253,
+              "a pedestal's dark base trim": 0.2222,
+              "a pedestal's a small black circular button": 0.2208
+            },
+            "gates": {
+              "reference_image": {
+                "passed": true,
+                "similarity": 0.9515,
+                "threshold_min": 0.93
+              },
+              "saturation": {
+                "passed": true,
+                "median_saturation": 9.0,
+                "max_saturation": 30
+              },
+              "aspect_ratio": {
+                "passed": true,
+                "h_over_w": 1.3,
+                "min_required": 1.0
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

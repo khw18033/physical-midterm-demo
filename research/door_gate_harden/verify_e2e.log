@@ -1,0 +1,20 @@
+﻿
+[verify] 144522: OK  문 2/2 오탐 0 found=[90, 135] gt=[90, 135]
+[verify] 161113: OK  문 0/0 오탐 0 found=[] gt=[]
+[verify] 161605: OK  문 2/2 오탐 0 found=[270, 315] gt=[270, 315]
+[verify] 161822: OK  문 1/1 오탐 0 found=[270] gt=[270]
+[verify] 164044: OK  문 1/1 오탐 0 found=[315] gt=[315]
+[verify] 164242: OK  문 1/1 오탐 0 found=[315] gt=[315]
+[verify] 164814: OK  문 2/2 오탐 0 found=[270, 315] gt=[270, 315]
+[verify] 164923: OK  문 2/2 오탐 0 found=[270, 315] gt=[270, 315]
+[verify] 165143: OK  문 2/2 오탐 0 found=[270, 315] gt=[270, 315]
+[verify] 165313: OK  문 2/2 오탐 0 found=[270, 315] gt=[270, 315]
+[verify] 165734: OK  문 0/0 오탐 0 found=[] gt=[]
+[verify] 170547: OK  문 2/2 오탐 0 found=[270, 315] gt=[270, 315]
+[verify] 170907: OK  문 2/2 오탐 0 found=[270, 315] gt=[270, 315]
+[verify] 171015: OK  문 2/2 오탐 0 found=[270, 315] gt=[270, 315]
+[verify] rot8: OK  문 2/2 오탐 0 found=[270, 315] gt=[270, 315]
+[verify] robot: OK  문 2/2 오탐 0 found=[225, 270] gt=[225, 270]
+[verify] 전체 통과
+
+

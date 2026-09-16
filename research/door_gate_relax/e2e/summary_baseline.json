@@ -1,0 +1,164 @@
+{
+ "rot8": [
+  {
+   "frame": "frame_000001.jpg",
+   "rotation_deg": 0.0,
+   "gt": null,
+   "instances": []
+  },
+  {
+   "frame": "frame_000020.jpg",
+   "rotation_deg": 45.0,
+   "gt": null,
+   "instances": []
+  },
+  {
+   "frame": "frame_000039.jpg",
+   "rotation_deg": 90.0,
+   "gt": null,
+   "instances": []
+  },
+  {
+   "frame": "frame_000057.jpg",
+   "rotation_deg": 135.0,
+   "gt": null,
+   "instances": []
+  },
+  {
+   "frame": "frame_000076.jpg",
+   "rotation_deg": 180.0,
+   "gt": null,
+   "instances": []
+  },
+  {
+   "frame": "frame_000095.jpg",
+   "rotation_deg": 225.0,
+   "gt": null,
+   "instances": []
+  },
+  {
+   "frame": "frame_000113.jpg",
+   "rotation_deg": 270.0,
+   "gt": [
+    139.6,
+    87.8,
+    161.4,
+    144.0
+   ],
+   "instances": [
+    {
+     "box": [
+      140.2,
+      91.2,
+      161.1,
+      143.8
+     ],
+     "iou_gt": 0.897,
+     "sources": [
+      "dictionary",
+      "grounding_dino"
+     ]
+    }
+   ]
+  },
+  {
+   "frame": "frame_000132.jpg",
+   "rotation_deg": 315.0,
+   "gt": [
+    31.9,
+    87.4,
+    52.5,
+    142.3
+   ],
+   "instances": [
+    {
+     "box": [
+      32.0,
+      93.7,
+      53.6,
+      142.1
+     ],
+     "iou_gt": 0.838,
+     "sources": [
+      "dictionary",
+      "grounding_dino"
+     ]
+    }
+   ]
+  }
+ ],
+ "robot": [
+  {
+   "frame": "frame_000000.jpg",
+   "rotation_deg": 0.0,
+   "gt": null,
+   "instances": []
+  },
+  {
+   "frame": "frame_000001.jpg",
+   "rotation_deg": 45.0,
+   "gt": null,
+   "instances": []
+  },
+  {
+   "frame": "frame_000002.jpg",
+   "rotation_deg": 90.0,
+   "gt": null,
+   "instances": []
+  },
+  {
+   "frame": "frame_000003.jpg",
+   "rotation_deg": 135.0,
+   "gt": null,
+   "instances": []
+  },
+  {
+   "frame": "frame_000004.jpg",
+   "rotation_deg": 180.0,
+   "gt": null,
+   "instances": []
+  },
+  {
+   "frame": "frame_000005.jpg",
+   "rotation_deg": 225.0,
+   "gt": [
+    188.5,
+    82.0,
+    215.5,
+    146.7
+   ],
+   "instances": []
+  },
+  {
+   "frame": "frame_000006.jpg",
+   "rotation_deg": 270.0,
+   "gt": [
+    93.0,
+    88.5,
+    114.0,
+    144.1
+   ],
+   "instances": [
+    {
+     "box": [
+      92.7,
+      88.2,
+      113.9,
+      143.7
+     ],
+     "iou_gt": 0.969,
+     "sources": [
+      "dictionary",
+      "grounding_dino"
+     ]
+    }
+   ]
+  },
+  {
+   "frame": "frame_000007.jpg",
+   "rotation_deg": 315.0,
+   "gt": null,
+   "instances": []
+  }
+ ]
+}

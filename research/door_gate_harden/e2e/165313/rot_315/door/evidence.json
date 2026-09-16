@@ -1,0 +1,133 @@
+{
+  "target_class": "door",
+  "frame": "rot_315.jpg",
+  "rotation_deg": 315.0,
+  "provider_timings_ms": {
+    "dictionary": 1047.3,
+    "grounding_dino": 217.1,
+    "yolo_world": 254.2,
+    "fastsam": 27.7
+  },
+  "instance_count": 1,
+  "instances": [
+    {
+      "index": 0,
+      "box_xyxy": [
+        51.9,
+        91.5,
+        70.8,
+        142.3
+      ],
+      "semantic_class": "door",
+      "lifecycle": "CONFIRMED",
+      "final_score": 0.9494,
+      "supporting_sources": {
+        "dictionary": "CLIP",
+        "grounding_dino": "OVD"
+      },
+      "evidence_trail": [
+        {
+          "source": "grounding_dino",
+          "source_category": "OVD",
+          "arrived_at_ms": 217.1,
+          "semantic_class": "door",
+          "supporting_groups": [
+            "grounding_dino"
+          ],
+          "lifecycle": "PROVISIONAL",
+          "box_xyxy": [
+            51.9,
+            88.7,
+            70.7,
+            142.1
+          ],
+          "geometry_source": "box_weighted_avg",
+          "dictionary_ovd_iou": {
+            "value": 0.0,
+            "min_required": 0.42
+          }
+        },
+        {
+          "source": "dictionary",
+          "source_category": "CLIP",
+          "arrived_at_ms": 1047.3,
+          "semantic_class": "door",
+          "supporting_groups": [
+            "dictionary",
+            "grounding_dino"
+          ],
+          "lifecycle": "CONFIRMED",
+          "box_xyxy": [
+            51.9,
+            91.5,
+            70.8,
+            142.3
+          ],
+          "geometry_source": "box_weighted_avg",
+          "dictionary_ovd_iou": {
+            "value": 0.784,
+            "min_required": 0.42
+          },
+          "clip_detail": {
+            "compared_features": {
+              "a door's handle": 0.2459,
+              "a door's hinge": 0.2446,
+              "a door's lock": 0.244,
+              "a door's threshold": 0.2448,
+              "a door's light blue color": 0.2774,
+              "a door's round metal knob": 0.2337,
+              "a door's closer device at the top": 0.2363,
+              "a door's glossy surface": 0.254
+            },
+            "gates": {
+              "color": {
+                "passed": true,
+                "winning_color": "a door's light blue color",
+                "target_color_gap": 0.0161,
+                "tolerance": 0.012,
+                "candidates": {
+                  "a door's light blue color": 0.2767,
+                  "a door's white color": 0.2537,
+                  "a door's gray color": 0.2606,
+                  "a door's black color": 0.2543,
+                  "a door's brown color": 0.2569,
+                  "a door's red color": 0.2488,
+                  "a door's yellow color": 0.2432,
+                  "a door's green color": 0.2525
+                }
+              },
+              "shape": {
+                "passed": true,
+                "winning_shape": "a rectangular shape",
+                "positive_minus_negative": 0.0036,
+                "tolerance": 0.005,
+                "candidates": {
+                  "a rectangular shape": 0.2347,
+                  "a square shape": 0.2333,
+                  "a round shape": 0.2284,
+                  "an irregular shape": 0.2311
+                }
+              },
+              "saturation": {
+                "passed": true,
+                "median_saturation": 120.0,
+                "min_saturation": 75
+              },
+              "hue": {
+                "passed": true,
+                "median_hue": 102.0,
+                "min_median_hue": 85,
+                "max_median_hue": 112
+              },
+              "aspect_ratio": {
+                "passed": true,
+                "h_over_w": 2.322,
+                "min_required": 1.5
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

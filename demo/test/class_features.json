@@ -1,0 +1,123 @@
+{
+  "_meta": {
+    "purpose": "clip_wbf_pipeline_poc.py의 CLIP 텍스트 앵커로 쓰는 클래스별 영어 특징 문구 사전. CLIP(clip-vit-base-patch32)이 영어 위주로 학습돼 한국어 특징 문장은 거의 구분을 못 한다는 것을 2026-09-10 dog 실험에서 실측했다(모든 crop이 하나의 특징으로만 매칭, top-5에 실제 GT 없음) -- 그래서 이 사전은 항상 영어로만 채운다.",
+    "model": "qwen2.5:3b-instruct (Ollama, local)",
+    "seed": 42,
+    "temperature": 0.0,
+    "note": "각 항목은 실제 LLM 호출 결과를 그대로 옮긴 것이다 -- 사람이 문구를 다듬지 않았다. 품질 편차가 있다(예: chair/desk 항목에 재질 언급이 섞여 있는데, 프롬프트는 재질 제외를 명시했지만 3B 모델이 항상 지키지는 못했다). 실제 사용 전 사람 검수를 거치는 게 좋다."
+  },
+  "door": {
+    "features": [
+      "handle",
+      "hinge",
+      "lock",
+      "threshold"
+    ],
+    "distractors_used_in_prompt": "cabinet, window, whiteboard",
+    "min_aspect_ratio_h_over_w": 1.5,
+    "shape_gate": {
+      "positive_prompts": [
+        "a rectangular shape",
+        "a square shape"
+      ],
+      "negative_prompts": [
+        "a round shape",
+        "an irregular shape"
+      ],
+      "rationale": "2026-09-10 사용자 지시: 색상 하나만 필수조건으로 쓰면 파란 옷을 입은 사람 등 색만 맞는 오탐을 못 거른다는 지적 -- 색+모양+참조이미지 3가지 전부를 필수조건(AND)으로 만든다. 모양은 절대 임계값이 아니라 색상 게이트와 같은 상대순위 방식(positive/negative 묶음 중 어디가 1등인지)으로 판정한다 -- 실측: 알려진 오탐(사람 다리/신발, 흰 단상)도 이미 'rectangular'가 1등으로 나와서(실제 문과 값이 겹침) 이 게이트가 이 두 특정 오탐을 걸러내지는 못하지만, 사람 몸통처럼 명백히 irregular/round한 형태의 오탐(예: 파란 옷 사람)은 걸러낼 수 있다는 점에서 유지한다 -- 정직하게 남김: 이 게이트가 실제로 걸러낸 사례는 아직 없다.",
+      "tolerance": 0.005,
+      "tolerance_rationale": "2026-09-14 사용자 지시('조명, 촬영 각도 등이 달라지는 상황을 고려해 게이트는 유지한 채 통과 기준만 완화'): positive 최고가 negative 최고보다 0.005 낮아도 통과. 실측(rot8+리허설 로봇 프레임): 실제 문 crop의 positive-negative 차이가 +0.0001~+0.0059로 경계에 붙어 있었다(frame_132는 +0.0001). 0.002~0.01 사이 어느 값이든 rot8/로봇 결과가 같았고 오탐도 늘지 않아 중간값을 잡았다. 근거: research/door_gate_relax/RESULT.md"
+    },
+    "saturation_gate": {
+      "min_saturation": 75,
+      "rationale": "2026-09-10 사용자 지적: '오탐들은 하얀색에 가까운 하늘색이고 문은 색이 진한 하늘색' -- CLIP 텍스트 색상 게이트(light blue color)로는 이 둘을 전혀 못 갈랐지만(둘 다 'light blue' 1등), OpenCV HSV로 crop의 채도(S, 0~255)를 직접 재보니 완전히 분리됐다: 실제 문 2건(frame_113=108, frame_132=104, median) vs 알려진 오탐 3건(frame_020 창문=64, frame_039 스위치=52, frame_057 창문반사=57). 오탐 최댓값(64)과 실제값 최솟값(104) 사이 40 단위 여유 구간 중앙인 85를 문턱으로 잡았다. CLIP 임베딩이 아니라 crop 픽셀을 직접 재는 별도 게이트라 mandatory_gates에 별도로 기록된다.",
+      "rationale_2026-09-14": "85 -> 75(게이트 유지, 기준만 완화). 조명 변형(채도 x0.7, 따뜻한 색온도, 감마, 대비 저하)에서 실제 문 crop 채도가 63~73까지 떨어져 85로는 문을 하나도 못 찾았다. 조건 11개(원본+변형 10) x 문 44개 평가에서 85->75가 오탐 증가 없이 문 검출을 가장 많이 늘렸고, 70부터는 어두운 감마 조건에서 오탐이 생겼다. 원본 기준 가장 위험한 음성은 리허설 방의 목재 유리책장(채도 78, 색 차이 -0.016) -- 채도로는 못 막지만 color_gate_tolerance(0.012)가 막는다."
+    },
+    "target_sim_threshold": 0.25,
+    "target_sim_threshold_rationale": "2026-09-14: 전역 0.26 -> door 0.25. 리허설 로봇 카메라 225도의 실제 문 crop이 target_sim 0.2522로 0.26에 못 미쳐 미검출됐다. 0.24도 원본 결과는 같았지만 조명·각도 변형 조건에서 오탐이 7개(0.25는 2개)로 늘어 0.25를 잡았다 -- 로봇 문 0.2522와 여유가 0.002뿐이라는 한계를 남긴다(CLIP 특징 유사도는 실제 문 0.250~0.270, 위험 음성 최대 0.267로 겹쳐 이 값 자체의 변별력은 약하다).",
+    "color_gate_tolerance": 0.012,
+    "color_gate_tolerance_rationale": "2026-09-14: 색 게이트를 'light blue가 8색 중 1등'에서 '1등과 차이 0.012 이내'로 완화. 리허설 로봇 카메라(어두운 형광등)에서 실제 문의 light blue가 6등(green/gray/black/white가 위)까지 떨어졌지만 1등과의 차이는 -0.0074였다 -- 8색 유사도가 0.01 안에 몰려 있어 순위(top-k)로 푸는 것은 무의미하고 차이로 풀어야 한다. 하한: 실제 문 -0.0074(0.008부터 통과), 상한: 목재 유리책장 오탐 -0.0159(0.02에서 오탐) -- 그 사이 중간값.",
+    "hue_gate": {
+      "min_median_hue": 85,
+      "max_median_hue": 112,
+      "rationale": "2026-09-15 사용자 지시('단상과 사람의 다리를 가끔 문으로 오검출 -- 게이트 강화'): crop 픽셀의 HSV 색상(H, OpenCV 0~179) 중앙값이 이 범위 안이어야 통과. 채도 게이트처럼 CLIP이 아니라 픽셀을 직접 잰다. 실측(datasets/260915 기록 14건 + 변형, 문 209개): 실제 문에 기여한 CLIP 후보 H는 p5~p95 100~105(최대 111), 짙은 바지 다리 후보는 105~125로 일부 겹쳐 이 게이트 혼자로는 오탐 17건이 남는다 -- confirm_pair_iou_min과 함께 쓸 때 짝 IoU로 못 막는 '같은 다리를 CLIP·GDINO가 함께 잡은' 3건을 막는다. 상한 108~114 어디서나 오탐 0·문 손실 0이었고(106은 클러스터가 바뀌어 새 오탐 1, 118은 다리 오탐 재발) 그 가운데 112. 이 파란 문 전용 조건이다(color/saturation 게이트와 같은 성격). 근거: research/door_gate_harden/RESULT.md"
+    },
+    "confirm_pair_iou_min": 0.42,
+    "confirm_pair_iou_min_rationale": "2026-09-15: door를 CONFIRMED로 올리려면 사전(CLIP) 박스와 OVD(GroundingDINO/YOLO-World) 박스 중 가장 잘 맞는 한 쌍의 IoU가 이 값 이상이어야 한다. 기록(datasets/260915)의 실제 오탐 6건(단상 4·청바지 다리 1·화이트보드 1)은 전부 창문 조각/짙은 옷 같은 작은 CLIP 통과 후보가 GDINO의 큰 단상·사람 'door' 박스 안에 containment 0.7로만 묶여 '서로 다른 provider 2개 동의'가 된 것이었다(짝 IoU 0.03~0.22, 실제 문 0.76~0.91). 변형 포함 분포: 실제 문 최소 0.471 / 오탐 최대 0.378 -- 0.40·0.42는 문 손실 0, 0.45부터 1개, 0.50은 7개 손실. containment 연계 자체를 끄면 같은 물체의 부위 증거를 못 묶어 오탐이 13건 남아서 연계는 그대로 두고 확정 조건으로만 건다. hue_gate와 함께 문 209개 기준 오탐 62 -> 0, 문 195 유지, 기록 14건의 '문이 보인 방향'이 전부 정답과 일치. 이 값을 빼면 단상·다리 오탐이 되살아난다.",
+    "reference_image_gate_removed_2026-09-14":"사용자 지시('특히 참조 이미지 게이트를 필수에서 제외')로 reference_image_similarity_min(0.75)을 뺐다. 실측: 실제 문 crop 0.745~0.809 vs GroundingDINO가 이미 문으로 보는 위험 음성 최대 0.83으로 값이 겹쳐 변별력이 없었고, frame_132 실제 문 crop 하나는 0.745로 오히려 떨어졌다. 빼고도 rot8에서 frame_113/132에만 문이 나오는 결과는 그대로였다. 참조이미지(reference_image_features.source_image)는 특징 문구의 출처로 계속 남는다. 예전 근거(0.7850~0.8062 실측으로 0.75 설정)는 backup_260914의 원본 참고.",
+    "grounding_dino_evidence": {
+      "exact_label": true,
+      "min_score": 0.25,
+      "rationale": "2026-09-14: door 증거로 받는 GroundingDINO 결과만 '라벨이 정확히 door + 점수>=0.25'로 거른다(호출 임계값 0.15/0.15와 다른 클래스는 그대로). 예전 규칙(라벨에 door가 들어가면 인정, 0.15)에서는 'door pedestal'로 섞인 흰 단상(0.49)·화이트보드·창문 박스가 문 증거로 들어와, 색 1등 조건 혼자 rot8 오탐을 막고 있었다 -- 이 필터 없이 게이트 기준만 풀면 rot8 180도에 오탐 2건이 생겼다. 0.25는 rot8/로봇 결과가 유지되는 0.15~0.38 구간의 중간이고(실제 문 GDINO 0.38~0.48), 전역으로 올리면 rot8 135도 단상(0.17~0.24)이 사라져 위치 추정 랜드마크를 잃으므로 door에만 적용한다."
+    },
+    "aspect_ratio_rationale": "2026-09-10 실측: 텍스트 특징을 5가지 조합(기존/LLM 추가/VLM 추가/전부/신규만)으로 다 시도해도 화이트보드 crop이 CLIP margin에서 실제 문 crop을 매번 이겼다(문 0.0101~0.0118 vs 화이트보드 0.0173~0.0217, 특징을 늘릴수록 격차가 벌어지는 경우도 있었음) -- 텍스트 특징 튜닝으로는 못 푸는 문제라고 판단했다. 대신 박스 자체의 세로/가로 비율은 명확히 갈렸다: 실제 문 후보=2.60(세로로 김), 화이트보드 후보=0.96(거의 정사각형). 1.5는 표준 문짝의 일반적 비율(대략 2.0~3.0)보다 넉넉히 낮고 화이트보드의 0.96보다는 충분히 높게 잡은 값이다 -- 이 한 사례에만 맞춘 값이 아니라 일반적인 문 비율 범위에서 고른 값이다.",
+    "curated_2026-09-10": "원본 LLM 출력('typically has a hinged top or bottom', 'may have a lock mechanism' 등)은 전부 완결된 절(clause)이라 'a door's {feature}' 템플릿과 결합하면 문법이 깨진다('a door's typically has a hinged top or bottom') -- dog/chair/desk 항목은 전부 짧은 명사(구)라 이 문제가 없었는데 door만 다른 프롬프트로 생성돼 형식이 달랐다. 명사(구) 위주로 사람이 재작성했다. 이후 실제 시연 장소 fisheye 프레임에서 옆에 있던 화이트보드가 문으로 오검출됐는데(margin 0.021~0.025), 원인이 'vertical rectangular shape'였다 -- 문뿐 아니라 화이트보드·창문·캐비닛도 다 해당하는 클래스 비특이적 형태 서술어라 chair의 'four legs'와 같은 문제였다. 제거 후 재실측: 같은 화이트보드 crop의 margin이 0.0118로 떨어져 임계값(0.02) 아래로 정상 탈락함을 확인하고 제거했다.",
+    "removed_2026-09-10_doorframe": "'door frame'을 제거했다. 시연 장소 frame_117에서 사람 다리+신발 crop이 door로 오검됐는데, 이 crop의 최댓값이 'a door's door frame'(target_sim=0.2606)이었다. 넓은 어휘(edge/corner/shadow line/person standing/a pair of legs/a shoe 등)와 직접 재경쟁시켜보니 이 crop은 'a person standing'(0.2401)이나 'a shoe'(0.2269)보다도 'a door frame'(0.2560)에 더 가깝게 나왔다 -- 반대로 진짜 문 crop에서는 'door frame'이 이 확장 어휘 안에서도 1등이 아니었다('a shadow line'이 0.2476으로 1등, 'door frame'은 0.2454로 6위). 즉 'door frame'은 실제 문틀 모양이 아니라 '수직 방향의 밝기 경계'라는 훨씬 일반적인 시각 패턴에 반응하고 있었다 -- 앞서 제거한 'vertical rectangular shape', 'wood slat frame'과 같은 클래스 비특이적 형태 서술어 문제였다. 실제 문 crop들에서는 'door frame'이 한 번도 최댓값이 된 적이 없었고(항상 'light blue color'보다 0.02 이상 낮음) 항상 2~3위였으므로 제거해도 실제 검출에는 영향이 없었다 -- 제거 후 재실측: 이 오탐 crop의 최댓값이 'glossy surface'(0.2588)로 바뀌었고 이는 임계값(0.26) 아래라 정상 탈락함을 확인했다(실제 문 검출 2건은 그대로 유지).",
+    "reference_image_features": {
+      "source_image": "datasets/25301.jpg",
+      "model": "Claude(Sonnet 5, 에이전트 자신) -- 별도 VLM API 호출이 아니라 에이전트가 이미지를 직접 멀티모달로 읽고 특징을 추출함",
+      "extraction_method_note": "원래는 로컬 Ollama VLM(llava:7b)을 받아 호출할 계획이었으나, 이 환경의 실측 다운로드 속도(4.7GB 중 2.6GB에서 정지, 이전 관측 속도 100~140KB/s 기준 잔여분에 수 시간 소요 추정)로 실행이 비현실적이라 사용자 지시로 에이전트 자신(멀티모달 모델)이 직접 이미지를 보고 추출하는 방식으로 전환함(demo/test/vlm_door_feature_extraction.py는 애초 계획한 로컬 VLM 경로를 남겨둔 것 -- 이번 실행에는 쓰지 않았다).",
+      "prompt_intent": "이 특정 문(시연 장소)의 저해상도 fisheye crop에서도 살아남을 만한 구체적 시각 특징(색 포함)을 뽑는다 -- 문 클래스 전체에 일반화되는 features(handle/hinge/door frame/lock/threshold)와 별개로, 이 인스턴스에서만 참인 속성(색 등)을 담는다.",
+      "features": [
+        "light blue color",
+        "round metal knob",
+        "closer device at the top",
+        "glossy surface"
+      ],
+      "unanchored_features": [],
+      "unanchored_features_rationale": "2026-09-10 시도했다가 되돌림: 'light blue color'를 앵커('a door's light blue color') 없이 그대로 쓰면 격리된 단일 crop 비교에서는 과거 오탐(흰 단상/사람 다리)과의 margin이 +0.0149->+0.0220으로 좋아 보였다(진짜 문=0.2640 vs 최대 오탐=0.2419). 하지만 실제 파이프라인(정확한 float 좌표로 원본에서 바로 자른 crop, JPEG 재압축 없음)으로 frame_117을 다시 돌리니 진짜 문의 target_sim이 0.2595로 나와 임계값(0.26) 바로 아래로 떨어져 미검출됐다 -- 격리 테스트에 쓴 crop은 한 번 JPEG로 저장했다 다시 읽은 것이라 재압축 오차(0.2693 vs 0.2595, 차이 0.01)가 이 경계선을 넘나들 만큼 컸다. margin이 좋아져도 절대 점수가 고정 임계값 밑으로 내려가면 그 자체로 손실이므로(TARGET_SIM_THRESHOLD는 상대비교가 아니라 고정값과 비교) 원래대로 앵커링을 유지한다. handle/hinge처럼 '문의 부분'을 가리키는 구조적 특징에 앵커링이 유효하다는 결론(위 anchoring_rationale)은 여전히 유효하고, 오직 이 인스턴스 색상 특징 하나에 대한 무앵커 시도만 되돌렸다. unanchored_features 메커니즘 자체는 남겨둔다 -- 다른 인스턴스 속성 특징에서 절대점수 손실 없이 margin이 개선되는 경우가 확인되면 다시 쓸 수 있다.",
+      "note": "저해상도 crop에서 구조적 특징(손잡이/경첩 등)이 CLIP에 아예 안 잡히는 경우(margin이 배경보다도 낮게 나옴, 이 문의 실제 crop으로 실측 확인)를 보완하기 위해 추가했다. 'light blue color'가 가장 강한 신호였다(진짜 문 crop에서 항상 최고 매칭).",
+      "removed_2026-09-10": "'wood slat frame'을 원래 넣었었는데, 종횡비 게이트 도입 후 새로 걸린 오탐(사람 다리 옆 나무 패널 벽 영역)의 최고 매칭 특징이 바로 이것이었다(margin 0.0103, 'a door's wood slat frame'=0.2636) -- 이 방은 나무 패널 마감이 문 주변만이 아니라 여러 벽에 있어서 비특이적이었다(desk의 'legs', door의 'vertical rectangular shape'와 같은 패턴). 제거 후 재실측: 진짜 문 margin=0.0120으로 유지되고 그 오탐은 margin=0.0093으로 떨어져 임계값(0.010) 아래로 정상 탈락함을 확인했다."
+    }
+  },
+  "pedestal": {
+    "features": [
+      "flat top surface",
+      "vertical upright body",
+      "a small circular button",
+      "a dark base trim"
+    ],
+    "distractors_used_in_prompt": "door, cabinet, wall corner",
+    "curated_2026-09-10": "사람이 직접 작성(LLM 호출 없음) -- 2026-09-10까지는 이 단상 위치를 PEDESTAL_BBOX_BY_FRAME(육안 확인 고정 bbox)으로만 다뤘는데, 사용자가 '단상도 door처럼 특징 비교 파이프라인으로 자동 검출해야 하는 것 아니냐'고 지적해 처음으로 class_features.json에 등록한다. door처럼 여러 오탐 사례를 실측하며 다듬은 게 아니라 datasets/pedestal_reference.jpg(frame_000039의 육안 확인 bbox crop) 하나만 보고 사람이 작성한 1차 버전이다 -- 문턱값들은 아직 검증되지 않은 잠정치임을 정직하게 남긴다.",
+    "target_sim_threshold": 0.2,
+    "target_sim_threshold_rationale": "2026-09-10 실측: 알려진 실제 단상 crop 2개(frame_039=0.2325, frame_057=0.2181)의 target_sim이 door 기준 전역 임계값(0.26)에 못 미쳤다. 넓은 어휘(lectern/podium/pillar/white column 등 18개)로 재경쟁시켜도 최고점이 0.238을 못 넘어 door(0.25~0.29대)보다 이 개체 전체가 구조적으로 낮은 점수대임을 확인했다 -- 어휘 문제가 아니라 이 crop 자체가 짧은 텍스트와 약하게만 매칭되는 경우로 판단. 그래서 전역 상수 대신 클래스별 target_sim_threshold를 도입해 두 실측값보다 낮은 0.20으로 잡았다(door처럼 전역 상수를 공유하면 한쪽에 맞춘 값이 다른 쪽을 다 떨어뜨린다).",
+    "min_aspect_ratio_h_over_w": 1.0,
+    "aspect_ratio_rationale": "실측 확인된 두 시점의 bbox 세로/가로 비율: frame_039=1.40, frame_057=2.56 -- 시야각에 따라 편차가 커서 door의 1.5처럼 타이트하게 잡지 않고 '가로보다 세로가 길거나 같다'는 최소 조건(1.0)만 문턱으로 둔다.",
+    "shape_gate_removed_2026-09-10": "처음에 door와 동일하게 rectangular/square vs round/irregular 모양 게이트를 넣었으나, 실측 확인된 frame_057의 실제 단상 crop이 'an irregular shape'(0.2157)를 'a rectangular shape'(0.2139)보다 더 높게 매칭해 게이트를 통과 못 했다(카메라에 가깝게 잘린 시야각 때문으로 추정). door의 흰 단상 오탐 사례와 달리 이 클래스는 색상+참조이미지 게이트만으로도 이미 강하게 변별되므로(아래 reference_image_similarity_min 실측값 0.92~0.98 참고) 모양 게이트는 빼고 색+참조이미지 2중 필수 조건만 둔다.",
+    "reference_image_similarity_min": 0.93,
+    "reference_image_similarity_min_rationale": "2026-09-10 실측(4차): 채도 게이트로 frame_000095 벽 그림자(S=56)를 가른 뒤 참조이미지 임계값을 0.85로 낮춰봤으나, 실제 파이프라인 전체 후보군에서 새로운 오탐 2건이 나타났다 -- frame_095에서는 사람의 회색 바지(ref_sim=0.8734, S=28), frame_113에서는 벽 모서리(ref_sim=0.8509, S=12)가 새로 걸렸다. 문제는 이 두 오탐의 ref_sim이 frame_057 실제 단상의 실측값(0.8658)보다 오히려 더 높다는 것 -- 즉 ref_sim 문턱을 어디에 잡아도 이 오탐들을 걸러내면서 frame_057을 살릴 수는 없다(오탐이 실제값보다 높은 순서라 어떤 절대 문턱도 둘을 못 가름). 이 방을 통틀어 무채색 표면(사람 옷/벽/단상)이 여러 개 있어서 참조이미지 유사도+채도만으로는 부족하다고 판단, 0.93으로 되돌려 frame_039 단일 검출(오탐 0건)을 유지한다 -- frame_057 미탐은 여전히 받아들이는 한계.",
+    "saturation_gate": {
+      "max_saturation": 30,
+      "rationale": "2026-09-10 도입: door 채도 게이트의 성공을 보고 pedestal에도 적용 -- door와 반대 방향(무채색 흰 단상 vs 색이 있는 나무벽 오탐). frame_000095 벽 그림자(S=56)는 이 게이트로 확실히 걸러지지만(위 rationale 참고), 사람 옷처럼 단상과 마찬가지로 무채색인 다른 오탐까지는 막지 못한다는 것을 실측으로 확인했다 -- 참조이미지 임계값을 낮추지 않고 0.93과 함께 유지하면 현재는 이 게이트가 하는 일이 사실상 없다(0.93 자체가 이미 벽 그림자를 걸러내므로). 향후 참조이미지 임계값을 더 정교하게 다시 낮출 수 있는 경우를 위해 게이트 자체는 남겨둔다."
+    },
+    "reference_image_features": {
+      "source_image": "datasets/pedestal_reference.jpg",
+      "model": "Claude(Sonnet 5, 에이전트 자신) -- door와 동일한 방식으로 에이전트가 이미지를 직접 보고 특징 추출",
+      "extraction_method_note": "frame_000039.jpg를 PEDESTAL_BBOX_BY_FRAME의 bbox(75,15,225,225, border-cropped 좌표)로 크롭해 datasets/pedestal_reference.jpg로 저장한 뒤 그 이미지를 보고 작성.",
+      "features": [
+        "cream white and dark two-tone finish",
+        "smooth curved vertical surface",
+        "dark base trim",
+        "a small black circular button"
+      ],
+      "unanchored_features": [],
+      "note": "door의 'light blue color'처럼 이 개체 고유의 색이 가장 강한 신호가 될 것으로 기대했으나 실측 결과 이 개체는 흰 몸통+검은 받침의 두 가지 색이 섞여 있어 단일 색상 필수 게이트(color_gate)가 오히려 불안정했다(2026-09-10 실측: frame_039의 실제 crop이 'cream white'보다 'black'에 더 가깝게 나옴 -- crop 안에 검은 받침이 차지하는 비율이 시야각마다 달라서). 그래서 이 문구에서 의도적으로 'color'라는 단어를 빼 class_finder_service.py의 자동 color_gate 트리거(문구에 'color' 포함 여부로 판정)를 비활성화했다 -- 점수용 feature로는 남기되 필수 게이트로는 쓰지 않는다. 참조이미지 게이트(0.85, 실측 0.92~0.98)가 이미 이 개체를 강하게 변별하므로 참조이미지+종횡비 2가지만 필수 조건으로 둔다."
+    }
+  },
+  "person": {
+    "features": [
+      "two arms",
+      "one torso",
+      "two legs",
+      "head on top of torso",
+      "typically upright posture",
+      "wearing clothing",
+      "a human silhouette"
+    ],
+    "distractors_used_in_prompt": "mannequin, chair, coat rack",
+    "curated_2026-09-11": "사용자 지시(demo/test/grounding_dino_comparison 오버레이 육안 확인 후): '사람 사전 정확도를 높이는 게 우선' -- 8프레임 중 7프레임(001/039/057/076/113)에서 최종 선택 박스가 실제 사람이 아니라 천장 조명/단상/창문/바닥 케이블/벽걸이 물체를 가리켰다. 실측 확인: 이 5건 전부 최종 1위 feature가 'two eyes'(0.24~0.27대)였다 -- door의 'vertical rectangular shape', desk/chair의 'legs'와 같은 클래스 비특이적 패턴 문제(저해상도에서 나란히 놓인 두 개의 밝은/둥근 형태가 뭐든 'two eyes'에 반응). 'mouth present'도 같은 계열로 같이 제거했다. 대신 실제 사람 crop(frame_000001, IoU 0.59)과 오탐 crop을 넓은 어휘로 재경쟁시켜 실제 사람에서 더 높게 나온 'a human silhouette'/'wearing clothing'을 추가했다. 종횡비/모양/참조이미지 게이트는 시도했으나(아래 rejected 기록) 부분 크롭(다리만/발만 등)마다 실제 사람의 형태 자체가 크게 달라 안정적인 게이트를 못 찾았다 -- 텍스트 특징 교체만으로 이번 개선을 진행한다.",
+    "curated_2026-09-11_result": "재실측(8프레임 재실행, 오버레이 재확인): 5건의 오탐 중 3건(frame_000001 조명, frame_000039 단상, frame_000113 벽걸이물체)이 실제 사람으로 정정됨(각각 머리, 몸통, 신발 영역으로 이동). 2건(frame_000057 창문, frame_000076 바닥 케이블)은 여전히 오탐 -- 이 둘은 위 rejected_gates에서 확인했듯 참조이미지로도 실제 사람 부분크롭과 구분이 안 될 만큼 시각적으로 유사해서 텍스트 특징 교체만으로는 못 풀었다. 기존에 맞았던 frame_000020/000095는 계속 정상(020) 또는 박스 위치가 다소 바뀜(095, 발->다리 쪽 근처로 이동, 사람 위인지 의자 다리인지 애매) -- 순회귀는 아니지만 완전한 회귀 검증은 아직 못 했다. 전체적으로 5/7 오탐 -> 2/7 오탐(+095 애매 1건)으로 개선.",
+    "rejected_gates_2026-09-11": "1) 종횡비: 진짜 사람 박스가 프레임마다 다리만(세로로 긺, 2.44) 발만(가로로 넓음, 0.26) 등 크롭 부위가 달라 door처럼 단일 최소 종횡비로 못 거른다. 2) 참조이미지(datasets/person_reference.jpg, frame_000001 crop): 오탐 중 하나(frame_000057 창문, ref_sim=0.8409)가 실제 사람의 부분 크롭(frame_000095 발, ref_sim=0.7359)보다 오히려 더 높게 나와 안정적 분리 실패 -- door/pedestal은 매번 같은 물리 개체라 참조이미지가 잘 통했지만 person은 포즈·의상·크롭 범위 변동이 너무 커서 단일 참조 이미지로는 부족하다고 판단.",
+    "known_limitation": "여러 사람이 한 프레임에 있어도(frame_000076, 2명) 현재 파이프라인은 프레임당 최고 점수 박스 1개만 남기므로 1명만 검출된다 -- class_finder_service.py의 '클래스당 최선 박스 1개' 설계 자체의 한계이며 텍스트 특징 교체로 해결되는 문제가 아니다. 다중 인스턴스 지원은 별도 아키텍처 변경(통과 후보 리스트 + NMS)이 필요."
+  }
+}

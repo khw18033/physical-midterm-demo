@@ -1,0 +1,176 @@
+{
+  "ok": true,
+  "method": "door_only",
+  "method_words": "B -- 단상이 안 보여 문의 겉보기 크기(거리)와 문 방위만으로 위치와 방위를 추정",
+  "fallback_chain": [
+    {
+      "step": "A_pedestal",
+      "ok": false,
+      "detail": "pedestal이 어느 프레임에서도 검출되지 않아 로봇 위치를 추정할 수 없음"
+    },
+    {
+      "step": "B_door_only",
+      "ok": true,
+      "detail": "문 거리 648.9cm(겉보기 크기) · 문 방위 257.1도(bearing_refinement)"
+    }
+  ],
+  "rotation_sequence": {
+    "description": "로봇이 오른쪽(시계) 방향으로 정확히 45도씩 회전하며 촬영한 8개 프레임(0/45/90/135/180/225/270/315도).",
+    "rotation_direction": "clockwise (오른쪽)",
+    "nominal_step_deg": 45.0,
+    "frames": [
+      {
+        "frame": "frame_000000.jpg",
+        "rotation_deg": 0.0
+      },
+      {
+        "frame": "frame_000001.jpg",
+        "rotation_deg": 45.0
+      },
+      {
+        "frame": "frame_000002.jpg",
+        "rotation_deg": 90.0
+      },
+      {
+        "frame": "frame_000003.jpg",
+        "rotation_deg": 135.0
+      },
+      {
+        "frame": "frame_000004.jpg",
+        "rotation_deg": 180.0
+      },
+      {
+        "frame": "frame_000005.jpg",
+        "rotation_deg": 225.0
+      },
+      {
+        "frame": "frame_000006.jpg",
+        "rotation_deg": 270.0
+      },
+      {
+        "frame": "frame_000007.jpg",
+        "rotation_deg": 315.0
+      }
+    ]
+  },
+  "observations": {
+    "door": [
+      {
+        "frame": "frame_000005.jpg",
+        "rotation_deg": 225.0,
+        "instance_count": 1,
+        "clip_score": 0.9226,
+        "original_image": "C:\\Users\\user\\Desktop\\khw\\Physical-project-mk2\\physical_demo\\research\\door_gate_relax\\pipeline\\after\\robot\\frame_000005\\original.jpg",
+        "rpn_overlay_image": "C:\\Users\\user\\Desktop\\khw\\Physical-project-mk2\\physical_demo\\research\\door_gate_relax\\pipeline\\after\\robot\\frame_000005\\rpn_overlay.jpg",
+        "confirmed_overlay_image": "C:\\Users\\user\\Desktop\\khw\\Physical-project-mk2\\physical_demo\\research\\door_gate_relax\\pipeline\\after\\robot\\frame_000005\\confirmed_overlay.jpg",
+        "target_overlay_image": "C:\\Users\\user\\Desktop\\khw\\Physical-project-mk2\\physical_demo\\research\\door_gate_relax\\pipeline\\after\\robot\\frame_000005\\door\\target_overlay.jpg"
+      },
+      {
+        "frame": "frame_000006.jpg",
+        "rotation_deg": 270.0,
+        "instance_count": 1,
+        "clip_score": 0.7345,
+        "original_image": "C:\\Users\\user\\Desktop\\khw\\Physical-project-mk2\\physical_demo\\research\\door_gate_relax\\pipeline\\after\\robot\\frame_000006\\original.jpg",
+        "rpn_overlay_image": "C:\\Users\\user\\Desktop\\khw\\Physical-project-mk2\\physical_demo\\research\\door_gate_relax\\pipeline\\after\\robot\\frame_000006\\rpn_overlay.jpg",
+        "confirmed_overlay_image": "C:\\Users\\user\\Desktop\\khw\\Physical-project-mk2\\physical_demo\\research\\door_gate_relax\\pipeline\\after\\robot\\frame_000006\\confirmed_overlay.jpg",
+        "target_overlay_image": "C:\\Users\\user\\Desktop\\khw\\Physical-project-mk2\\physical_demo\\research\\door_gate_relax\\pipeline\\after\\robot\\frame_000006\\door\\target_overlay.jpg"
+      }
+    ],
+    "pedestal": []
+  },
+  "door_position_cm_fixed_from_gt": [
+    922.8,
+    327.8
+  ],
+  "door_distance_estimate": {
+    "method": "문 박스 겉보기 크기 -- distance_cm = K / box_px (잘린 치수 제외, 중앙값)",
+    "formula": "distance_cm = median(K_width / box_w_px, K_height / box_h_px)  [K_width=14333, K_height=38674]",
+    "constants_source": "door_example 시료(A 성공, 로봇->문 715.4cm)의 문 박스로 역산",
+    "per_frame": [
+      {
+        "frame": "frame_000005.jpg",
+        "rotation_deg": 225.0,
+        "box_xyxy": [
+          188.8,
+          84.2,
+          221.4,
+          146.4
+        ],
+        "box_w_px": 32.6,
+        "box_h_px": 62.2,
+        "width_clipped": false,
+        "height_clipped": false,
+        "distance_from_width_cm": 439.7,
+        "distance_from_height_cm": 621.8
+      },
+      {
+        "frame": "frame_000006.jpg",
+        "rotation_deg": 270.0,
+        "box_xyxy": [
+          92.7,
+          88.2,
+          113.9,
+          143.7
+        ],
+        "box_w_px": 21.2,
+        "box_h_px": 55.5,
+        "width_clipped": false,
+        "height_clipped": false,
+        "distance_from_width_cm": 676.1,
+        "distance_from_height_cm": 696.8
+      }
+    ],
+    "estimates_cm": [
+      439.7,
+      621.8,
+      676.1,
+      696.8
+    ],
+    "distance_cm": 648.9,
+    "substituted": "median(439.7, 621.8, 676.1, 696.8) = 648.9"
+  },
+  "door_rotation_estimate": {
+    "source": "bearing_refinement",
+    "method": "각 관측 프레임에서 검출 박스의 화면 중심 대비 픽셀 오프셋을 UniDepth가 그 프레임에서 추정한 카메라 내부파라미터(fx, cx)로 각도 환산해 rotation_deg(45도 단위)에 더한 연속값을 구하고, 복수 관측이면 원형평균(circular mean)한다.",
+    "formula": "refined_rotation_i = (rotation_deg_i + degrees(atan2(box_center_x_infer - cx, fx))) mod 360; refined_target_rotation_deg = degrees(atan2(mean(sin(refined_rotation_i)), mean(cos(refined_rotation_i))))",
+    "per_frame": [
+      {
+        "frame": "frame_000005.jpg",
+        "rotation_deg": 225.0,
+        "pixel_offset_angle_deg": 23.65,
+        "refined_rotation_deg": 248.65
+      },
+      {
+        "frame": "frame_000006.jpg",
+        "rotation_deg": 270.0,
+        "pixel_offset_angle_deg": -4.4,
+        "refined_rotation_deg": 265.6
+      }
+    ],
+    "refined_target_rotation_deg": 257.13,
+    "spread_deg": 16.95,
+    "note": "회전 지시각이 항상 45의 배수로만 나오던 문제(로봇/단상/문 위치가 map 좌표상 서로 종속적으로 유도되어 rotation_deg 8단계에만 의존하던 구조적 결함)를 이 랜드마크 자신의 관측만으로 직접 구한 연속값으로 대체해 해결."
+  },
+  "robot_position_cm": [
+    300.0,
+    145.6
+  ],
+  "current_heading_map_deg": 119.2,
+  "map_bearing_to_door_deg": 16.3,
+  "rotation_calculation": {
+    "step1_door_distance": {
+      "formula": "distance_cm = median(K_width / box_w_px, K_height / box_h_px)  [K_width=14333, K_height=38674]",
+      "substituted": "median(439.7, 621.8, 676.1, 696.8) = 648.9"
+    },
+    "step2_robot_position": {
+      "formula": "robot_position_cm = door_position_cm - door_distance_cm * unit_vector(pedestal_center -> door)",
+      "substituted": "(922.8, 327.8) - 648.9 * (0.960, 0.281) = (300.0, 145.6)",
+      "note": "A와 같은 기하 가정(로봇은 단상->문 직선 위) -- 단상까지 대신 문까지의 거리로 자리를 잡는다"
+    },
+    "step3_current_heading_map_deg": {
+      "formula": "current_heading_map_deg = (map_bearing_to_door_deg - door_rotation_deg) mod 360",
+      "substituted": "(16.3 - 257.1) mod 360 = 119.2",
+      "note": "교차검증할 단상이 없어 문 자신의 관측각으로 역산했다 -- 회전각과 서로 기대는 값이다"
+    }
+  }
+}

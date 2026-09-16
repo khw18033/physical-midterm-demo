@@ -1,0 +1,112 @@
+{
+  "target_class": "door",
+  "ok": true,
+  "path_mode": "map",
+  "path_mode_words": "도면 위 로봇 자리에서 목표까지 산출 (B -- 문만으로 추정한 위치)",
+  "localization_method": "door_only",
+  "fallback_chain": [
+    {
+      "step": "A_pedestal",
+      "ok": false,
+      "detail": "pedestal이 어느 프레임에서도 검출되지 않아 로봇 위치를 추정할 수 없음"
+    },
+    {
+      "step": "B_door_only",
+      "ok": true,
+      "detail": "문 거리 648.9cm(겉보기 크기) · 문 방위 257.1도(bearing_refinement)"
+    },
+    {
+      "step": "path_map",
+      "ok": true,
+      "detail": "도면 기반 경로 산출"
+    }
+  ],
+  "path_overlay_available": true,
+  "target_resolution": {
+    "target_class": "door",
+    "position_cm": [
+      922.8382525306339,
+      327.79439999999994
+    ],
+    "source": "gt_fixed",
+    "detail": "datasets/25300_gt.png GT 점으로 고정된 도면상 위치"
+  },
+  "robot_position_cm": [
+    300.0,
+    145.6
+  ],
+  "current_heading_map_deg": 119.2,
+  "target_position_cm": [
+    922.8,
+    327.8
+  ],
+  "map_bearing_to_target_deg": 16.3,
+  "turn_instruction": "왼쪽(반시계)으로 102.9도 회전",
+  "turn_deg": -102.9,
+  "distance_to_target_cm": 648.9,
+  "standoff_cm": 80.0,
+  "forward_distance_cm": 568.9,
+  "forward_distance_m": 5.689,
+  "robot_command": {
+    "turn": {
+      "deg": -102.9
+    },
+    "move_forward": {
+      "distance_m": 5.689
+    },
+    "distance_m_in_range": true,
+    "accepted_range_m": [
+      0.05,
+      10.0
+    ],
+    "note": "turn.deg는 오른쪽이 +(왼쪽이 음수). move_forward.distance_m에는 standoff가 이미 반영돼 있다 -- 또 빼지 말 것."
+  },
+  "goal_cm": [
+    846.1,
+    305.3
+  ],
+  "path_calculation": {
+    "step1_map_bearing_to_target": {
+      "formula": "atan2(target_position_cm.y - robot_position_cm.y, target_position_cm.x - robot_position_cm.x) mod 360",
+      "substituted": "atan2(182.2, 622.8) mod 360 = 16.3"
+    },
+    "step2_turn_amount": {
+      "formula": "turn_amount_deg = |((refined_target_rotation_deg + 180) mod 360) - 180| (bearing_refinement 참고 -- 랜드마크 자신의 관측을 각도 보정해 직접 구함)",
+      "substituted": "|((257.1 + 180) mod 360) - 180| = 102.9 (왼쪽(반시계))"
+    },
+    "step3_distance_to_target": {
+      "formula": "distance_to_target_cm = hypot(target_position_cm.x - robot_position_cm.x, target_position_cm.y - robot_position_cm.y)",
+      "substituted": "hypot(622.8, 182.2) = 648.9"
+    },
+    "step4_forward_distance": {
+      "formula": "forward_distance_cm = distance_to_target_cm - standoff_cm(target_class)",
+      "substituted": "648.9 - 80.0 = 568.9"
+    },
+    "step5_goal_position": {
+      "formula": "goal_cm = robot_position_cm + forward_distance_cm * unit_vector(robot->target)",
+      "substituted": "(300.0, 145.6) + 568.9 * (0.960, 0.281) = (846.1, 305.3)"
+    }
+  },
+  "bearing_refinement": {
+    "method": "각 관측 프레임에서 검출 박스의 화면 중심 대비 픽셀 오프셋을 UniDepth가 그 프레임에서 추정한 카메라 내부파라미터(fx, cx)로 각도 환산해 rotation_deg(45도 단위)에 더한 연속값을 구하고, 복수 관측이면 원형평균(circular mean)한다.",
+    "formula": "refined_rotation_i = (rotation_deg_i + degrees(atan2(box_center_x_infer - cx, fx))) mod 360; refined_target_rotation_deg = degrees(atan2(mean(sin(refined_rotation_i)), mean(cos(refined_rotation_i))))",
+    "per_frame": [
+      {
+        "frame": "frame_000005.jpg",
+        "rotation_deg": 225.0,
+        "pixel_offset_angle_deg": 23.65,
+        "refined_rotation_deg": 248.65
+      },
+      {
+        "frame": "frame_000006.jpg",
+        "rotation_deg": 270.0,
+        "pixel_offset_angle_deg": -4.4,
+        "refined_rotation_deg": 265.6
+      }
+    ],
+    "refined_target_rotation_deg": 257.13,
+    "spread_deg": 16.95,
+    "note": "회전 지시각이 항상 45의 배수로만 나오던 문제(로봇/단상/문 위치가 map 좌표상 서로 종속적으로 유도되어 rotation_deg 8단계에만 의존하던 구조적 결함)를 이 랜드마크 자신의 관측만으로 직접 구한 연속값으로 대체해 해결."
+  },
+  "pedestal_obstacle_clear": true
+}

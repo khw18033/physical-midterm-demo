@@ -1,0 +1,67 @@
+﻿[baseline] True 
+stage1: 152/512 합격
+-- all8: 합격 104개, 가장 관대한 순 15개
+   gates=['sat'] sim>=0.26
+   gates=['aspect', 'color'] sim>=0.0
+   gates=['color', 'sat'] sim>=0.0
+   gates=['aspect', 'color'] sim>=0.18
+   gates=['color', 'sat'] sim>=0.18
+   gates=['aspect', 'color'] sim>=0.2
+   gates=['color', 'sat'] sim>=0.2
+   gates=['aspect', 'color'] sim>=0.22
+   gates=['color', 'sat'] sim>=0.22
+   gates=['aspect', 'color'] sim>=0.23
+   gates=['color', 'sat'] sim>=0.23
+   gates=['aspect', 'color'] sim>=0.24
+   gates=['color', 'sat'] sim>=0.24
+   gates=['aspect', 'color'] sim>=0.25
+   gates=['color', 'sat'] sim>=0.25
+-- generic4: 합격 48개, 가장 관대한 순 15개
+   gates=['aspect', 'color'] sim>=0.0
+   gates=['color', 'sat'] sim>=0.0
+   gates=['aspect', 'color'] sim>=0.18
+   gates=['color', 'sat'] sim>=0.18
+   gates=['aspect', 'color'] sim>=0.2
+   gates=['color', 'sat'] sim>=0.2
+   gates=['aspect', 'color'] sim>=0.22
+   gates=['color', 'sat'] sim>=0.22
+   gates=['aspect', 'color', 'shape'] sim>=0.0
+   gates=['aspect', 'color', 'ref'] sim>=0.0
+   gates=['aspect', 'color', 'sat'] sim>=0.0
+   gates=['color', 'shape', 'sat'] sim>=0.0
+   gates=['color', 'ref', 'sat'] sim>=0.0
+   gates=['aspect', 'color', 'shape'] sim>=0.18
+   gates=['aspect', 'color', 'ref'] sim>=0.18
+-- 게이트 조합별 합격 sim 문턱(all8 / generic4), 실패 이유는 sim=0.26 기준
+   []                                         all8=[] generic4=[] | 0.26 실패: all8[000020:1개 000039:2개 000057:1개 000076:1개] generic4[000076:1개 000113:0개(IoU []) 000132:0개(IoU [])]
+   ['aspect']                                 all8=[] generic4=[] | 0.26 실패: all8[000039:1개 000076:1개] generic4[000076:1개 000113:0개(IoU []) 000132:0개(IoU [])]
+   ['color']                                  all8=[] generic4=[] | 0.26 실패: all8[000039:1개] generic4[000113:0개(IoU []) 000132:0개(IoU [])]
+   ['shape']                                  all8=[] generic4=[] | 0.26 실패: all8[000020:1개 000039:2개 000076:1개] generic4[000076:1개 000113:0개(IoU []) 000132:0개(IoU [])]
+   ['ref']                                    all8=[] generic4=[] | 0.26 실패: all8[000039:2개 000076:1개] generic4[000076:1개 000113:0개(IoU []) 000132:0개(IoU [])]
+   ['sat']                                    all8=[0.26] generic4=[] | 0.26 실패: all8[] generic4[000113:0개(IoU []) 000132:0개(IoU [])]
+   ['aspect', 'color']                        all8=[0.0, 0.18, 0.2, 0.22, 0.23, 0.24, 0.25, 0.26] generic4=[0.0, 0.18, 0.2, 0.22] | 0.26 실패: all8[] generic4[000113:0개(IoU []) 000132:0개(IoU [])]
+   ['aspect', 'shape']                        all8=[] generic4=[] | 0.26 실패: all8[000039:1개 000076:1개] generic4[000076:1개 000113:0개(IoU []) 000132:0개(IoU [])]
+   ['aspect', 'ref']                          all8=[] generic4=[] | 0.26 실패: all8[000039:1개 000076:1개] generic4[000076:1개 000113:0개(IoU []) 000132:0개(IoU [])]
+   ['aspect', 'sat']                          all8=[0.26] generic4=[] | 0.26 실패: all8[] generic4[000113:0개(IoU []) 000132:0개(IoU [])]
+   ['color', 'shape']                         all8=[] generic4=[] | 0.26 실패: all8[000039:1개] generic4[000113:0개(IoU []) 000132:0개(IoU [])]
+   ['color', 'ref']                           all8=[] generic4=[] | 0.26 실패: all8[000039:1개] generic4[000113:0개(IoU []) 000132:0개(IoU [])]
+   ['color', 'sat']                           all8=[0.0, 0.18, 0.2, 0.22, 0.23, 0.24, 0.25, 0.26] generic4=[0.0, 0.18, 0.2, 0.22] | 0.26 실패: all8[] generic4[000113:0개(IoU []) 000132:0개(IoU [])]
+   ['shape', 'ref']                           all8=[] generic4=[] | 0.26 실패: all8[000039:2개 000076:1개] generic4[000076:1개 000113:0개(IoU []) 000132:0개(IoU [])]
+   ['shape', 'sat']                           all8=[0.26] generic4=[] | 0.26 실패: all8[] generic4[000113:0개(IoU []) 000132:0개(IoU [])]
+   ['ref', 'sat']                             all8=[0.26] generic4=[] | 0.26 실패: all8[] generic4[000113:0개(IoU []) 000132:0개(IoU [])]
+   ['aspect', 'color', 'shape']               all8=[0.0, 0.18, 0.2, 0.22, 0.23, 0.24, 0.25, 0.26] generic4=[0.0, 0.18, 0.2, 0.22] | 0.26 실패: all8[] generic4[000113:0개(IoU []) 000132:0개(IoU [])]
+   ['aspect', 'color', 'ref']                 all8=[0.0, 0.18, 0.2, 0.22, 0.23, 0.24, 0.25, 0.26] generic4=[0.0, 0.18, 0.2, 0.22] | 0.26 실패: all8[] generic4[000113:0개(IoU []) 000132:0개(IoU [])]
+   ['aspect', 'color', 'sat']                 all8=[0.0, 0.18, 0.2, 0.22, 0.23, 0.24, 0.25, 0.26] generic4=[0.0, 0.18, 0.2, 0.22] | 0.26 실패: all8[] generic4[000113:0개(IoU []) 000132:0개(IoU [])]
+   ['aspect', 'shape', 'ref']                 all8=[] generic4=[] | 0.26 실패: all8[000039:1개 000076:1개] generic4[000076:1개 000113:0개(IoU []) 000132:0개(IoU [])]
+   ['aspect', 'shape', 'sat']                 all8=[0.26] generic4=[] | 0.26 실패: all8[] generic4[000113:0개(IoU []) 000132:0개(IoU [])]
+   ['aspect', 'ref', 'sat']                   all8=[0.26] generic4=[] | 0.26 실패: all8[] generic4[000113:0개(IoU []) 000132:0개(IoU [])]
+   ['color', 'shape', 'ref']                  all8=[] generic4=[] | 0.26 실패: all8[000039:1개] generic4[000113:0개(IoU []) 000132:0개(IoU [])]
+   ['color', 'shape', 'sat']                  all8=[0.0, 0.18, 0.2, 0.22, 0.23, 0.24, 0.25, 0.26] generic4=[0.0, 0.18, 0.2, 0.22] | 0.26 실패: all8[] generic4[000113:0개(IoU []) 000132:0개(IoU [])]
+   ['color', 'ref', 'sat']                    all8=[0.0, 0.18, 0.2, 0.22, 0.23, 0.24, 0.25, 0.26] generic4=[0.0, 0.18, 0.2, 0.22] | 0.26 실패: all8[] generic4[000113:0개(IoU []) 000132:0개(IoU [])]
+   ['shape', 'ref', 'sat']                    all8=[0.26] generic4=[] | 0.26 실패: all8[] generic4[000113:0개(IoU []) 000132:0개(IoU [])]
+   ['aspect', 'color', 'shape', 'ref']        all8=[0.0, 0.18, 0.2, 0.22, 0.23, 0.24, 0.25, 0.26] generic4=[0.0, 0.18, 0.2, 0.22] | 0.26 실패: all8[] generic4[000113:0개(IoU []) 000132:0개(IoU [])]
+   ['aspect', 'color', 'shape', 'sat']        all8=[0.0, 0.18, 0.2, 0.22, 0.23, 0.24, 0.25, 0.26] generic4=[0.0, 0.18, 0.2, 0.22] | 0.26 실패: all8[] generic4[000113:0개(IoU []) 000132:0개(IoU [])]
+   ['aspect', 'color', 'ref', 'sat']          all8=[0.0, 0.18, 0.2, 0.22, 0.23, 0.24, 0.25, 0.26] generic4=[0.0, 0.18, 0.2, 0.22] | 0.26 실패: all8[] generic4[000113:0개(IoU []) 000132:0개(IoU [])]
+   ['aspect', 'shape', 'ref', 'sat']          all8=[0.26] generic4=[] | 0.26 실패: all8[] generic4[000113:0개(IoU []) 000132:0개(IoU [])]
+   ['color', 'shape', 'ref', 'sat']           all8=[0.0, 0.18, 0.2, 0.22, 0.23, 0.24, 0.25, 0.26] generic4=[0.0, 0.18, 0.2, 0.22] | 0.26 실패: all8[] generic4[000113:0개(IoU []) 000132:0개(IoU [])]
+   ['aspect', 'color', 'shape', 'ref', 'sat'] all8=[0.0, 0.18, 0.2, 0.22, 0.23, 0.24, 0.25, 0.26] generic4=[0.0, 0.18, 0.2, 0.22] | 0.26 실패: all8[] generic4[000113:0개(IoU []) 000132:0개(IoU [])]
