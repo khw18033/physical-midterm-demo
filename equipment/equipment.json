@@ -1,0 +1,116 @@
+{
+  "schema": "contracts/equipment.schema.json",
+  "extracted_from": {
+    "registry": "web-dashboard/mock-gateway/registry.json",
+    "goldset": "gen-lab/goldset/missions/*.json 의 assigned_targets",
+    "script": "scripts/extract-equipment.mjs"
+  },
+  "note": "손으로 고치지 마라 — 원천은 레지스트리와 정답셋이고 `npm run extract:equipment` 로 다시 뽑는다. 레지스트리에 없는 식별자는 label·kind 가 null 이다: 이름을 지어내지 않는다.",
+  "vocabulary_note": "프롬프트에 싣는 목록은 채점 어휘(정답셋 assigned_targets 합집합 4건)보다 **넓어야 한다.** 같아지면 오답 선택지가 없는 시험이 되어 이 축이 자기 자신을 채점한다. verify:no-leak 이 검사한다.",
+  "counts": {
+    "total": 10,
+    "registry": 10,
+    "goldset_targets": 4,
+    "wider_by": 6
+  },
+  "equipment": [
+    {
+      "equipment_id": "actuator-01",
+      "label": "수문 01",
+      "aliases": [
+        "1번 게이트",
+        "수문"
+      ],
+      "kind": "actuator",
+      "zone_id": "zone-503"
+    },
+    {
+      "equipment_id": "actuator-02",
+      "label": "수문 02 (504 구역)",
+      "aliases": [
+        "2번 게이트",
+        "504 수문"
+      ],
+      "kind": "actuator",
+      "zone_id": "zone-504"
+    },
+    {
+      "equipment_id": "camera-02",
+      "label": "고정 비전센서 02",
+      "aliases": [
+        "2번 카메라",
+        "고정 카메라"
+      ],
+      "kind": "camera",
+      "zone_id": "zone-503"
+    },
+    {
+      "equipment_id": "edge-node-a",
+      "label": "엣지 노드 A (자기 관측)",
+      "aliases": [
+        "A노드 지표"
+      ],
+      "kind": "edge_node",
+      "zone_id": "zone-503"
+    },
+    {
+      "equipment_id": "robot-01",
+      "label": "로봇 01",
+      "aliases": [
+        "1호기",
+        "503 구역 로봇",
+        "선두 로봇"
+      ],
+      "kind": "robot",
+      "zone_id": "zone-503"
+    },
+    {
+      "equipment_id": "robot-02",
+      "label": "로봇 02",
+      "aliases": [
+        "2호기"
+      ],
+      "kind": "robot",
+      "zone_id": "zone-503"
+    },
+    {
+      "equipment_id": "robot-03",
+      "label": "로봇 03",
+      "aliases": [
+        "3호기",
+        "예비 로봇"
+      ],
+      "kind": "robot",
+      "zone_id": "zone-503"
+    },
+    {
+      "equipment_id": "sensor-01",
+      "label": "수위 센서 01",
+      "aliases": [
+        "1번 수위",
+        "상류 수위계"
+      ],
+      "kind": "sensor",
+      "zone_id": "zone-503"
+    },
+    {
+      "equipment_id": "sensor-02",
+      "label": "수위 센서 02",
+      "aliases": [
+        "2번 수위",
+        "하류 수위계"
+      ],
+      "kind": "sensor",
+      "zone_id": "zone-503"
+    },
+    {
+      "equipment_id": "sensor-04",
+      "label": "수위 센서 04",
+      "aliases": [
+        "4번 수위"
+      ],
+      "kind": "sensor",
+      "zone_id": "zone-503"
+    }
+  ]
+}

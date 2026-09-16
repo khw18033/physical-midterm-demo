@@ -1,0 +1,17 @@
+{
+  "type": "video-stream",
+  "version": "1.0.0",
+  "displayName": "Video Stream",
+  "description": "REQ-502: 영상 스트림을 1급 컴포넌트로 표현하는 렌더러. 텍스트 패널에 HTML을 끼워 넣는 임시방편을 대체한다.",
+  "acceptsFieldTypes": ["binary-stream"],
+  "streaming": true,
+  "executionLocation": "client",
+  "configSchema": {
+    "type": "object",
+    "properties": {
+      "codec": { "type": "string" },
+      "autoplay": { "type": "boolean" }
+    }
+  },
+  "implementationRef": "core/renderers/video-stream"
+}

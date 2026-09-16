@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema", "$id": "action-item.schema.json",
+  "type": "object", "additionalProperties": false,
+  "required": ["item_id", "target", "adapter", "params", "status", "telemetry_ref"],
+  "properties": {
+    "item_id": { "type": "string", "minLength": 1 }, "target": { "type": "string" },
+    "adapter": { "type": "string" }, "params": { "type": "object" },
+    "status": { "enum": ["pending", "running", "done", "failed", "skipped", "awaiting_evaluation", "not_executed", "rerunning"] },
+    "telemetry_ref": { "type": ["string", "null"] }
+  }
+}

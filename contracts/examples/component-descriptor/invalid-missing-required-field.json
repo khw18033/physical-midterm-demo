@@ -1,0 +1,10 @@
+{
+  "id": "broken-sensor-01",
+  "version": "1.0.0",
+  "fields": [
+    {
+      "name": "temperature",
+      "type": "number"
+    }
+  ]
+}

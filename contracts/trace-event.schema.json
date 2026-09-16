@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema", "$id": "trace-event.schema.json",
+  "type": "object", "additionalProperties": false,
+  "required": ["seq", "ts", "layer", "node_id", "kind", "produced_by", "payload"],
+  "properties": {
+    "seq": { "type": "integer", "minimum": 0 }, "ts": { "type": "string", "format": "date-time" },
+    "layer": { "enum": ["mission", "milestone", "task", "action_item"] }, "node_id": { "type": "string" },
+    "kind": { "enum": ["created", "dispatched", "acked", "started", "progress", "evaluated", "failed", "derived"] },
+    "produced_by": { "enum": ["ai", "backend", "human"] }, "payload": { "type": "object" }
+  }
+}

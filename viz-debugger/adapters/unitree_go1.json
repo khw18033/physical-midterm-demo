@@ -1,0 +1,13 @@
+{
+  "profile": "unitree_go1", "version": 1,
+  "actions": {
+    "set_walk_mode": { "params": { "mode": { "type": "string", "enum": ["normal", "sport"] } } },
+    "move_forward": { "params": { "distance_m": { "type": "number", "unit": "m", "minimum": 0, "maximum": 20 }, "speed_mps": { "type": "number", "unit": "m/s", "minimum": 0.1, "maximum": 1.5 } } },
+    "turn": { "params": { "angle_deg": { "type": "number", "unit": "deg", "minimum": -180, "maximum": 180 }, "angular_speed_dps": { "type": "number", "unit": "deg/s", "minimum": 5, "maximum": 120 } } },
+    "stop": { "params": {} }
+  },
+  "telemetry": {
+    "battery": { "unit": "%" }, "rssi": { "unit": "dBm" }, "latency": { "unit": "ms" },
+    "ip": { "unit": null }, "firmware": { "unit": null }, "joint_temperature": { "unit": "°C" }, "heartbeat": { "unit": "ISO-8601" }
+  }
+}

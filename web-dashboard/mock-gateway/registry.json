@@ -1,0 +1,148 @@
+{
+  "registry_version": "0.1.0",
+  "generated_by": "mock-gateway (VZ-I-03 / REQ-304·305 대체 구현)",
+  "note": "백엔드 레지스트리 조회 형태가 Tier 2로 미확정이므로, REQ-204에 따라 정적 구성 파일로 선행 개발한다. 실제 레지스트리가 나오면 이 파일의 형태를 그 응답에 맞추고 registry.ts의 파싱만 교체한다.",
+
+  "zones": [
+    {
+      "id": "zone-503",
+      "display_name": "503 구역",
+      "aliases": ["503", "오삼공", "503구역"],
+      "nodes": ["edge-node-a"]
+    },
+    {
+      "id": "zone-504",
+      "display_name": "504 구역",
+      "aliases": ["504", "오공사", "504구역"],
+      "nodes": ["edge-node-b"],
+      "note": "권한 범위(VZ-C-04 / BE-Q-04) 검증용 인접 구역. 503 담당 역할로 로그인하면 이 구역 대상이 범위 밖이 된다."
+    }
+  ],
+
+  "nodes": [
+    {
+      "id": "edge-node-a",
+      "zone": "zone-503",
+      "display_name": "엣지 노드 A",
+      "aliases": ["A노드", "엣지A"],
+      "origin": {
+        "comment": "REQ-302 / BE-C-04: Node 원점의 전역 배치. 로컬→글로벌 변환과 축 변환은 백엔드가 단독 수행하며 가시화는 이 배치를 받아 놓기만 한다. 목 게이트웨이는 이미 변환된 전역 좌표를 발행하고 봉투에 coordinate_frame을 표기한다.",
+        "position": { "x": 12.0, "y": 0.0, "z": -4.5 },
+        "rotation": { "yaw_deg": 90.0, "pitch_deg": 0.0, "roll_deg": 0.0 },
+        "frame": "site-global"
+      }
+    },
+    {
+      "id": "edge-node-b",
+      "zone": "zone-504",
+      "display_name": "엣지 노드 B",
+      "aliases": ["B노드", "엣지B"],
+      "origin": {
+        "position": { "x": 41.0, "y": 0.0, "z": -4.5 },
+        "rotation": { "yaw_deg": 90.0, "pitch_deg": 0.0, "roll_deg": 0.0 },
+        "frame": "site-global"
+      }
+    }
+  ],
+
+  "entities": [
+    {
+      "id": "robot-01",
+      "node": "edge-node-a",
+      "zone": "zone-503",
+      "entity_type": "robot",
+      "display_name": "로봇 01",
+      "aliases": ["1호기", "503 구역 로봇", "선두 로봇"],
+      "channels": ["state", "telemetry", "heartbeat"]
+    },
+    {
+      "id": "robot-02",
+      "node": "edge-node-a",
+      "zone": "zone-503",
+      "entity_type": "robot",
+      "display_name": "로봇 02",
+      "aliases": ["2호기"],
+      "channels": ["state", "telemetry", "heartbeat"]
+    },
+    {
+      "id": "robot-03",
+      "node": "edge-node-a",
+      "zone": "zone-503",
+      "entity_type": "robot",
+      "display_name": "로봇 03",
+      "aliases": ["3호기", "예비 로봇"],
+      "channels": ["state"],
+      "note": "미배포 대상. 값을 발행하지 않으므로 이 목록에 있어야만 화면에 그릴 수 있다(VZ-I-03)."
+    },
+    {
+      "id": "sensor-01",
+      "node": "edge-node-a",
+      "zone": "zone-503",
+      "entity_type": "sensor",
+      "display_name": "수위 센서 01",
+      "aliases": ["상류 수위계", "1번 수위"],
+      "channels": ["state", "telemetry", "heartbeat"],
+      "component": "temperature-sensor-01"
+    },
+    {
+      "id": "sensor-02",
+      "node": "edge-node-a",
+      "zone": "zone-503",
+      "entity_type": "sensor",
+      "display_name": "수위 센서 02",
+      "aliases": ["하류 수위계", "2번 수위"],
+      "channels": ["state", "telemetry", "heartbeat"]
+    },
+    {
+      "id": "sensor-04",
+      "node": "edge-node-a",
+      "zone": "zone-503",
+      "entity_type": "sensor",
+      "display_name": "수위 센서 04",
+      "aliases": ["4번 수위"],
+      "channels": ["state"],
+      "note": "기동 시점부터 연결 두절(LWT 감지). 매핑표의 '— · offline · deployed → 장애' 행을 화면에서 확인하기 위한 대상."
+    },
+    {
+      "id": "camera-02",
+      "node": "edge-node-a",
+      "zone": "zone-503",
+      "entity_type": "camera",
+      "display_name": "고정 비전센서 02",
+      "aliases": ["2번 카메라", "고정 카메라"],
+      "channels": ["state", "video_meta", "heartbeat"],
+      "component": "camera-01"
+    },
+    {
+      "id": "actuator-01",
+      "node": "edge-node-a",
+      "zone": "zone-503",
+      "entity_type": "actuator",
+      "display_name": "수문 01",
+      "aliases": ["수문", "1번 게이트"],
+      "channels": ["state", "actuator_state", "command_result"],
+      "note": "표준 3층과 별개인 도메인 어휘(대기·동작 중·완료·오류·확인 불가)를 actuator_state 채널로 낸다(VZ-U-01)."
+    },
+    {
+      "id": "actuator-02",
+      "node": "edge-node-b",
+      "zone": "zone-504",
+      "entity_type": "actuator",
+      "display_name": "수문 02 (504 구역)",
+      "aliases": ["504 수문", "2번 게이트"],
+      "channels": ["state", "actuator_state", "command_result"],
+      "note": "권한 범위 검증용. 503 담당 역할로 로그인하면 이 대상의 제어 버튼이 잠기고, 화면을 우회해 명령을 보내도 서버가 out_of_scope로 거부한다(VZ-C-04 / BE-Q-04)."
+    },
+    {
+      "id": "edge-node-a",
+      "node": "edge-node-a",
+      "zone": "zone-503",
+      "entity_type": "edge_node",
+      "display_name": "엣지 노드 A (자기 관측)",
+      "aliases": ["A노드 지표"],
+      "channels": ["metrics"],
+      "component": "batch-processor-01",
+      "note": "구역 요약 지표(15초 페더레이션). 평시에 올라오는 것은 원본이 아니라 구역 요약이므로 aggregation 표기가 aggregated/zone으로 내려온다(BE-S-03·BE-S-06)."
+    }
+  ]
+}

@@ -1,0 +1,1 @@
+{"item_id":"action-001","target":"robot-01","adapter":"unitree_go1","params":{"action":"move_forward","distance_m":2},"status":"pending","telemetry_ref":null}

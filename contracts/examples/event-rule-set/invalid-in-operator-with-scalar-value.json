@@ -1,0 +1,17 @@
+{
+  "id": "broken-rules",
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "bad-in-operator",
+      "when": {
+        "field": "temperature-sensor-01.status",
+        "operator": "in",
+        "value": "warning"
+      },
+      "then": [
+        { "type": "highlight", "target": "zone-a/node-1/temperature-sensor-01" }
+      ]
+    }
+  ]
+}

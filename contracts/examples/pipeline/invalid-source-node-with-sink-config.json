@@ -1,0 +1,35 @@
+{
+  "id": "broken-pipeline",
+  "version": "1.0.0",
+  "serializationFormat": "json",
+  "nodes": [
+    {
+      "id": "src",
+      "kind": "source",
+      "executionLocation": "server",
+      "source": {
+        "dataSourceRef": "prom-main",
+        "queryMode": "instant",
+        "query": "up"
+      },
+      "sink": {
+        "rendererType": "graph",
+        "componentRef": "temperature-sensor-01",
+        "fieldRef": "temperature"
+      }
+    },
+    {
+      "id": "out",
+      "kind": "sink",
+      "executionLocation": "client",
+      "sink": {
+        "rendererType": "graph",
+        "componentRef": "temperature-sensor-01",
+        "fieldRef": "temperature"
+      }
+    }
+  ],
+  "edges": [
+    { "from": "src", "to": "out" }
+  ]
+}

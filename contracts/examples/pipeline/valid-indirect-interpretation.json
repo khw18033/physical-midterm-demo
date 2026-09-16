@@ -1,0 +1,59 @@
+{
+  "id": "temperature-smoothed",
+  "version": "1.0.0",
+  "displayName": "Temperature → Resample → Graph (indirect)",
+  "description": "REQ-402: 전처리 체인(resample → unit-convert)을 경유하는 간접 해석 경로. REQ-404에 따라 무거운 전처리는 server, 최종 표현은 client에서 실행한다.",
+  "serializationFormat": "cbor",
+  "nodes": [
+    {
+      "id": "src",
+      "kind": "source",
+      "executionLocation": "server",
+      "source": {
+        "dataSourceRef": "prom-main",
+        "queryMode": "range",
+        "query": "temperature_celsius{component=\"temperature-sensor-01\"}",
+        "timeoutMs": 3000
+      }
+    },
+    {
+      "id": "resample",
+      "kind": "transform",
+      "executionLocation": "server",
+      "transform": {
+        "operator": "resample",
+        "params": {
+          "intervalMs": 5000,
+          "method": "mean"
+        }
+      }
+    },
+    {
+      "id": "to-fahrenheit",
+      "kind": "transform",
+      "executionLocation": "client",
+      "transform": {
+        "operator": "unit-convert",
+        "params": {
+          "from": "celsius",
+          "to": "fahrenheit"
+        }
+      }
+    },
+    {
+      "id": "out",
+      "kind": "sink",
+      "executionLocation": "client",
+      "sink": {
+        "rendererType": "graph",
+        "componentRef": "temperature-sensor-01",
+        "fieldRef": "temperature"
+      }
+    }
+  ],
+  "edges": [
+    { "from": "src", "to": "resample" },
+    { "from": "resample", "to": "to-fahrenheit" },
+    { "from": "to-fahrenheit", "to": "out" }
+  ]
+}

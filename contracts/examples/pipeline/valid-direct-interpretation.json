@@ -1,0 +1,36 @@
+{
+  "id": "temperature-direct",
+  "version": "1.0.0",
+  "displayName": "Temperature → Graph (direct)",
+  "description": "REQ-401: transform 노드 없이 원본을 바로 표현으로 보내는 직접 해석 경로.",
+  "serializationFormat": "json",
+  "nodes": [
+    {
+      "id": "src",
+      "kind": "source",
+      "executionLocation": "server",
+      "source": {
+        "dataSourceRef": "prom-main",
+        "queryMode": "range",
+        "query": "temperature_celsius{component=\"temperature-sensor-01\"}"
+      }
+    },
+    {
+      "id": "out",
+      "kind": "sink",
+      "executionLocation": "client",
+      "sink": {
+        "rendererType": "graph",
+        "componentRef": "temperature-sensor-01",
+        "fieldRef": "temperature",
+        "rendererConfig": {
+          "yAxisLabel": "celsius",
+          "showLegend": true
+        }
+      }
+    }
+  ],
+  "edges": [
+    { "from": "src", "to": "out" }
+  ]
+}

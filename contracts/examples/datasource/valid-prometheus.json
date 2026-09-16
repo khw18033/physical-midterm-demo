@@ -1,0 +1,19 @@
+{
+  "id": "prom-main",
+  "type": "prometheus",
+  "version": "1.0.0",
+  "displayName": "Primary Prometheus",
+  "endpoint": "http://prometheus:9090",
+  "capabilities": {
+    "instantQuery": true,
+    "rangeQuery": true,
+    "streaming": false
+  },
+  "auth": {
+    "mode": "none"
+  },
+  "defaultTimeoutMs": 5000,
+  "labels": {
+    "environment": "dev"
+  }
+}

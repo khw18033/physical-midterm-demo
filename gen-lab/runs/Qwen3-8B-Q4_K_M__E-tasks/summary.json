@@ -1,0 +1,2617 @@
+{
+  "model": "Qwen3-8B-Q4_K_M",
+  "label": "Qwen3-8B-Q4_K_M__E-tasks",
+  "grammar_enforced": true,
+  "equipment_given": true,
+  "shots": "leave-one-out",
+  "node_kinds": false,
+  "tasks": true,
+  "ran_at": "2026-09-07T10:39:21.768Z",
+  "scored_at": "2026-09-07T10:39:21.770Z",
+  "calls": 15,
+  "records": [
+    {
+      "mission_id": "MSN-260831-01",
+      "variant": 0,
+      "utterance": "503호에서 복도에 있는 엘리베이터 앞까지 이동해줘.",
+      "ok": true,
+      "failure": null,
+      "wall_sec": 32.107,
+      "model_requested": "Qwen3-8B-Q4_K_M",
+      "model_reported": "Qwen3-8B-Q4_K_M",
+      "served_model_file": "Qwen3-8B-Q4_K_M.gguf",
+      "elapsed_sec": 22.363,
+      "schema_errors": [],
+      "schema_pass": true,
+      "grammar": {
+        "source": "contracts/mission.schema.json",
+        "digest": "84cfad7b7fd9801b",
+        "bytes": 5167
+      },
+      "grammar_enforced": true,
+      "examples_used": [
+        "MSN-260831-02",
+        "MSN-260831-03"
+      ],
+      "equipment_given": 10,
+      "node_kinds_given": false,
+      "tasks_given": true,
+      "extra": {
+        "stub": false,
+        "grammar_enforced": true,
+        "places_given": true,
+        "equipment_given": 10,
+        "examples_given": 2,
+        "node_kinds_given": false,
+        "tasks_given": true,
+        "rules_applied": [
+          "출력은 JSON 객체 하나다. 설명·주석·코드펜스를 붙이지 않는다.",
+          "마일스톤은 여러 개다. 임무를 **사람이 중간에 확인할 수 있는 단위**로 나눈다 — 발화 한 줄을 마일스톤 하나로 옮겨 적는 것은 분리가 아니다.",
+          "마일스톤은 **무엇을 이루는가**를 적는다. 어떻게 이루는지는 적지 않는다.",
+          "로봇 기종·모델명(예: 사족보행 로봇의 제품명)을 쓰지 않는다. 어떤 장비가 하는지는 assigned_targets 로만 적는다.",
+          "좌표를 쓰지 않는다. (x, y, z) 나 절대 위치를 적으면 그 마일스톤은 이 건물 전용이 된다.",
+          "속도·가속도·모터 파라미터를 쓰지 않는다. 그것은 실행이 정하는 값이다.",
+          "임무 자체의 조건(시간·수위·거리 임계처럼 발화가 요구한 것)은 적어도 된다. 금지되는 것은 구현 파라미터다.",
+          "장소는 아래 [장소] 목록에 있는 이름만 쓴다. 목록에 없는 방 번호·층·시설을 만들면 실패다.",
+          "assigned_targets 에는 아래 [장비] 목록에 있는 id 만 쓴다. 목록에 없는 장비 id 를 만들면 실패다.",
+          "각 마일스톤의 tasks 에 그 마일스톤을 이루는 태스크를 낸다. 태스크는 **한 번에 하나씩 실행되는 단위**다.",
+          "task_id 는 임무 안에서 겹치지 않게 짓는다 (예: T-1, T-2 …).",
+          "node_kind 는 반드시 적는다 — sense(관측·값을 받아 온다) · decide(판정·조건이 참인가) · act(구동·명령을 낸다) · verify(검증·구동 결과가 의도대로인가) · report(보고·기록하고 알린다) 중 하나다.",
+          "target 은 그 태스크를 수행하는 [장비] 목록의 id 하나다. 장비가 필요 없는 태스크(임무 종료 처리 등)는 null 로 둔다 — 아무 장비나 적지 않는다.",
+          "deps 는 **빈 배열 [] 로 둔다.** 태스크 사이의 순서는 다음 단계가 규칙으로 계산한다. 여기서 적으면 버려진다.",
+          "status 는 \"pending\", attempt 는 1, derived_from 은 null, action_items 는 [], evaluation 은 null 로 둔다. 그 자리는 실행이 채운다.",
+          "node_kind 는 그 자리에만 적는다. 제목에 「(감지)」·「(확인)」처럼 종류를 덧붙이지 않는다.",
+          "status 는 모두 \"pending\", order 는 0 부터 1 씩 는다.",
+          "mission_id 와 utterance 는 아래 [요청] 에 준 값을 그대로 옮긴다."
+        ],
+        "prompt_digest": "4b9ceae6f06c9f7a",
+        "prompt_chars": 7724,
+        "overwritten": [],
+        "load_sec": 3.217,
+        "prompt_tokens": 4710,
+        "completion_tokens": 1012,
+        "stop_reason": "eos",
+        "applied_options": {
+          "temperature": 0,
+          "seed": 0,
+          "n_predict": 2048,
+          "ctx_size": 8192,
+          "n_gpu_layers": 99
+        },
+        "json_recovered": false,
+        "raw_text": "{\n  \"mission_id\": \"MSN-260831-01\",\n  \"utterance\": {\n    \"audio_ref\": null,\n    \"text\": \"503호에서 복도에 있는 엘리베이터 앞까지 이동해줘.\",\n    \"engine\": \"script\",\n    \"confidence\": 1\n  },\n  \"milestones\": [\n    {\n      \"milestone_id\": \"MS-A\",\n      \"title\": \"503호에서 출발\",\n      \"order\": 0,\n      \"status\": \"pending\",\n      \"tasks\": [\n        {\n          \"task_id\": \"T-1\",\n          \"title\": \"503호 내부 위치 확인\",\n          \"deps\": [],\n          \"status\": \"pending\",\n          \"attempt\": 1,\n          \"derived_from\": null,\n          \"action_items\": [],\n          \"evaluation\": null,\n          \"node_kind\": \"sense\",\n          \"target\": \"robot-01\"\n        },\n        {\n          \"task_id\": \"T-2\",\n          \"title\": \"503호 내부 이동\",\n          \"deps\": [],\n          \"status\": \"pending\",\n          \"attempt\": 1,\n          \"derived_from\": null,\n          \"action_items\": [],\n          \"evaluation\": null,\n          \"node_kind\": \"act\",\n          \"target\": \"robot-01\"\n        }\n      ],\n      \"assigned_targets\": [\n        \"robot-01\"\n      ]\n    },\n    {\n      \"milestone_id\": \"MS-B\",\n      \"title\": \"복도로 이동\",\n      \"order\": 1,\n      \"status\": \"pending\",\n      \"tasks\": [\n        {\n          \"task_id\": \"T-3\",\n          \"title\": \"503호 문 열기\",\n          \"deps\": [],\n          \"status\": \"pending\",\n          \"attempt\": 1,\n          \"derived_from\": null,\n          \"action_items\": [],\n          \"evaluation\": null,\n          \"node_kind\": \"act\",\n          \"target\": \"robot-01\"\n        },\n        {\n          \"task_id\": \"T-4\",\n          \"title\": \"503호 문을 통해 복도로 이동\",\n          \"deps\": [],\n          \"status\": \"pending\",\n          \"attempt\": 1,\n          \"derived_from\": null,\n          \"action_items\": [],\n          \"evaluation\": null,\n          \"node_kind\": \"act\",\n          \"target\": \"robot-01\"\n        }\n      ],\n      \"assigned_targets\": [\n        \"robot-01\"\n      ]\n    },\n    {\n      \"milestone_id\": \"MS-C\",\n      \"title\": \"엘리베이터 위치 확인\",\n      \"order\": 2,\n      \"status\": \"pending\",\n      \"tasks\": [\n        {\n          \"task_id\": \"T-5\",\n          \"title\": \"복도 내부 위치 확인\",\n          \"deps\": [],\n          \"status\": \"pending\",\n          \"attempt\": 1,\n          \"derived_from\": null,\n          \"action_items\": [],\n          \"evaluation\": null,\n          \"node_kind\": \"sense\",\n          \"target\": \"robot-01\"\n        },\n        {\n          \"task_id\": \"T-6\",\n          \"title\": \"복도 내부 이동\",\n          \"deps\": [],\n          \"status\": \"pending\",\n          \"attempt\": 1,\n          \"derived_from\": null,\n          \"action_items\": [],\n          \"evaluation\": null,\n          \"node_kind\": \"act\",\n          \"target\": \"robot-01\"\n        }\n      ],\n      \"assigned_targets\": [\n        \"robot-01\"\n      ]\n    },\n    {\n      \"milestone_id\": \"MS-D\",\n      \"title\": \"엘리베이터 앞까지 이동\",\n      \"order\": 3,\n      \"status\": \"pending\",\n      \"tasks\": [\n        {\n          \"task_id\": \"T-7\",\n          \"title\": \"엘리베이터 위치 감지\",\n          \"deps\": [],\n          \"status\": \"pending\",\n          \"attempt\": 1,\n          \"derived_from\": null,\n          \"action_items\": [],\n          \"evaluation\": null,\n          \"node_kind\": \"sense\",\n          \"target\": \"robot-01\"\n        },\n        {\n          \"task_id\": \"T-8\",\n          \"title\": \"엘리베이터 위치까지 이동\",\n          \"deps\": [],\n          \"status\": \"pending\",\n          \"attempt\": 1,\n          \"derived_from\": null,\n          \"action_items\": [],\n          \"evaluation\": null,\n          \"node_kind\": \"act\",\n          \"target\": \"robot-01\"\n        }\n      ],\n      \"assigned_targets\": [\n        \"robot-01\"\n      ]\n    }\n  ]\n}\n",
+        "vram_used_mib": 5843,
+        "vram_model_mib": 5837,
+        "served_model_file": "Qwen3-8B-Q4_K_M.gguf",
+        "predicted_per_sec": 51.04426416209477,
+        "prompt_per_sec": 1869.8994621359254,
+        "truncated": false,
+        "chat_template_applied": true
+      },
+      "id_obeyed": true,
+      "nodes": 8,
+      "edges_by_rule": 7,
+      "model_deps": 0
+    },
+    {
+      "mission_id": "MSN-260831-01",
+      "variant": 1,
+      "utterance": "503호에서 엘리베이터까지 가줘",
+      "ok": true,
+      "failure": null,
+      "wall_sec": 6.866,
+      "model_requested": "Qwen3-8B-Q4_K_M",
+      "model_reported": "Qwen3-8B-Q4_K_M",
+      "served_model_file": "Qwen3-8B-Q4_K_M.gguf",
+      "elapsed_sec": 6.625,
+      "schema_errors": [],
+      "schema_pass": true,
+      "grammar": {
+        "source": "contracts/mission.schema.json",
+        "digest": "84cfad7b7fd9801b",
+        "bytes": 5167
+      },
+      "grammar_enforced": true,
+      "examples_used": [
+        "MSN-260831-02",
+        "MSN-260831-03"
+      ],
+      "equipment_given": 10,
+      "node_kinds_given": false,
+      "tasks_given": true,
+      "extra": {
+        "stub": false,
+        "grammar_enforced": true,
+        "places_given": true,
+        "equipment_given": 10,
+        "examples_given": 2,
+        "node_kinds_given": false,
+        "tasks_given": true,
+        "rules_applied": [
+          "출력은 JSON 객체 하나다. 설명·주석·코드펜스를 붙이지 않는다.",
+          "마일스톤은 여러 개다. 임무를 **사람이 중간에 확인할 수 있는 단위**로 나눈다 — 발화 한 줄을 마일스톤 하나로 옮겨 적는 것은 분리가 아니다.",
+          "마일스톤은 **무엇을 이루는가**를 적는다. 어떻게 이루는지는 적지 않는다.",
+          "로봇 기종·모델명(예: 사족보행 로봇의 제품명)을 쓰지 않는다. 어떤 장비가 하는지는 assigned_targets 로만 적는다.",
+          "좌표를 쓰지 않는다. (x, y, z) 나 절대 위치를 적으면 그 마일스톤은 이 건물 전용이 된다.",
+          "속도·가속도·모터 파라미터를 쓰지 않는다. 그것은 실행이 정하는 값이다.",
+          "임무 자체의 조건(시간·수위·거리 임계처럼 발화가 요구한 것)은 적어도 된다. 금지되는 것은 구현 파라미터다.",
+          "장소는 아래 [장소] 목록에 있는 이름만 쓴다. 목록에 없는 방 번호·층·시설을 만들면 실패다.",
+          "assigned_targets 에는 아래 [장비] 목록에 있는 id 만 쓴다. 목록에 없는 장비 id 를 만들면 실패다.",
+          "각 마일스톤의 tasks 에 그 마일스톤을 이루는 태스크를 낸다. 태스크는 **한 번에 하나씩 실행되는 단위**다.",
+          "task_id 는 임무 안에서 겹치지 않게 짓는다 (예: T-1, T-2 …).",
+          "node_kind 는 반드시 적는다 — sense(관측·값을 받아 온다) · decide(판정·조건이 참인가) · act(구동·명령을 낸다) · verify(검증·구동 결과가 의도대로인가) · report(보고·기록하고 알린다) 중 하나다.",
+          "target 은 그 태스크를 수행하는 [장비] 목록의 id 하나다. 장비가 필요 없는 태스크(임무 종료 처리 등)는 null 로 둔다 — 아무 장비나 적지 않는다.",
+          "deps 는 **빈 배열 [] 로 둔다.** 태스크 사이의 순서는 다음 단계가 규칙으로 계산한다. 여기서 적으면 버려진다.",
+          "status 는 \"pending\", attempt 는 1, derived_from 은 null, action_items 는 [], evaluation 은 null 로 둔다. 그 자리는 실행이 채운다.",
+          "node_kind 는 그 자리에만 적는다. 제목에 「(감지)」·「(확인)」처럼 종류를 덧붙이지 않는다.",
+          "status 는 모두 \"pending\", order 는 0 부터 1 씩 는다.",
+          "mission_id 와 utterance 는 아래 [요청] 에 준 값을 그대로 옮긴다."
+        ],
+        "prompt_digest": "d7acc55590f74492",
+        "prompt_chars": 7712,
+        "overwritten": [
+          {
+            "field": "utterance",
+            "model": {
+              "audio_ref": null,
+              "text": "503호에서 엘리베이터까지 가줘",
+              "engine": "script",
+              "confidence": 1
+            },
+            "used": {
+              "text": "503호에서 복도에 있는 엘리베이터 앞까지 이동해줘.",
+              "engine": "script",
+              "confidence": 1,
+              "audio_ref": null
+            }
+          }
+        ],
+        "load_sec": 0,
+        "prompt_tokens": 4702,
+        "completion_tokens": 332,
+        "stop_reason": "eos",
+        "applied_options": {
+          "temperature": 0,
+          "seed": 0,
+          "n_predict": 2048,
+          "ctx_size": 8192,
+          "n_gpu_layers": 99
+        },
+        "json_recovered": false,
+        "raw_text": "{\n  \"mission_id\": \"MSN-260831-01\",\n  \"utterance\": {\n    \"audio_ref\": null,\n    \"text\": \"503호에서 엘리베이터까지 가줘\",\n    \"engine\": \"script\",\n    \"confidence\": 1\n  },\n  \"milestones\": [\n    {\n      \"milestone_id\": \"MS-A\",\n      \"title\": \"503호에서 출발\",\n      \"order\": 0,\n      \"status\": \"pending\",\n      \"tasks\": [],\n      \"assigned_targets\": [\n        \"robot-01\"\n      ]\n    },\n    {\n      \"milestone_id\": \"MS-B\",\n      \"title\": \"503호 문을 확인하고 출발\",\n      \"order\": 1,\n      \"status\": \"pending\",\n      \"tasks\": [],\n      \"assigned_targets\": [\n        \"robot-01\"\n      ]\n    },\n    {\n      \"milestone_id\": \"MS-C\",\n      \"title\": \"5층 동서 복도로 이동\",\n      \"order\": 2,\n      \"status\": \"pending\",\n      \"tasks\": [],\n      \"assigned_targets\": [\n        \"robot-01\"\n      ]\n    },\n    {\n      \"milestone_id\": \"MS-D\",\n      \"title\": \"엘리베이터 위치에 도달\",\n      \"order\": 3,\n      \"status\": \"pending\",\n      \"tasks\": [],\n      \"assigned_targets\": [\n        \"robot-01\"\n      ]\n    }\n  ]\n}\n",
+        "vram_used_mib": 5843,
+        "vram_model_mib": 5837,
+        "served_model_file": "Qwen3-8B-Q4_K_M.gguf",
+        "predicted_per_sec": 50.57022898535801,
+        "prompt_per_sec": 484.04222097308104,
+        "truncated": false,
+        "chat_template_applied": true
+      },
+      "id_obeyed": true,
+      "nodes": 0,
+      "edges_by_rule": 0,
+      "model_deps": 0
+    },
+    {
+      "mission_id": "MSN-260831-01",
+      "variant": 2,
+      "utterance": "503호 나가서 복도 엘리베이터 앞으로 이동",
+      "ok": true,
+      "failure": null,
+      "wall_sec": 14.045,
+      "model_requested": "Qwen3-8B-Q4_K_M",
+      "model_reported": "Qwen3-8B-Q4_K_M",
+      "served_model_file": "Qwen3-8B-Q4_K_M.gguf",
+      "elapsed_sec": 13.743,
+      "schema_errors": [],
+      "schema_pass": true,
+      "grammar": {
+        "source": "contracts/mission.schema.json",
+        "digest": "84cfad7b7fd9801b",
+        "bytes": 5167
+      },
+      "grammar_enforced": true,
+      "examples_used": [
+        "MSN-260831-02",
+        "MSN-260831-03"
+      ],
+      "equipment_given": 10,
+      "node_kinds_given": false,
+      "tasks_given": true,
+      "extra": {
+        "stub": false,
+        "grammar_enforced": true,
+        "places_given": true,
+        "equipment_given": 10,
+        "examples_given": 2,
+        "node_kinds_given": false,
+        "tasks_given": true,
+        "rules_applied": [
+          "출력은 JSON 객체 하나다. 설명·주석·코드펜스를 붙이지 않는다.",
+          "마일스톤은 여러 개다. 임무를 **사람이 중간에 확인할 수 있는 단위**로 나눈다 — 발화 한 줄을 마일스톤 하나로 옮겨 적는 것은 분리가 아니다.",
+          "마일스톤은 **무엇을 이루는가**를 적는다. 어떻게 이루는지는 적지 않는다.",
+          "로봇 기종·모델명(예: 사족보행 로봇의 제품명)을 쓰지 않는다. 어떤 장비가 하는지는 assigned_targets 로만 적는다.",
+          "좌표를 쓰지 않는다. (x, y, z) 나 절대 위치를 적으면 그 마일스톤은 이 건물 전용이 된다.",
+          "속도·가속도·모터 파라미터를 쓰지 않는다. 그것은 실행이 정하는 값이다.",
+          "임무 자체의 조건(시간·수위·거리 임계처럼 발화가 요구한 것)은 적어도 된다. 금지되는 것은 구현 파라미터다.",
+          "장소는 아래 [장소] 목록에 있는 이름만 쓴다. 목록에 없는 방 번호·층·시설을 만들면 실패다.",
+          "assigned_targets 에는 아래 [장비] 목록에 있는 id 만 쓴다. 목록에 없는 장비 id 를 만들면 실패다.",
+          "각 마일스톤의 tasks 에 그 마일스톤을 이루는 태스크를 낸다. 태스크는 **한 번에 하나씩 실행되는 단위**다.",
+          "task_id 는 임무 안에서 겹치지 않게 짓는다 (예: T-1, T-2 …).",
+          "node_kind 는 반드시 적는다 — sense(관측·값을 받아 온다) · decide(판정·조건이 참인가) · act(구동·명령을 낸다) · verify(검증·구동 결과가 의도대로인가) · report(보고·기록하고 알린다) 중 하나다.",
+          "target 은 그 태스크를 수행하는 [장비] 목록의 id 하나다. 장비가 필요 없는 태스크(임무 종료 처리 등)는 null 로 둔다 — 아무 장비나 적지 않는다.",
+          "deps 는 **빈 배열 [] 로 둔다.** 태스크 사이의 순서는 다음 단계가 규칙으로 계산한다. 여기서 적으면 버려진다.",
+          "status 는 \"pending\", attempt 는 1, derived_from 은 null, action_items 는 [], evaluation 은 null 로 둔다. 그 자리는 실행이 채운다.",
+          "node_kind 는 그 자리에만 적는다. 제목에 「(감지)」·「(확인)」처럼 종류를 덧붙이지 않는다.",
+          "status 는 모두 \"pending\", order 는 0 부터 1 씩 는다.",
+          "mission_id 와 utterance 는 아래 [요청] 에 준 값을 그대로 옮긴다."
+        ],
+        "prompt_digest": "7c00d5fd2e31bba4",
+        "prompt_chars": 7719,
+        "overwritten": [],
+        "load_sec": 0,
+        "prompt_tokens": 4707,
+        "completion_tokens": 688,
+        "stop_reason": "eos",
+        "applied_options": {
+          "temperature": 0,
+          "seed": 0,
+          "n_predict": 2048,
+          "ctx_size": 8192,
+          "n_gpu_layers": 99
+        },
+        "json_recovered": false,
+        "raw_text": "{\n  \"mission_id\": \"MSN-260831-01\",\n  \"utterance\": {\n    \"audio_ref\": null,\n    \"text\": \"503호에서 복도에 있는 엘리베이터 앞까지 이동해줘.\",\n    \"engine\": \"script\",\n    \"confidence\": 1\n  },\n  \"milestones\": [\n    {\n      \"milestone_id\": \"MS-A\",\n      \"title\": \"503호 문으로 이동\",\n      \"order\": 0,\n      \"status\": \"pending\",\n      \"tasks\": [\n        {\n          \"task_id\": \"T-1\",\n          \"title\": \"503호 문으로 이동\",\n          \"deps\": [],\n          \"status\": \"pending\",\n          \"attempt\": 1,\n          \"derived_from\": null,\n          \"action_items\": [],\n          \"evaluation\": null,\n          \"node_kind\": \"act\",\n          \"target\": \"robot-01\"\n        }\n      ],\n      \"assigned_targets\": [\n        \"robot-01\"\n      ]\n    },\n    {\n      \"milestone_id\": \"MS-B\",\n      \"title\": \"503호 문을 열고 복도로 이동\",\n      \"order\": 1,\n      \"status\": \"pending\",\n      \"tasks\": [\n        {\n          \"task_id\": \"T-2\",\n          \"title\": \"503호 문을 열고 복도로 이동\",\n          \"deps\": [],\n          \"status\": \"pending\",\n          \"attempt\": 1,\n          \"derived_from\": null,\n          \"action_items\": [],\n          \"evaluation\": null,\n          \"node_kind\": \"act\",\n          \"target\": \"robot-01\"\n        }\n      ],\n      \"assigned_targets\": [\n        \"robot-01\"\n      ]\n    },\n    {\n      \"milestone_id\": \"MS-C\",\n      \"title\": \"엘리베이터 위치 확인\",\n      \"order\": 2,\n      \"status\": \"pending\",\n      \"tasks\": [\n        {\n          \"task_id\": \"T-3\",\n          \"title\": \"엘리베이터 위치 확인\",\n          \"deps\": [],\n          \"status\": \"pending\",\n          \"attempt\": 1,\n          \"derived_from\": null,\n          \"action_items\": [],\n          \"evaluation\": null,\n          \"node_kind\": \"sense\",\n          \"target\": \"edge-node-a\"\n        }\n      ],\n      \"assigned_targets\": [\n        \"edge-node-a\"\n      ]\n    },\n    {\n      \"milestone_id\": \"MS-D\",\n      \"title\": \"엘리베이터 앞까지 이동\",\n      \"order\": 3,\n      \"status\": \"pending\",\n      \"tasks\": [\n        {\n          \"task_id\": \"T-4\",\n          \"title\": \"엘리베이터 앞까지 이동\",\n          \"deps\": [],\n          \"status\": \"pending\",\n          \"attempt\": 1,\n          \"derived_from\": null,\n          \"action_items\": [],\n          \"evaluation\": null,\n          \"node_kind\": \"act\",\n          \"target\": \"robot-01\"\n        }\n      ],\n      \"assigned_targets\": [\n        \"robot-01\"\n      ]\n    }\n  ]\n}\n",
+        "vram_used_mib": 5843,
+        "vram_model_mib": 5837,
+        "served_model_file": "Qwen3-8B-Q4_K_M.gguf",
+        "predicted_per_sec": 50.451741367189314,
+        "prompt_per_sec": 370.8232275651947,
+        "truncated": false,
+        "chat_template_applied": true
+      },
+      "id_obeyed": true,
+      "nodes": 4,
+      "edges_by_rule": 3,
+      "model_deps": 0
+    },
+    {
+      "mission_id": "MSN-260831-01",
+      "variant": 3,
+      "utterance": "503호에서 출발해서 복도 엘레베이터 앞까지 가줘",
+      "ok": true,
+      "failure": null,
+      "wall_sec": 13.498,
+      "model_requested": "Qwen3-8B-Q4_K_M",
+      "model_reported": "Qwen3-8B-Q4_K_M",
+      "served_model_file": "Qwen3-8B-Q4_K_M.gguf",
+      "elapsed_sec": 13.298,
+      "schema_errors": [],
+      "schema_pass": true,
+      "grammar": {
+        "source": "contracts/mission.schema.json",
+        "digest": "84cfad7b7fd9801b",
+        "bytes": 5167
+      },
+      "grammar_enforced": true,
+      "examples_used": [
+        "MSN-260831-02",
+        "MSN-260831-03"
+      ],
+      "equipment_given": 10,
+      "node_kinds_given": false,
+      "tasks_given": true,
+      "extra": {
+        "stub": false,
+        "grammar_enforced": true,
+        "places_given": true,
+        "equipment_given": 10,
+        "examples_given": 2,
+        "node_kinds_given": false,
+        "tasks_given": true,
+        "rules_applied": [
+          "출력은 JSON 객체 하나다. 설명·주석·코드펜스를 붙이지 않는다.",
+          "마일스톤은 여러 개다. 임무를 **사람이 중간에 확인할 수 있는 단위**로 나눈다 — 발화 한 줄을 마일스톤 하나로 옮겨 적는 것은 분리가 아니다.",
+          "마일스톤은 **무엇을 이루는가**를 적는다. 어떻게 이루는지는 적지 않는다.",
+          "로봇 기종·모델명(예: 사족보행 로봇의 제품명)을 쓰지 않는다. 어떤 장비가 하는지는 assigned_targets 로만 적는다.",
+          "좌표를 쓰지 않는다. (x, y, z) 나 절대 위치를 적으면 그 마일스톤은 이 건물 전용이 된다.",
+          "속도·가속도·모터 파라미터를 쓰지 않는다. 그것은 실행이 정하는 값이다.",
+          "임무 자체의 조건(시간·수위·거리 임계처럼 발화가 요구한 것)은 적어도 된다. 금지되는 것은 구현 파라미터다.",
+          "장소는 아래 [장소] 목록에 있는 이름만 쓴다. 목록에 없는 방 번호·층·시설을 만들면 실패다.",
+          "assigned_targets 에는 아래 [장비] 목록에 있는 id 만 쓴다. 목록에 없는 장비 id 를 만들면 실패다.",
+          "각 마일스톤의 tasks 에 그 마일스톤을 이루는 태스크를 낸다. 태스크는 **한 번에 하나씩 실행되는 단위**다.",
+          "task_id 는 임무 안에서 겹치지 않게 짓는다 (예: T-1, T-2 …).",
+          "node_kind 는 반드시 적는다 — sense(관측·값을 받아 온다) · decide(판정·조건이 참인가) · act(구동·명령을 낸다) · verify(검증·구동 결과가 의도대로인가) · report(보고·기록하고 알린다) 중 하나다.",
+          "target 은 그 태스크를 수행하는 [장비] 목록의 id 하나다. 장비가 필요 없는 태스크(임무 종료 처리 등)는 null 로 둔다 — 아무 장비나 적지 않는다.",
+          "deps 는 **빈 배열 [] 로 둔다.** 태스크 사이의 순서는 다음 단계가 규칙으로 계산한다. 여기서 적으면 버려진다.",
+          "status 는 \"pending\", attempt 는 1, derived_from 은 null, action_items 는 [], evaluation 은 null 로 둔다. 그 자리는 실행이 채운다.",
+          "node_kind 는 그 자리에만 적는다. 제목에 「(감지)」·「(확인)」처럼 종류를 덧붙이지 않는다.",
+          "status 는 모두 \"pending\", order 는 0 부터 1 씩 는다.",
+          "mission_id 와 utterance 는 아래 [요청] 에 준 값을 그대로 옮긴다."
+        ],
+        "prompt_digest": "99d940e920344912",
+        "prompt_chars": 7722,
+        "overwritten": [
+          {
+            "field": "utterance",
+            "model": {
+              "audio_ref": null,
+              "text": "503호에서 출발해서 복도 엘레베이터 앞까지 가줘",
+              "engine": "script",
+              "confidence": 1
+            },
+            "used": {
+              "text": "503호에서 복도에 있는 엘리베이터 앞까지 이동해줘.",
+              "engine": "script",
+              "confidence": 1,
+              "audio_ref": null
+            }
+          }
+        ],
+        "load_sec": 0,
+        "prompt_tokens": 4710,
+        "completion_tokens": 672,
+        "stop_reason": "eos",
+        "applied_options": {
+          "temperature": 0,
+          "seed": 0,
+          "n_predict": 2048,
+          "ctx_size": 8192,
+          "n_gpu_layers": 99
+        },
+        "json_recovered": false,
+        "raw_text": "{\n  \"mission_id\": \"MSN-260831-01\",\n  \"utterance\": {\n    \"audio_ref\": null,\n    \"text\": \"503호에서 출발해서 복도 엘레베이터 앞까지 가줘\",\n    \"engine\": \"script\",\n    \"confidence\": 1\n  },\n  \"milestones\": [\n    {\n      \"milestone_id\": \"MS-A\",\n      \"title\": \"503호 출발\",\n      \"order\": 0,\n      \"status\": \"pending\",\n      \"tasks\": [\n        {\n          \"task_id\": \"T-1\",\n          \"title\": \"503호 출발\",\n          \"deps\": [],\n          \"status\": \"pending\",\n          \"attempt\": 1,\n          \"derived_from\": null,\n          \"action_items\": [],\n          \"evaluation\": null,\n          \"node_kind\": \"act\",\n          \"target\": \"robot-01\"\n        }\n      ],\n      \"assigned_targets\": [\n        \"robot-01\"\n      ]\n    },\n    {\n      \"milestone_id\": \"MS-B\",\n      \"title\": \"503호 문으로 이동\",\n      \"order\": 1,\n      \"status\": \"pending\",\n      \"tasks\": [\n        {\n          \"task_id\": \"T-2\",\n          \"title\": \"503호 문으로 이동\",\n          \"deps\": [],\n          \"status\": \"pending\",\n          \"attempt\": 1,\n          \"derived_from\": null,\n          \"action_items\": [],\n          \"evaluation\": null,\n          \"node_kind\": \"act\",\n          \"target\": \"robot-01\"\n        }\n      ],\n      \"assigned_targets\": [\n        \"robot-01\"\n      ]\n    },\n    {\n      \"milestone_id\": \"MS-C\",\n      \"title\": \"복도로 이동\",\n      \"order\": 2,\n      \"status\": \"pending\",\n      \"tasks\": [\n        {\n          \"task_id\": \"T-3\",\n          \"title\": \"복도로 이동\",\n          \"deps\": [],\n          \"status\": \"pending\",\n          \"attempt\": 1,\n          \"derived_from\": null,\n          \"action_items\": [],\n          \"evaluation\": null,\n          \"node_kind\": \"act\",\n          \"target\": \"robot-01\"\n        }\n      ],\n      \"assigned_targets\": [\n        \"robot-01\"\n      ]\n    },\n    {\n      \"milestone_id\": \"MS-D\",\n      \"title\": \"엘리베이터 앞까지 이동\",\n      \"order\": 3,\n      \"status\": \"pending\",\n      \"tasks\": [\n        {\n          \"task_id\": \"T-4\",\n          \"title\": \"엘리베이터 앞까지 이동\",\n          \"deps\": [],\n          \"status\": \"pending\",\n          \"attempt\": 1,\n          \"derived_from\": null,\n          \"action_items\": [],\n          \"evaluation\": null,\n          \"node_kind\": \"act\",\n          \"target\": \"robot-01\"\n        }\n      ],\n      \"assigned_targets\": [\n        \"robot-01\"\n      ]\n    }\n  ]\n}\n",
+        "vram_used_mib": 6842,
+        "vram_model_mib": 5837,
+        "served_model_file": "Qwen3-8B-Q4_K_M.gguf",
+        "predicted_per_sec": 50.793883417212626,
+        "prompt_per_sec": 582.2924855154745,
+        "truncated": false,
+        "chat_template_applied": true
+      },
+      "id_obeyed": true,
+      "nodes": 4,
+      "edges_by_rule": 3,
+      "model_deps": 0
+    },
+    {
+      "mission_id": "MSN-260831-01",
+      "variant": 4,
+      "utterance": "복도에 있는 엘리베이터 앞으로 이동, 503호에서 출발",
+      "ok": true,
+      "failure": null,
+      "wall_sec": 13.232,
+      "model_requested": "Qwen3-8B-Q4_K_M",
+      "model_reported": "Qwen3-8B-Q4_K_M",
+      "served_model_file": "Qwen3-8B-Q4_K_M.gguf",
+      "elapsed_sec": 12.993,
+      "schema_errors": [],
+      "schema_pass": true,
+      "grammar": {
+        "source": "contracts/mission.schema.json",
+        "digest": "84cfad7b7fd9801b",
+        "bytes": 5167
+      },
+      "grammar_enforced": true,
+      "examples_used": [
+        "MSN-260831-02",
+        "MSN-260831-03"
+      ],
+      "equipment_given": 10,
+      "node_kinds_given": false,
+      "tasks_given": true,
+      "extra": {
+        "stub": false,
+        "grammar_enforced": true,
+        "places_given": true,
+        "equipment_given": 10,
+        "examples_given": 2,
+        "node_kinds_given": false,
+        "tasks_given": true,
+        "rules_applied": [
+          "출력은 JSON 객체 하나다. 설명·주석·코드펜스를 붙이지 않는다.",
+          "마일스톤은 여러 개다. 임무를 **사람이 중간에 확인할 수 있는 단위**로 나눈다 — 발화 한 줄을 마일스톤 하나로 옮겨 적는 것은 분리가 아니다.",
+          "마일스톤은 **무엇을 이루는가**를 적는다. 어떻게 이루는지는 적지 않는다.",
+          "로봇 기종·모델명(예: 사족보행 로봇의 제품명)을 쓰지 않는다. 어떤 장비가 하는지는 assigned_targets 로만 적는다.",
+          "좌표를 쓰지 않는다. (x, y, z) 나 절대 위치를 적으면 그 마일스톤은 이 건물 전용이 된다.",
+          "속도·가속도·모터 파라미터를 쓰지 않는다. 그것은 실행이 정하는 값이다.",
+          "임무 자체의 조건(시간·수위·거리 임계처럼 발화가 요구한 것)은 적어도 된다. 금지되는 것은 구현 파라미터다.",
+          "장소는 아래 [장소] 목록에 있는 이름만 쓴다. 목록에 없는 방 번호·층·시설을 만들면 실패다.",
+          "assigned_targets 에는 아래 [장비] 목록에 있는 id 만 쓴다. 목록에 없는 장비 id 를 만들면 실패다.",
+          "각 마일스톤의 tasks 에 그 마일스톤을 이루는 태스크를 낸다. 태스크는 **한 번에 하나씩 실행되는 단위**다.",
+          "task_id 는 임무 안에서 겹치지 않게 짓는다 (예: T-1, T-2 …).",
+          "node_kind 는 반드시 적는다 — sense(관측·값을 받아 온다) · decide(판정·조건이 참인가) · act(구동·명령을 낸다) · verify(검증·구동 결과가 의도대로인가) · report(보고·기록하고 알린다) 중 하나다.",
+          "target 은 그 태스크를 수행하는 [장비] 목록의 id 하나다. 장비가 필요 없는 태스크(임무 종료 처리 등)는 null 로 둔다 — 아무 장비나 적지 않는다.",
+          "deps 는 **빈 배열 [] 로 둔다.** 태스크 사이의 순서는 다음 단계가 규칙으로 계산한다. 여기서 적으면 버려진다.",
+          "status 는 \"pending\", attempt 는 1, derived_from 은 null, action_items 는 [], evaluation 은 null 로 둔다. 그 자리는 실행이 채운다.",
+          "node_kind 는 그 자리에만 적는다. 제목에 「(감지)」·「(확인)」처럼 종류를 덧붙이지 않는다.",
+          "status 는 모두 \"pending\", order 는 0 부터 1 씩 는다.",
+          "mission_id 와 utterance 는 아래 [요청] 에 준 값을 그대로 옮긴다."
+        ],
+        "prompt_digest": "ffaab046d56fd8c0",
+        "prompt_chars": 7725,
+        "overwritten": [],
+        "load_sec": 0,
+        "prompt_tokens": 4711,
+        "completion_tokens": 663,
+        "stop_reason": "eos",
+        "applied_options": {
+          "temperature": 0,
+          "seed": 0,
+          "n_predict": 2048,
+          "ctx_size": 8192,
+          "n_gpu_layers": 99
+        },
+        "json_recovered": false,
+        "raw_text": "{\"mission_id\": \"MSN-260831-01\", \"utterance\": {\"audio_ref\": null, \"text\": \"503호에서 복도에 있는 엘리베이터 앞까지 이동해줘.\", \"engine\": \"script\", \"confidence\": 1}, \"milestones\": [{\"milestone_id\": \"MS-A\", \"title\": \"503호 출발\", \"order\": 0, \"status\": \"pending\", \"tasks\": [{\"task_id\": \"T-1\", \"title\": \"503호 내부 위치 확인\", \"deps\": [], \"status\": \"pending\", \"attempt\": 1, \"derived_from\": null, \"action_items\": [], \"evaluation\": null, \"node_kind\": \"sense\", \"target\": \"robot-01\"}], \"assigned_targets\": [\"robot-01\"]}, {\"milestone_id\": \"MS-B\", \"title\": \"503호에서 복도로 이동\", \"order\": 1, \"status\": \"pending\", \"tasks\": [{\"task_id\": \"T-2\", \"title\": \"503호 문 열기\", \"deps\": [], \"status\": \"pending\", \"attempt\": 1, \"derived_from\": null, \"action_items\": [], \"evaluation\": null, \"node_kind\": \"act\", \"target\": \"robot-01\"}], \"assigned_targets\": [\"robot-01\"]}, {\"milestone_id\": \"MS-C\", \"title\": \"복도로 이동 중\", \"order\": 2, \"status\": \"pending\", \"tasks\": [{\"task_id\": \"T-3\", \"title\": \"복도 내부 위치 확인\", \"deps\": [], \"status\": \"pending\", \"attempt\": 1, \"derived_from\": null, \"action_items\": [], \"evaluation\": null, \"node_kind\": \"sense\", \"target\": \"robot-01\"}], \"assigned_targets\": [\"robot-01\"]}, {\"milestone_id\": \"MS-D\", \"title\": \"엘리베이터 위치 확인\", \"order\": 3, \"status\": \"pending\", \"tasks\": [{\"task_id\": \"T-4\", \"title\": \"엘리베이터 위치 감지\", \"deps\": [], \"status\": \"pending\", \"attempt\": 1, \"derived_from\": null, \"action_items\": [], \"evaluation\": null, \"node_kind\": \"sense\", \"target\": \"edge-node-a\"}], \"assigned_targets\": [\"edge-node-a\"]}, {\"milestone_id\": \"MS-E\", \"title\": \"엘리베이터 앞까지 이동\", \"order\": 4, \"status\": \"pending\", \"tasks\": [{\"task_id\": \"T-5\", \"title\": \"엘리베이터 방향으로 이동\", \"deps\": [], \"status\": \"pending\", \"attempt\": 1, \"derived_from\": null, \"action_items\": [], \"evaluation\": null, \"node_kind\": \"act\", \"target\": \"robot-01\"}], \"assigned_targets\": [\"robot-01\"]}]}\n",
+        "vram_used_mib": 5950,
+        "vram_model_mib": 5837,
+        "served_model_file": "Qwen3-8B-Q4_K_M.gguf",
+        "predicted_per_sec": 51.359641779687614,
+        "prompt_per_sec": 640.2850660467965,
+        "truncated": false,
+        "chat_template_applied": true
+      },
+      "id_obeyed": true,
+      "nodes": 5,
+      "edges_by_rule": 4,
+      "model_deps": 0
+    },
+    {
+      "mission_id": "MSN-260831-02",
+      "variant": 0,
+      "utterance": "503호 내에서 고정 카메라의 사각지대를 탐지해줘.",
+      "ok": true,
+      "failure": null,
+      "wall_sec": 8.624,
+      "model_requested": "Qwen3-8B-Q4_K_M",
+      "model_reported": "Qwen3-8B-Q4_K_M",
+      "served_model_file": "Qwen3-8B-Q4_K_M.gguf",
+      "elapsed_sec": 8.327,
+      "schema_errors": [],
+      "schema_pass": true,
+      "grammar": {
+        "source": "contracts/mission.schema.json",
+        "digest": "84cfad7b7fd9801b",
+        "bytes": 5167
+      },
+      "grammar_enforced": true,
+      "examples_used": [
+        "MSN-260831-01",
+        "MSN-260831-03"
+      ],
+      "equipment_given": 10,
+      "node_kinds_given": false,
+      "tasks_given": true,
+      "extra": {
+        "stub": false,
+        "grammar_enforced": true,
+        "places_given": true,
+        "equipment_given": 10,
+        "examples_given": 2,
+        "node_kinds_given": false,
+        "tasks_given": true,
+        "rules_applied": [
+          "출력은 JSON 객체 하나다. 설명·주석·코드펜스를 붙이지 않는다.",
+          "마일스톤은 여러 개다. 임무를 **사람이 중간에 확인할 수 있는 단위**로 나눈다 — 발화 한 줄을 마일스톤 하나로 옮겨 적는 것은 분리가 아니다.",
+          "마일스톤은 **무엇을 이루는가**를 적는다. 어떻게 이루는지는 적지 않는다.",
+          "로봇 기종·모델명(예: 사족보행 로봇의 제품명)을 쓰지 않는다. 어떤 장비가 하는지는 assigned_targets 로만 적는다.",
+          "좌표를 쓰지 않는다. (x, y, z) 나 절대 위치를 적으면 그 마일스톤은 이 건물 전용이 된다.",
+          "속도·가속도·모터 파라미터를 쓰지 않는다. 그것은 실행이 정하는 값이다.",
+          "임무 자체의 조건(시간·수위·거리 임계처럼 발화가 요구한 것)은 적어도 된다. 금지되는 것은 구현 파라미터다.",
+          "장소는 아래 [장소] 목록에 있는 이름만 쓴다. 목록에 없는 방 번호·층·시설을 만들면 실패다.",
+          "assigned_targets 에는 아래 [장비] 목록에 있는 id 만 쓴다. 목록에 없는 장비 id 를 만들면 실패다.",
+          "각 마일스톤의 tasks 에 그 마일스톤을 이루는 태스크를 낸다. 태스크는 **한 번에 하나씩 실행되는 단위**다.",
+          "task_id 는 임무 안에서 겹치지 않게 짓는다 (예: T-1, T-2 …).",
+          "node_kind 는 반드시 적는다 — sense(관측·값을 받아 온다) · decide(판정·조건이 참인가) · act(구동·명령을 낸다) · verify(검증·구동 결과가 의도대로인가) · report(보고·기록하고 알린다) 중 하나다.",
+          "target 은 그 태스크를 수행하는 [장비] 목록의 id 하나다. 장비가 필요 없는 태스크(임무 종료 처리 등)는 null 로 둔다 — 아무 장비나 적지 않는다.",
+          "deps 는 **빈 배열 [] 로 둔다.** 태스크 사이의 순서는 다음 단계가 규칙으로 계산한다. 여기서 적으면 버려진다.",
+          "status 는 \"pending\", attempt 는 1, derived_from 은 null, action_items 는 [], evaluation 은 null 로 둔다. 그 자리는 실행이 채운다.",
+          "node_kind 는 그 자리에만 적는다. 제목에 「(감지)」·「(확인)」처럼 종류를 덧붙이지 않는다.",
+          "status 는 모두 \"pending\", order 는 0 부터 1 씩 는다.",
+          "mission_id 와 utterance 는 아래 [요청] 에 준 값을 그대로 옮긴다."
+        ],
+        "prompt_digest": "b76122846a7d1405",
+        "prompt_chars": 7791,
+        "overwritten": [],
+        "load_sec": 0,
+        "prompt_tokens": 4699,
+        "completion_tokens": 385,
+        "stop_reason": "eos",
+        "applied_options": {
+          "temperature": 0,
+          "seed": 0,
+          "n_predict": 2048,
+          "ctx_size": 8192,
+          "n_gpu_layers": 99
+        },
+        "json_recovered": false,
+        "raw_text": "{\n  \"mission_id\": \"MSN-260831-02\",\n  \"utterance\": {\n    \"audio_ref\": null,\n    \"text\": \"503호 내에서 고정 카메라의 사각지대를 탐지해줘.\",\n    \"engine\": \"script\",\n    \"confidence\": 1\n  },\n  \"milestones\": [\n    {\n      \"milestone_id\": \"MS-A\",\n      \"title\": \"503호 내부로 이동\",\n      \"order\": 0,\n      \"status\": \"pending\",\n      \"tasks\": [],\n      \"assigned_targets\": [\n        \"robot-01\"\n      ]\n    },\n    {\n      \"milestone_id\": \"MS-B\",\n      \"title\": \"고정 카메라의 위치 확인\",\n      \"order\": 1,\n      \"status\": \"pending\",\n      \"tasks\": [],\n      \"assigned_targets\": [\n        \"camera-02\"\n      ]\n    },\n    {\n      \"milestone_id\": \"MS-C\",\n      \"title\": \"카메라 사각지대 탐지\",\n      \"order\": 2,\n      \"status\": \"pending\",\n      \"tasks\": [],\n      \"assigned_targets\": [\n        \"camera-02\"\n      ]\n    },\n    {\n      \"milestone_id\": \"MS-D\",\n      \"title\": \"탐지 결과 보고\",\n      \"order\": 3,\n      \"status\": \"pending\",\n      \"tasks\": [],\n      \"assigned_targets\": [\n        \"camera-02\"\n      ]\n    },\n    {\n      \"milestone_id\": \"MS-E\",\n      \"title\": \"임무 종료\",\n      \"order\": 4,\n      \"status\": \"pending\",\n      \"tasks\": [],\n      \"assigned_targets\": []\n    }\n  ]\n}\n",
+        "vram_used_mib": 5950,
+        "vram_model_mib": 5837,
+        "served_model_file": "Qwen3-8B-Q4_K_M.gguf",
+        "predicted_per_sec": 50.30235118953271,
+        "prompt_per_sec": 1604.643324773247,
+        "truncated": false,
+        "chat_template_applied": true
+      },
+      "id_obeyed": true,
+      "nodes": 0,
+      "edges_by_rule": 0,
+      "model_deps": 0
+    },
+    {
+      "mission_id": "MSN-260831-02",
+      "variant": 1,
+      "utterance": "고정 카메라가 못 보는 사각지대를 탐지해줘",
+      "ok": true,
+      "failure": null,
+      "wall_sec": 15.867,
+      "model_requested": "Qwen3-8B-Q4_K_M",
+      "model_reported": "Qwen3-8B-Q4_K_M",
+      "served_model_file": "Qwen3-8B-Q4_K_M.gguf",
+      "elapsed_sec": 15.637,
+      "schema_errors": [],
+      "schema_pass": true,
+      "grammar": {
+        "source": "contracts/mission.schema.json",
+        "digest": "84cfad7b7fd9801b",
+        "bytes": 5167
+      },
+      "grammar_enforced": true,
+      "examples_used": [
+        "MSN-260831-01",
+        "MSN-260831-03"
+      ],
+      "equipment_given": 10,
+      "node_kinds_given": false,
+      "tasks_given": true,
+      "extra": {
+        "stub": false,
+        "grammar_enforced": true,
+        "places_given": true,
+        "equipment_given": 10,
+        "examples_given": 2,
+        "node_kinds_given": false,
+        "tasks_given": true,
+        "rules_applied": [
+          "출력은 JSON 객체 하나다. 설명·주석·코드펜스를 붙이지 않는다.",
+          "마일스톤은 여러 개다. 임무를 **사람이 중간에 확인할 수 있는 단위**로 나눈다 — 발화 한 줄을 마일스톤 하나로 옮겨 적는 것은 분리가 아니다.",
+          "마일스톤은 **무엇을 이루는가**를 적는다. 어떻게 이루는지는 적지 않는다.",
+          "로봇 기종·모델명(예: 사족보행 로봇의 제품명)을 쓰지 않는다. 어떤 장비가 하는지는 assigned_targets 로만 적는다.",
+          "좌표를 쓰지 않는다. (x, y, z) 나 절대 위치를 적으면 그 마일스톤은 이 건물 전용이 된다.",
+          "속도·가속도·모터 파라미터를 쓰지 않는다. 그것은 실행이 정하는 값이다.",
+          "임무 자체의 조건(시간·수위·거리 임계처럼 발화가 요구한 것)은 적어도 된다. 금지되는 것은 구현 파라미터다.",
+          "장소는 아래 [장소] 목록에 있는 이름만 쓴다. 목록에 없는 방 번호·층·시설을 만들면 실패다.",
+          "assigned_targets 에는 아래 [장비] 목록에 있는 id 만 쓴다. 목록에 없는 장비 id 를 만들면 실패다.",
+          "각 마일스톤의 tasks 에 그 마일스톤을 이루는 태스크를 낸다. 태스크는 **한 번에 하나씩 실행되는 단위**다.",
+          "task_id 는 임무 안에서 겹치지 않게 짓는다 (예: T-1, T-2 …).",
+          "node_kind 는 반드시 적는다 — sense(관측·값을 받아 온다) · decide(판정·조건이 참인가) · act(구동·명령을 낸다) · verify(검증·구동 결과가 의도대로인가) · report(보고·기록하고 알린다) 중 하나다.",
+          "target 은 그 태스크를 수행하는 [장비] 목록의 id 하나다. 장비가 필요 없는 태스크(임무 종료 처리 등)는 null 로 둔다 — 아무 장비나 적지 않는다.",
+          "deps 는 **빈 배열 [] 로 둔다.** 태스크 사이의 순서는 다음 단계가 규칙으로 계산한다. 여기서 적으면 버려진다.",
+          "status 는 \"pending\", attempt 는 1, derived_from 은 null, action_items 는 [], evaluation 은 null 로 둔다. 그 자리는 실행이 채운다.",
+          "node_kind 는 그 자리에만 적는다. 제목에 「(감지)」·「(확인)」처럼 종류를 덧붙이지 않는다.",
+          "status 는 모두 \"pending\", order 는 0 부터 1 씩 는다.",
+          "mission_id 와 utterance 는 아래 [요청] 에 준 값을 그대로 옮긴다."
+        ],
+        "prompt_digest": "cde8abd804e73b6e",
+        "prompt_chars": 7786,
+        "overwritten": [
+          {
+            "field": "utterance",
+            "model": {
+              "audio_ref": null,
+              "text": "고정 카메라가 못 보는 사각지대를 탐지해줘",
+              "engine": "script",
+              "confidence": 1
+            },
+            "used": {
+              "text": "503호 내에서 고정 카메라의 사각지대를 탐지해줘.",
+              "engine": "script",
+              "confidence": 1,
+              "audio_ref": null
+            }
+          }
+        ],
+        "load_sec": 0,
+        "prompt_tokens": 4695,
+        "completion_tokens": 274,
+        "stop_reason": "eos",
+        "applied_options": {
+          "temperature": 0,
+          "seed": 0,
+          "n_predict": 2048,
+          "ctx_size": 8192,
+          "n_gpu_layers": 99
+        },
+        "json_recovered": false,
+        "raw_text": "{\n  \"mission_id\": \"MSN-260831-02\",\n  \"utterance\": {\n    \"audio_ref\": null,\n    \"text\": \"고정 카메라가 못 보는 사각지대를 탐지해줘\",\n    \"engine\": \"script\",\n    \"confidence\": 1\n  },\n  \"milestones\": [\n    {\n      \"milestone_id\": \"MS-A\",\n      \"title\": \"고정 카메라의 시야 범위 확인\",\n      \"order\": 0,\n      \"status\": \"pending\",\n      \"tasks\": [],\n      \"assigned_targets\": [\n        \"camera-02\"\n      ]\n    },\n    {\n      \"milestone_id\": \"MS-B\",\n      \"title\": \"사각지대 영역 파악\",\n      \"order\": 1,\n      \"status\": \"pending\",\n      \"tasks\": [],\n      \"assigned_targets\": [\n        \"camera-02\"\n      ]\n    },\n    {\n      \"milestone_id\": \"MS-C\",\n      \"title\": \"사각지대 위치 보고\",\n      \"order\": 2,\n      \"status\": \"pending\",\n      \"tasks\": [],\n      \"assigned_targets\": [\n        \"camera-02\"\n      ]\n    }\n  ]\n}\n",
+        "vram_used_mib": 5950,
+        "vram_model_mib": 5837,
+        "served_model_file": "Qwen3-8B-Q4_K_M.gguf",
+        "predicted_per_sec": 49.64764719254376,
+        "prompt_per_sec": 565.2378709373528,
+        "truncated": false,
+        "chat_template_applied": true
+      },
+      "id_obeyed": true,
+      "nodes": 0,
+      "edges_by_rule": 0,
+      "model_deps": 0
+    },
+    {
+      "mission_id": "MSN-260831-02",
+      "variant": 2,
+      "utterance": "503호 사각지대 찾아줘, 고정 카메라 기준으로",
+      "ok": true,
+      "failure": null,
+      "wall_sec": 8.055,
+      "model_requested": "Qwen3-8B-Q4_K_M",
+      "model_reported": "Qwen3-8B-Q4_K_M",
+      "served_model_file": "Qwen3-8B-Q4_K_M.gguf",
+      "elapsed_sec": 7.816,
+      "schema_errors": [],
+      "schema_pass": true,
+      "grammar": {
+        "source": "contracts/mission.schema.json",
+        "digest": "84cfad7b7fd9801b",
+        "bytes": 5167
+      },
+      "grammar_enforced": true,
+      "examples_used": [
+        "MSN-260831-01",
+        "MSN-260831-03"
+      ],
+      "equipment_given": 10,
+      "node_kinds_given": false,
+      "tasks_given": true,
+      "extra": {
+        "stub": false,
+        "grammar_enforced": true,
+        "places_given": true,
+        "equipment_given": 10,
+        "examples_given": 2,
+        "node_kinds_given": false,
+        "tasks_given": true,
+        "rules_applied": [
+          "출력은 JSON 객체 하나다. 설명·주석·코드펜스를 붙이지 않는다.",
+          "마일스톤은 여러 개다. 임무를 **사람이 중간에 확인할 수 있는 단위**로 나눈다 — 발화 한 줄을 마일스톤 하나로 옮겨 적는 것은 분리가 아니다.",
+          "마일스톤은 **무엇을 이루는가**를 적는다. 어떻게 이루는지는 적지 않는다.",
+          "로봇 기종·모델명(예: 사족보행 로봇의 제품명)을 쓰지 않는다. 어떤 장비가 하는지는 assigned_targets 로만 적는다.",
+          "좌표를 쓰지 않는다. (x, y, z) 나 절대 위치를 적으면 그 마일스톤은 이 건물 전용이 된다.",
+          "속도·가속도·모터 파라미터를 쓰지 않는다. 그것은 실행이 정하는 값이다.",
+          "임무 자체의 조건(시간·수위·거리 임계처럼 발화가 요구한 것)은 적어도 된다. 금지되는 것은 구현 파라미터다.",
+          "장소는 아래 [장소] 목록에 있는 이름만 쓴다. 목록에 없는 방 번호·층·시설을 만들면 실패다.",
+          "assigned_targets 에는 아래 [장비] 목록에 있는 id 만 쓴다. 목록에 없는 장비 id 를 만들면 실패다.",
+          "각 마일스톤의 tasks 에 그 마일스톤을 이루는 태스크를 낸다. 태스크는 **한 번에 하나씩 실행되는 단위**다.",
+          "task_id 는 임무 안에서 겹치지 않게 짓는다 (예: T-1, T-2 …).",
+          "node_kind 는 반드시 적는다 — sense(관측·값을 받아 온다) · decide(판정·조건이 참인가) · act(구동·명령을 낸다) · verify(검증·구동 결과가 의도대로인가) · report(보고·기록하고 알린다) 중 하나다.",
+          "target 은 그 태스크를 수행하는 [장비] 목록의 id 하나다. 장비가 필요 없는 태스크(임무 종료 처리 등)는 null 로 둔다 — 아무 장비나 적지 않는다.",
+          "deps 는 **빈 배열 [] 로 둔다.** 태스크 사이의 순서는 다음 단계가 규칙으로 계산한다. 여기서 적으면 버려진다.",
+          "status 는 \"pending\", attempt 는 1, derived_from 은 null, action_items 는 [], evaluation 은 null 로 둔다. 그 자리는 실행이 채운다.",
+          "node_kind 는 그 자리에만 적는다. 제목에 「(감지)」·「(확인)」처럼 종류를 덧붙이지 않는다.",
+          "status 는 모두 \"pending\", order 는 0 부터 1 씩 는다.",
+          "mission_id 와 utterance 는 아래 [요청] 에 준 값을 그대로 옮긴다."
+        ],
+        "prompt_digest": "3aa8e456d68dda99",
+        "prompt_chars": 7789,
+        "overwritten": [],
+        "load_sec": 0,
+        "prompt_tokens": 4696,
+        "completion_tokens": 390,
+        "stop_reason": "eos",
+        "applied_options": {
+          "temperature": 0,
+          "seed": 0,
+          "n_predict": 2048,
+          "ctx_size": 8192,
+          "n_gpu_layers": 99
+        },
+        "json_recovered": false,
+        "raw_text": "{\n  \"mission_id\": \"MSN-260831-02\",\n  \"utterance\": {\n    \"audio_ref\": null,\n    \"text\": \"503호 내에서 고정 카메라의 사각지대를 탐지해줘.\",\n    \"engine\": \"script\",\n    \"confidence\": 1\n  },\n  \"milestones\": [\n    {\n      \"milestone_id\": \"MS-A\",\n      \"title\": \"503호 내부 영역 확인\",\n      \"order\": 0,\n      \"status\": \"pending\",\n      \"tasks\": [],\n      \"assigned_targets\": [\n        \"robot-01\"\n      ]\n    },\n    {\n      \"milestone_id\": \"MS-B\",\n      \"title\": \"고정 카메라의 시야 영역 파악\",\n      \"order\": 1,\n      \"status\": \"pending\",\n      \"tasks\": [],\n      \"assigned_targets\": [\n        \"camera-02\"\n      ]\n    },\n    {\n      \"milestone_id\": \"MS-C\",\n      \"title\": \"사각지대 영역 탐지\",\n      \"order\": 2,\n      \"status\": \"pending\",\n      \"tasks\": [],\n      \"assigned_targets\": [\n        \"camera-02\"\n      ]\n    },\n    {\n      \"milestone_id\": \"MS-D\",\n      \"title\": \"사각지대 위치 보고\",\n      \"order\": 3,\n      \"status\": \"pending\",\n      \"tasks\": [],\n      \"assigned_targets\": [\n        \"camera-02\"\n      ]\n    },\n    {\n      \"milestone_id\": \"MS-E\",\n      \"title\": \"임무 종료\",\n      \"order\": 4,\n      \"status\": \"pending\",\n      \"tasks\": [],\n      \"assigned_targets\": []\n    }\n  ]\n}\n",
+        "vram_used_mib": 5950,
+        "vram_model_mib": 5837,
+        "served_model_file": "Qwen3-8B-Q4_K_M.gguf",
+        "predicted_per_sec": 50.360022375903,
+        "prompt_per_sec": 594.8675382167808,
+        "truncated": false,
+        "chat_template_applied": true
+      },
+      "id_obeyed": true,
+      "nodes": 0,
+      "edges_by_rule": 0,
+      "model_deps": 0
+    },
+    {
+      "mission_id": "MSN-260831-02",
+      "variant": 3,
+      "utterance": "고정 카메라 사각 지대를 로봇으로 탐지",
+      "ok": true,
+      "failure": null,
+      "wall_sec": 8.049,
+      "model_requested": "Qwen3-8B-Q4_K_M",
+      "model_reported": "Qwen3-8B-Q4_K_M",
+      "served_model_file": "Qwen3-8B-Q4_K_M.gguf",
+      "elapsed_sec": 7.732,
+      "schema_errors": [],
+      "schema_pass": true,
+      "grammar": {
+        "source": "contracts/mission.schema.json",
+        "digest": "84cfad7b7fd9801b",
+        "bytes": 5167
+      },
+      "grammar_enforced": true,
+      "examples_used": [
+        "MSN-260831-01",
+        "MSN-260831-03"
+      ],
+      "equipment_given": 10,
+      "node_kinds_given": false,
+      "tasks_given": true,
+      "extra": {
+        "stub": false,
+        "grammar_enforced": true,
+        "places_given": true,
+        "equipment_given": 10,
+        "examples_given": 2,
+        "node_kinds_given": false,
+        "tasks_given": true,
+        "rules_applied": [
+          "출력은 JSON 객체 하나다. 설명·주석·코드펜스를 붙이지 않는다.",
+          "마일스톤은 여러 개다. 임무를 **사람이 중간에 확인할 수 있는 단위**로 나눈다 — 발화 한 줄을 마일스톤 하나로 옮겨 적는 것은 분리가 아니다.",
+          "마일스톤은 **무엇을 이루는가**를 적는다. 어떻게 이루는지는 적지 않는다.",
+          "로봇 기종·모델명(예: 사족보행 로봇의 제품명)을 쓰지 않는다. 어떤 장비가 하는지는 assigned_targets 로만 적는다.",
+          "좌표를 쓰지 않는다. (x, y, z) 나 절대 위치를 적으면 그 마일스톤은 이 건물 전용이 된다.",
+          "속도·가속도·모터 파라미터를 쓰지 않는다. 그것은 실행이 정하는 값이다.",
+          "임무 자체의 조건(시간·수위·거리 임계처럼 발화가 요구한 것)은 적어도 된다. 금지되는 것은 구현 파라미터다.",
+          "장소는 아래 [장소] 목록에 있는 이름만 쓴다. 목록에 없는 방 번호·층·시설을 만들면 실패다.",
+          "assigned_targets 에는 아래 [장비] 목록에 있는 id 만 쓴다. 목록에 없는 장비 id 를 만들면 실패다.",
+          "각 마일스톤의 tasks 에 그 마일스톤을 이루는 태스크를 낸다. 태스크는 **한 번에 하나씩 실행되는 단위**다.",
+          "task_id 는 임무 안에서 겹치지 않게 짓는다 (예: T-1, T-2 …).",
+          "node_kind 는 반드시 적는다 — sense(관측·값을 받아 온다) · decide(판정·조건이 참인가) · act(구동·명령을 낸다) · verify(검증·구동 결과가 의도대로인가) · report(보고·기록하고 알린다) 중 하나다.",
+          "target 은 그 태스크를 수행하는 [장비] 목록의 id 하나다. 장비가 필요 없는 태스크(임무 종료 처리 등)는 null 로 둔다 — 아무 장비나 적지 않는다.",
+          "deps 는 **빈 배열 [] 로 둔다.** 태스크 사이의 순서는 다음 단계가 규칙으로 계산한다. 여기서 적으면 버려진다.",
+          "status 는 \"pending\", attempt 는 1, derived_from 은 null, action_items 는 [], evaluation 은 null 로 둔다. 그 자리는 실행이 채운다.",
+          "node_kind 는 그 자리에만 적는다. 제목에 「(감지)」·「(확인)」처럼 종류를 덧붙이지 않는다.",
+          "status 는 모두 \"pending\", order 는 0 부터 1 씩 는다.",
+          "mission_id 와 utterance 는 아래 [요청] 에 준 값을 그대로 옮긴다."
+        ],
+        "prompt_digest": "a0ca08b50e49f744",
+        "prompt_chars": 7784,
+        "overwritten": [],
+        "load_sec": 0,
+        "prompt_tokens": 4692,
+        "completion_tokens": 383,
+        "stop_reason": "eos",
+        "applied_options": {
+          "temperature": 0,
+          "seed": 0,
+          "n_predict": 2048,
+          "ctx_size": 8192,
+          "n_gpu_layers": 99
+        },
+        "json_recovered": false,
+        "raw_text": "{\n  \"mission_id\": \"MSN-260831-02\",\n  \"utterance\": {\n    \"audio_ref\": null,\n    \"text\": \"503호 내에서 고정 카메라의 사각지대를 탐지해줘.\",\n    \"engine\": \"script\",\n    \"confidence\": 1\n  },\n  \"milestones\": [\n    {\n      \"milestone_id\": \"MS-A\",\n      \"title\": \"503호 내부로 이동\",\n      \"order\": 0,\n      \"status\": \"pending\",\n      \"tasks\": [],\n      \"assigned_targets\": [\n        \"robot-01\"\n      ]\n    },\n    {\n      \"milestone_id\": \"MS-B\",\n      \"title\": \"고정 카메라의 영상 확인\",\n      \"order\": 1,\n      \"status\": \"pending\",\n      \"tasks\": [],\n      \"assigned_targets\": [\n        \"camera-02\"\n      ]\n    },\n    {\n      \"milestone_id\": \"MS-C\",\n      \"title\": \"사각지대 탐지\",\n      \"order\": 2,\n      \"status\": \"pending\",\n      \"tasks\": [],\n      \"assigned_targets\": [\n        \"robot-01\"\n      ]\n    },\n    {\n      \"milestone_id\": \"MS-D\",\n      \"title\": \"탐지 결과 보고\",\n      \"order\": 3,\n      \"status\": \"pending\",\n      \"tasks\": [],\n      \"assigned_targets\": [\n        \"robot-01\"\n      ]\n    },\n    {\n      \"milestone_id\": \"MS-E\",\n      \"title\": \"임무 종료\",\n      \"order\": 4,\n      \"status\": \"pending\",\n      \"tasks\": [],\n      \"assigned_targets\": []\n    }\n  ]\n}\n",
+        "vram_used_mib": 5950,
+        "vram_model_mib": 5837,
+        "served_model_file": "Qwen3-8B-Q4_K_M.gguf",
+        "predicted_per_sec": 50.1512941134459,
+        "prompt_per_sec": 408.2188052796298,
+        "truncated": false,
+        "chat_template_applied": true
+      },
+      "id_obeyed": true,
+      "nodes": 0,
+      "edges_by_rule": 0,
+      "model_deps": 0
+    },
+    {
+      "mission_id": "MSN-260831-02",
+      "variant": 4,
+      "utterance": "503호에서 카메라 사각지대 탐지 돌려줘",
+      "ok": true,
+      "failure": null,
+      "wall_sec": 12.24,
+      "model_requested": "Qwen3-8B-Q4_K_M",
+      "model_reported": "Qwen3-8B-Q4_K_M",
+      "served_model_file": "Qwen3-8B-Q4_K_M.gguf",
+      "elapsed_sec": 11.906,
+      "schema_errors": [],
+      "schema_pass": true,
+      "grammar": {
+        "source": "contracts/mission.schema.json",
+        "digest": "84cfad7b7fd9801b",
+        "bytes": 5167
+      },
+      "grammar_enforced": true,
+      "examples_used": [
+        "MSN-260831-01",
+        "MSN-260831-03"
+      ],
+      "equipment_given": 10,
+      "node_kinds_given": false,
+      "tasks_given": true,
+      "extra": {
+        "stub": false,
+        "grammar_enforced": true,
+        "places_given": true,
+        "equipment_given": 10,
+        "examples_given": 2,
+        "node_kinds_given": false,
+        "tasks_given": true,
+        "rules_applied": [
+          "출력은 JSON 객체 하나다. 설명·주석·코드펜스를 붙이지 않는다.",
+          "마일스톤은 여러 개다. 임무를 **사람이 중간에 확인할 수 있는 단위**로 나눈다 — 발화 한 줄을 마일스톤 하나로 옮겨 적는 것은 분리가 아니다.",
+          "마일스톤은 **무엇을 이루는가**를 적는다. 어떻게 이루는지는 적지 않는다.",
+          "로봇 기종·모델명(예: 사족보행 로봇의 제품명)을 쓰지 않는다. 어떤 장비가 하는지는 assigned_targets 로만 적는다.",
+          "좌표를 쓰지 않는다. (x, y, z) 나 절대 위치를 적으면 그 마일스톤은 이 건물 전용이 된다.",
+          "속도·가속도·모터 파라미터를 쓰지 않는다. 그것은 실행이 정하는 값이다.",
+          "임무 자체의 조건(시간·수위·거리 임계처럼 발화가 요구한 것)은 적어도 된다. 금지되는 것은 구현 파라미터다.",
+          "장소는 아래 [장소] 목록에 있는 이름만 쓴다. 목록에 없는 방 번호·층·시설을 만들면 실패다.",
+          "assigned_targets 에는 아래 [장비] 목록에 있는 id 만 쓴다. 목록에 없는 장비 id 를 만들면 실패다.",
+          "각 마일스톤의 tasks 에 그 마일스톤을 이루는 태스크를 낸다. 태스크는 **한 번에 하나씩 실행되는 단위**다.",
+          "task_id 는 임무 안에서 겹치지 않게 짓는다 (예: T-1, T-2 …).",
+          "node_kind 는 반드시 적는다 — sense(관측·값을 받아 온다) · decide(판정·조건이 참인가) · act(구동·명령을 낸다) · verify(검증·구동 결과가 의도대로인가) · report(보고·기록하고 알린다) 중 하나다.",
+          "target 은 그 태스크를 수행하는 [장비] 목록의 id 하나다. 장비가 필요 없는 태스크(임무 종료 처리 등)는 null 로 둔다 — 아무 장비나 적지 않는다.",
+          "deps 는 **빈 배열 [] 로 둔다.** 태스크 사이의 순서는 다음 단계가 규칙으로 계산한다. 여기서 적으면 버려진다.",
+          "status 는 \"pending\", attempt 는 1, derived_from 은 null, action_items 는 [], evaluation 은 null 로 둔다. 그 자리는 실행이 채운다.",
+          "node_kind 는 그 자리에만 적는다. 제목에 「(감지)」·「(확인)」처럼 종류를 덧붙이지 않는다.",
+          "status 는 모두 \"pending\", order 는 0 부터 1 씩 는다.",
+          "mission_id 와 utterance 는 아래 [요청] 에 준 값을 그대로 옮긴다."
+        ],
+        "prompt_digest": "3e573ce55e9ea5e4",
+        "prompt_chars": 7785,
+        "overwritten": [
+          {
+            "field": "utterance",
+            "model": {
+              "audio_ref": null,
+              "text": "503호에서 고정 카메라의 사각지대를 탐지해줘.",
+              "engine": "script",
+              "confidence": 1
+            },
+            "used": {
+              "text": "503호 내에서 고정 카메라의 사각지대를 탐지해줘.",
+              "engine": "script",
+              "confidence": 1,
+              "audio_ref": null
+            }
+          }
+        ],
+        "load_sec": 0,
+        "prompt_tokens": 4695,
+        "completion_tokens": 581,
+        "stop_reason": "eos",
+        "applied_options": {
+          "temperature": 0,
+          "seed": 0,
+          "n_predict": 2048,
+          "ctx_size": 8192,
+          "n_gpu_layers": 99
+        },
+        "json_recovered": false,
+        "raw_text": "{\n  \"mission_id\": \"MSN-260831-02\",\n  \"utterance\": {\n    \"audio_ref\": null,\n    \"text\": \"503호에서 고정 카메라의 사각지대를 탐지해줘.\",\n    \"engine\": \"script\",\n    \"confidence\": 1\n  },\n  \"milestones\": [\n    {\n      \"milestone_id\": \"MS-A\",\n      \"title\": \"503호 내부 영상 수집\",\n      \"order\": 0,\n      \"status\": \"pending\",\n      \"tasks\": [\n        {\n          \"task_id\": \"T-1\",\n          \"title\": \"카메라 영상 촬영\",\n          \"deps\": [],\n          \"status\": \"pending\",\n          \"attempt\": 1,\n          \"derived_from\": null,\n          \"action_items\": [],\n          \"evaluation\": null,\n          \"node_kind\": \"act\",\n          \"target\": \"camera-02\"\n        }\n      ],\n      \"assigned_targets\": [\n        \"camera-02\"\n      ]\n    },\n    {\n      \"milestone_id\": \"MS-B\",\n      \"title\": \"영상 분석 및 사각지대 탐지\",\n      \"order\": 1,\n      \"status\": \"pending\",\n      \"tasks\": [\n        {\n          \"task_id\": \"T-2\",\n          \"title\": \"영상 분석 및 사각지대 탐지\",\n          \"deps\": [],\n          \"status\": \"pending\",\n          \"attempt\": 1,\n          \"derived_from\": null,\n          \"action_items\": [],\n          \"evaluation\": null,\n          \"node_kind\": \"act\",\n          \"target\": \"camera-02\"\n        }\n      ],\n      \"assigned_targets\": [\n        \"camera-02\"\n      ]\n    },\n    {\n      \"milestone_id\": \"MS-C\",\n      \"title\": \"탐지 결과 보고\",\n      \"order\": 2,\n      \"status\": \"pending\",\n      \"tasks\": [\n        {\n          \"task_id\": \"T-3\",\n          \"title\": \"탐지 결과 보고\",\n          \"deps\": [],\n          \"status\": \"pending\",\n          \"attempt\": 1,\n          \"derived_from\": null,\n          \"action_items\": [],\n          \"evaluation\": null,\n          \"node_kind\": \"report\",\n          \"target\": \"camera-02\"\n        }\n      ],\n      \"assigned_targets\": [\n        \"camera-02\"\n      ]\n    },\n    {\n      \"milestone_id\": \"MS-D\",\n      \"title\": \"임무 종료\",\n      \"order\": 3,\n      \"status\": \"pending\",\n      \"tasks\": [],\n      \"assigned_targets\": []\n    }\n  ]\n}\n",
+        "vram_used_mib": 5950,
+        "vram_model_mib": 5837,
+        "served_model_file": "Qwen3-8B-Q4_K_M.gguf",
+        "predicted_per_sec": 49.23109935336649,
+        "prompt_per_sec": 407.11086986022525,
+        "truncated": false,
+        "chat_template_applied": true
+      },
+      "id_obeyed": true,
+      "nodes": 3,
+      "edges_by_rule": 2,
+      "model_deps": 0
+    },
+    {
+      "mission_id": "MSN-260831-03",
+      "variant": 0,
+      "utterance": "월류방어벽 자동 개폐 시스템을 가동해.",
+      "ok": true,
+      "failure": null,
+      "wall_sec": 8.307,
+      "model_requested": "Qwen3-8B-Q4_K_M",
+      "model_reported": "Qwen3-8B-Q4_K_M",
+      "served_model_file": "Qwen3-8B-Q4_K_M.gguf",
+      "elapsed_sec": 8.003,
+      "schema_errors": [],
+      "schema_pass": true,
+      "grammar": {
+        "source": "contracts/mission.schema.json",
+        "digest": "84cfad7b7fd9801b",
+        "bytes": 5167
+      },
+      "grammar_enforced": true,
+      "examples_used": [
+        "MSN-260831-01",
+        "MSN-260831-02"
+      ],
+      "equipment_given": 10,
+      "node_kinds_given": false,
+      "tasks_given": true,
+      "extra": {
+        "stub": false,
+        "grammar_enforced": true,
+        "places_given": true,
+        "equipment_given": 10,
+        "examples_given": 2,
+        "node_kinds_given": false,
+        "tasks_given": true,
+        "rules_applied": [
+          "출력은 JSON 객체 하나다. 설명·주석·코드펜스를 붙이지 않는다.",
+          "마일스톤은 여러 개다. 임무를 **사람이 중간에 확인할 수 있는 단위**로 나눈다 — 발화 한 줄을 마일스톤 하나로 옮겨 적는 것은 분리가 아니다.",
+          "마일스톤은 **무엇을 이루는가**를 적는다. 어떻게 이루는지는 적지 않는다.",
+          "로봇 기종·모델명(예: 사족보행 로봇의 제품명)을 쓰지 않는다. 어떤 장비가 하는지는 assigned_targets 로만 적는다.",
+          "좌표를 쓰지 않는다. (x, y, z) 나 절대 위치를 적으면 그 마일스톤은 이 건물 전용이 된다.",
+          "속도·가속도·모터 파라미터를 쓰지 않는다. 그것은 실행이 정하는 값이다.",
+          "임무 자체의 조건(시간·수위·거리 임계처럼 발화가 요구한 것)은 적어도 된다. 금지되는 것은 구현 파라미터다.",
+          "장소는 아래 [장소] 목록에 있는 이름만 쓴다. 목록에 없는 방 번호·층·시설을 만들면 실패다.",
+          "assigned_targets 에는 아래 [장비] 목록에 있는 id 만 쓴다. 목록에 없는 장비 id 를 만들면 실패다.",
+          "각 마일스톤의 tasks 에 그 마일스톤을 이루는 태스크를 낸다. 태스크는 **한 번에 하나씩 실행되는 단위**다.",
+          "task_id 는 임무 안에서 겹치지 않게 짓는다 (예: T-1, T-2 …).",
+          "node_kind 는 반드시 적는다 — sense(관측·값을 받아 온다) · decide(판정·조건이 참인가) · act(구동·명령을 낸다) · verify(검증·구동 결과가 의도대로인가) · report(보고·기록하고 알린다) 중 하나다.",
+          "target 은 그 태스크를 수행하는 [장비] 목록의 id 하나다. 장비가 필요 없는 태스크(임무 종료 처리 등)는 null 로 둔다 — 아무 장비나 적지 않는다.",
+          "deps 는 **빈 배열 [] 로 둔다.** 태스크 사이의 순서는 다음 단계가 규칙으로 계산한다. 여기서 적으면 버려진다.",
+          "status 는 \"pending\", attempt 는 1, derived_from 은 null, action_items 는 [], evaluation 은 null 로 둔다. 그 자리는 실행이 채운다.",
+          "node_kind 는 그 자리에만 적는다. 제목에 「(감지)」·「(확인)」처럼 종류를 덧붙이지 않는다.",
+          "status 는 모두 \"pending\", order 는 0 부터 1 씩 는다.",
+          "mission_id 와 utterance 는 아래 [요청] 에 준 값을 그대로 옮긴다."
+        ],
+        "prompt_digest": "558bdf57b3015675",
+        "prompt_chars": 8140,
+        "overwritten": [],
+        "load_sec": 0,
+        "prompt_tokens": 4816,
+        "completion_tokens": 373,
+        "stop_reason": "eos",
+        "applied_options": {
+          "temperature": 0,
+          "seed": 0,
+          "n_predict": 2048,
+          "ctx_size": 8192,
+          "n_gpu_layers": 99
+        },
+        "json_recovered": false,
+        "raw_text": "{\n  \"mission_id\": \"MSN-260831-03\",\n  \"utterance\": {\n    \"audio_ref\": null,\n    \"text\": \"월류방어벽 자동 개폐 시스템을 가동해.\",\n    \"engine\": \"script\",\n    \"confidence\": 1\n  },\n  \"milestones\": [\n    {\n      \"milestone_id\": \"MS-A\",\n      \"title\": \"수위 센서 데이터 수집\",\n      \"order\": 0,\n      \"status\": \"pending\",\n      \"tasks\": [],\n      \"assigned_targets\": [\n        \"sensor-01\",\n        \"sensor-02\",\n        \"sensor-04\"\n      ]\n    },\n    {\n      \"milestone_id\": \"MS-B\",\n      \"title\": \"수위 데이터 분석 및 월류 방어벽 개폐 판단\",\n      \"order\": 1,\n      \"status\": \"pending\",\n      \"tasks\": [],\n      \"assigned_targets\": [\n        \"edge-node-a\"\n      ]\n    },\n    {\n      \"milestone_id\": \"MS-C\",\n      \"title\": \"월류 방어벽 개폐 명령 전달\",\n      \"order\": 2,\n      \"status\": \"pending\",\n      \"tasks\": [],\n      \"assigned_targets\": [\n        \"actuator-01\",\n        \"actuator-02\"\n      ]\n    },\n    {\n      \"milestone_id\": \"MS-D\",\n      \"title\": \"개폐 상태 확인 및 결과 보고\",\n      \"order\": 3,\n      \"status\": \"pending\",\n      \"tasks\": [],\n      \"assigned_targets\": [\n        \"sensor-01\",\n        \"sensor-02\",\n        \"sensor-04\"\n      ]\n    }\n  ]\n}\n",
+        "vram_used_mib": 5950,
+        "vram_model_mib": 5837,
+        "served_model_file": "Qwen3-8B-Q4_K_M.gguf",
+        "predicted_per_sec": 49.35891133348273,
+        "prompt_per_sec": 1465.3945731256465,
+        "truncated": false,
+        "chat_template_applied": true
+      },
+      "id_obeyed": true,
+      "nodes": 0,
+      "edges_by_rule": 0,
+      "model_deps": 0
+    },
+    {
+      "mission_id": "MSN-260831-03",
+      "variant": 1,
+      "utterance": "월류방어벽 자동 개폐 켜줘",
+      "ok": true,
+      "failure": null,
+      "wall_sec": 9.323,
+      "model_requested": "Qwen3-8B-Q4_K_M",
+      "model_reported": "Qwen3-8B-Q4_K_M",
+      "served_model_file": "Qwen3-8B-Q4_K_M.gguf",
+      "elapsed_sec": 9.056,
+      "schema_errors": [],
+      "schema_pass": true,
+      "grammar": {
+        "source": "contracts/mission.schema.json",
+        "digest": "84cfad7b7fd9801b",
+        "bytes": 5167
+      },
+      "grammar_enforced": true,
+      "examples_used": [
+        "MSN-260831-01",
+        "MSN-260831-02"
+      ],
+      "equipment_given": 10,
+      "node_kinds_given": false,
+      "tasks_given": true,
+      "extra": {
+        "stub": false,
+        "grammar_enforced": true,
+        "places_given": true,
+        "equipment_given": 10,
+        "examples_given": 2,
+        "node_kinds_given": false,
+        "tasks_given": true,
+        "rules_applied": [
+          "출력은 JSON 객체 하나다. 설명·주석·코드펜스를 붙이지 않는다.",
+          "마일스톤은 여러 개다. 임무를 **사람이 중간에 확인할 수 있는 단위**로 나눈다 — 발화 한 줄을 마일스톤 하나로 옮겨 적는 것은 분리가 아니다.",
+          "마일스톤은 **무엇을 이루는가**를 적는다. 어떻게 이루는지는 적지 않는다.",
+          "로봇 기종·모델명(예: 사족보행 로봇의 제품명)을 쓰지 않는다. 어떤 장비가 하는지는 assigned_targets 로만 적는다.",
+          "좌표를 쓰지 않는다. (x, y, z) 나 절대 위치를 적으면 그 마일스톤은 이 건물 전용이 된다.",
+          "속도·가속도·모터 파라미터를 쓰지 않는다. 그것은 실행이 정하는 값이다.",
+          "임무 자체의 조건(시간·수위·거리 임계처럼 발화가 요구한 것)은 적어도 된다. 금지되는 것은 구현 파라미터다.",
+          "장소는 아래 [장소] 목록에 있는 이름만 쓴다. 목록에 없는 방 번호·층·시설을 만들면 실패다.",
+          "assigned_targets 에는 아래 [장비] 목록에 있는 id 만 쓴다. 목록에 없는 장비 id 를 만들면 실패다.",
+          "각 마일스톤의 tasks 에 그 마일스톤을 이루는 태스크를 낸다. 태스크는 **한 번에 하나씩 실행되는 단위**다.",
+          "task_id 는 임무 안에서 겹치지 않게 짓는다 (예: T-1, T-2 …).",
+          "node_kind 는 반드시 적는다 — sense(관측·값을 받아 온다) · decide(판정·조건이 참인가) · act(구동·명령을 낸다) · verify(검증·구동 결과가 의도대로인가) · report(보고·기록하고 알린다) 중 하나다.",
+          "target 은 그 태스크를 수행하는 [장비] 목록의 id 하나다. 장비가 필요 없는 태스크(임무 종료 처리 등)는 null 로 둔다 — 아무 장비나 적지 않는다.",
+          "deps 는 **빈 배열 [] 로 둔다.** 태스크 사이의 순서는 다음 단계가 규칙으로 계산한다. 여기서 적으면 버려진다.",
+          "status 는 \"pending\", attempt 는 1, derived_from 은 null, action_items 는 [], evaluation 은 null 로 둔다. 그 자리는 실행이 채운다.",
+          "node_kind 는 그 자리에만 적는다. 제목에 「(감지)」·「(확인)」처럼 종류를 덧붙이지 않는다.",
+          "status 는 모두 \"pending\", order 는 0 부터 1 씩 는다.",
+          "mission_id 와 utterance 는 아래 [요청] 에 준 값을 그대로 옮긴다."
+        ],
+        "prompt_digest": "716057d210572dc7",
+        "prompt_chars": 8133,
+        "overwritten": [],
+        "load_sec": 0,
+        "prompt_tokens": 4813,
+        "completion_tokens": 457,
+        "stop_reason": "eos",
+        "applied_options": {
+          "temperature": 0,
+          "seed": 0,
+          "n_predict": 2048,
+          "ctx_size": 8192,
+          "n_gpu_layers": 99
+        },
+        "json_recovered": false,
+        "raw_text": "{\n  \"mission_id\": \"MSN-260831-03\",\n  \"utterance\": {\n    \"audio_ref\": null,\n    \"text\": \"월류방어벽 자동 개폐 시스템을 가동해.\",\n    \"engine\": \"script\",\n    \"confidence\": 1\n  },\n  \"milestones\": [\n    {\n      \"milestone_id\": \"MS-A\",\n      \"title\": \"월류방어벽 자동 개폐 시스템 작동 확인\",\n      \"order\": 0,\n      \"status\": \"pending\",\n      \"tasks\": [],\n      \"assigned_targets\": [\n        \"actuator-01\"\n      ]\n    },\n    {\n      \"milestone_id\": \"MS-B\",\n      \"title\": \"수위 센서 데이터 수집\",\n      \"order\": 1,\n      \"status\": \"pending\",\n      \"tasks\": [],\n      \"assigned_targets\": [\n        \"sensor-01\"\n      ]\n    },\n    {\n      \"milestone_id\": \"MS-C\",\n      \"title\": \"수위 데이터 기준으로 개폐 상태 결정\",\n      \"order\": 2,\n      \"status\": \"pending\",\n      \"tasks\": [],\n      \"assigned_targets\": [\n        \"edge-node-a\"\n      ]\n    },\n    {\n      \"milestone_id\": \"MS-D\",\n      \"title\": \"수위 기준에 따라 월류방어벽 개폐 명령 전달\",\n      \"order\": 3,\n      \"status\": \"pending\",\n      \"tasks\": [],\n      \"assigned_targets\": [\n        \"actuator-01\"\n      ]\n    },\n    {\n      \"milestone_id\": \"MS-E\",\n      \"title\": \"개폐 상태 확인 및 기록\",\n      \"order\": 4,\n      \"status\": \"pending\",\n      \"tasks\": [],\n      \"assigned_targets\": [\n        \"sensor-01\"\n      ]\n    },\n    {\n      \"milestone_id\": \"MS-F\",\n      \"title\": \"임무 종료\",\n      \"order\": 5,\n      \"status\": \"pending\",\n      \"tasks\": [],\n      \"assigned_targets\": []\n    }\n  ]\n}\n",
+        "vram_used_mib": 5950,
+        "vram_model_mib": 5837,
+        "served_model_file": "Qwen3-8B-Q4_K_M.gguf",
+        "predicted_per_sec": 51.045509422430136,
+        "prompt_per_sec": 283.31081375582966,
+        "truncated": false,
+        "chat_template_applied": true
+      },
+      "id_obeyed": true,
+      "nodes": 0,
+      "edges_by_rule": 0,
+      "model_deps": 0
+    },
+    {
+      "mission_id": "MSN-260831-03",
+      "variant": 2,
+      "utterance": "방어벽 자동 개폐 시스템 가동",
+      "ok": true,
+      "failure": null,
+      "wall_sec": 9.246,
+      "model_requested": "Qwen3-8B-Q4_K_M",
+      "model_reported": "Qwen3-8B-Q4_K_M",
+      "served_model_file": "Qwen3-8B-Q4_K_M.gguf",
+      "elapsed_sec": 8.992,
+      "schema_errors": [],
+      "schema_pass": true,
+      "grammar": {
+        "source": "contracts/mission.schema.json",
+        "digest": "84cfad7b7fd9801b",
+        "bytes": 5167
+      },
+      "grammar_enforced": true,
+      "examples_used": [
+        "MSN-260831-01",
+        "MSN-260831-02"
+      ],
+      "equipment_given": 10,
+      "node_kinds_given": false,
+      "tasks_given": true,
+      "extra": {
+        "stub": false,
+        "grammar_enforced": true,
+        "places_given": true,
+        "equipment_given": 10,
+        "examples_given": 2,
+        "node_kinds_given": false,
+        "tasks_given": true,
+        "rules_applied": [
+          "출력은 JSON 객체 하나다. 설명·주석·코드펜스를 붙이지 않는다.",
+          "마일스톤은 여러 개다. 임무를 **사람이 중간에 확인할 수 있는 단위**로 나눈다 — 발화 한 줄을 마일스톤 하나로 옮겨 적는 것은 분리가 아니다.",
+          "마일스톤은 **무엇을 이루는가**를 적는다. 어떻게 이루는지는 적지 않는다.",
+          "로봇 기종·모델명(예: 사족보행 로봇의 제품명)을 쓰지 않는다. 어떤 장비가 하는지는 assigned_targets 로만 적는다.",
+          "좌표를 쓰지 않는다. (x, y, z) 나 절대 위치를 적으면 그 마일스톤은 이 건물 전용이 된다.",
+          "속도·가속도·모터 파라미터를 쓰지 않는다. 그것은 실행이 정하는 값이다.",
+          "임무 자체의 조건(시간·수위·거리 임계처럼 발화가 요구한 것)은 적어도 된다. 금지되는 것은 구현 파라미터다.",
+          "장소는 아래 [장소] 목록에 있는 이름만 쓴다. 목록에 없는 방 번호·층·시설을 만들면 실패다.",
+          "assigned_targets 에는 아래 [장비] 목록에 있는 id 만 쓴다. 목록에 없는 장비 id 를 만들면 실패다.",
+          "각 마일스톤의 tasks 에 그 마일스톤을 이루는 태스크를 낸다. 태스크는 **한 번에 하나씩 실행되는 단위**다.",
+          "task_id 는 임무 안에서 겹치지 않게 짓는다 (예: T-1, T-2 …).",
+          "node_kind 는 반드시 적는다 — sense(관측·값을 받아 온다) · decide(판정·조건이 참인가) · act(구동·명령을 낸다) · verify(검증·구동 결과가 의도대로인가) · report(보고·기록하고 알린다) 중 하나다.",
+          "target 은 그 태스크를 수행하는 [장비] 목록의 id 하나다. 장비가 필요 없는 태스크(임무 종료 처리 등)는 null 로 둔다 — 아무 장비나 적지 않는다.",
+          "deps 는 **빈 배열 [] 로 둔다.** 태스크 사이의 순서는 다음 단계가 규칙으로 계산한다. 여기서 적으면 버려진다.",
+          "status 는 \"pending\", attempt 는 1, derived_from 은 null, action_items 는 [], evaluation 은 null 로 둔다. 그 자리는 실행이 채운다.",
+          "node_kind 는 그 자리에만 적는다. 제목에 「(감지)」·「(확인)」처럼 종류를 덧붙이지 않는다.",
+          "status 는 모두 \"pending\", order 는 0 부터 1 씩 는다.",
+          "mission_id 와 utterance 는 아래 [요청] 에 준 값을 그대로 옮긴다."
+        ],
+        "prompt_digest": "dba2fbbb074d0f11",
+        "prompt_chars": 8135,
+        "overwritten": [],
+        "load_sec": 0,
+        "prompt_tokens": 4811,
+        "completion_tokens": 460,
+        "stop_reason": "eos",
+        "applied_options": {
+          "temperature": 0,
+          "seed": 0,
+          "n_predict": 2048,
+          "ctx_size": 8192,
+          "n_gpu_layers": 99
+        },
+        "json_recovered": false,
+        "raw_text": "{\n  \"mission_id\": \"MSN-260831-03\",\n  \"utterance\": {\n    \"audio_ref\": null,\n    \"text\": \"월류방어벽 자동 개폐 시스템을 가동해.\",\n    \"engine\": \"script\",\n    \"confidence\": 1\n  },\n  \"milestones\": [\n    {\n      \"milestone_id\": \"MS-A\",\n      \"title\": \"방어벽 자동 개폐 시스템 작동 확인\",\n      \"order\": 0,\n      \"status\": \"pending\",\n      \"tasks\": [],\n      \"assigned_targets\": [\n        \"actuator-01\"\n      ]\n    },\n    {\n      \"milestone_id\": \"MS-B\",\n      \"title\": \"수위 센서 데이터 수집\",\n      \"order\": 1,\n      \"status\": \"pending\",\n      \"tasks\": [],\n      \"assigned_targets\": [\n        \"sensor-01\"\n      ]\n    },\n    {\n      \"milestone_id\": \"MS-C\",\n      \"title\": \"수위 데이터 기반으로 방어벽 개폐 결정\",\n      \"order\": 2,\n      \"status\": \"pending\",\n      \"tasks\": [],\n      \"assigned_targets\": [\n        \"edge-node-a\"\n      ]\n    },\n    {\n      \"milestone_id\": \"MS-D\",\n      \"title\": \"방어벽 개폐 명령 전달\",\n      \"order\": 3,\n      \"status\": \"pending\",\n      \"tasks\": [],\n      \"assigned_targets\": [\n        \"actuator-01\"\n      ]\n    },\n    {\n      \"milestone_id\": \"MS-E\",\n      \"title\": \"방어벽 개폐 상태 확인\",\n      \"order\": 4,\n      \"status\": \"pending\",\n      \"tasks\": [],\n      \"assigned_targets\": [\n        \"sensor-02\"\n      ]\n    },\n    {\n      \"milestone_id\": \"MS-F\",\n      \"title\": \"시스템 작동 완료 보고\",\n      \"order\": 5,\n      \"status\": \"pending\",\n      \"tasks\": [],\n      \"assigned_targets\": [\n        \"edge-node-a\"\n      ]\n    }\n  ]\n}\n",
+        "vram_used_mib": 5950,
+        "vram_model_mib": 5837,
+        "served_model_file": "Qwen3-8B-Q4_K_M.gguf",
+        "predicted_per_sec": 51.65260192948913,
+        "prompt_per_sec": 372.5333362551634,
+        "truncated": false,
+        "chat_template_applied": true
+      },
+      "id_obeyed": true,
+      "nodes": 0,
+      "edges_by_rule": 0,
+      "model_deps": 0
+    },
+    {
+      "mission_id": "MSN-260831-03",
+      "variant": 3,
+      "utterance": "수문 자동 개폐 작동시켜줘",
+      "ok": true,
+      "failure": null,
+      "wall_sec": 6.937,
+      "model_requested": "Qwen3-8B-Q4_K_M",
+      "model_reported": "Qwen3-8B-Q4_K_M",
+      "served_model_file": "Qwen3-8B-Q4_K_M.gguf",
+      "elapsed_sec": 6.675,
+      "schema_errors": [],
+      "schema_pass": true,
+      "grammar": {
+        "source": "contracts/mission.schema.json",
+        "digest": "84cfad7b7fd9801b",
+        "bytes": 5167
+      },
+      "grammar_enforced": true,
+      "examples_used": [
+        "MSN-260831-01",
+        "MSN-260831-02"
+      ],
+      "equipment_given": 10,
+      "node_kinds_given": false,
+      "tasks_given": true,
+      "extra": {
+        "stub": false,
+        "grammar_enforced": true,
+        "places_given": true,
+        "equipment_given": 10,
+        "examples_given": 2,
+        "node_kinds_given": false,
+        "tasks_given": true,
+        "rules_applied": [
+          "출력은 JSON 객체 하나다. 설명·주석·코드펜스를 붙이지 않는다.",
+          "마일스톤은 여러 개다. 임무를 **사람이 중간에 확인할 수 있는 단위**로 나눈다 — 발화 한 줄을 마일스톤 하나로 옮겨 적는 것은 분리가 아니다.",
+          "마일스톤은 **무엇을 이루는가**를 적는다. 어떻게 이루는지는 적지 않는다.",
+          "로봇 기종·모델명(예: 사족보행 로봇의 제품명)을 쓰지 않는다. 어떤 장비가 하는지는 assigned_targets 로만 적는다.",
+          "좌표를 쓰지 않는다. (x, y, z) 나 절대 위치를 적으면 그 마일스톤은 이 건물 전용이 된다.",
+          "속도·가속도·모터 파라미터를 쓰지 않는다. 그것은 실행이 정하는 값이다.",
+          "임무 자체의 조건(시간·수위·거리 임계처럼 발화가 요구한 것)은 적어도 된다. 금지되는 것은 구현 파라미터다.",
+          "장소는 아래 [장소] 목록에 있는 이름만 쓴다. 목록에 없는 방 번호·층·시설을 만들면 실패다.",
+          "assigned_targets 에는 아래 [장비] 목록에 있는 id 만 쓴다. 목록에 없는 장비 id 를 만들면 실패다.",
+          "각 마일스톤의 tasks 에 그 마일스톤을 이루는 태스크를 낸다. 태스크는 **한 번에 하나씩 실행되는 단위**다.",
+          "task_id 는 임무 안에서 겹치지 않게 짓는다 (예: T-1, T-2 …).",
+          "node_kind 는 반드시 적는다 — sense(관측·값을 받아 온다) · decide(판정·조건이 참인가) · act(구동·명령을 낸다) · verify(검증·구동 결과가 의도대로인가) · report(보고·기록하고 알린다) 중 하나다.",
+          "target 은 그 태스크를 수행하는 [장비] 목록의 id 하나다. 장비가 필요 없는 태스크(임무 종료 처리 등)는 null 로 둔다 — 아무 장비나 적지 않는다.",
+          "deps 는 **빈 배열 [] 로 둔다.** 태스크 사이의 순서는 다음 단계가 규칙으로 계산한다. 여기서 적으면 버려진다.",
+          "status 는 \"pending\", attempt 는 1, derived_from 은 null, action_items 는 [], evaluation 은 null 로 둔다. 그 자리는 실행이 채운다.",
+          "node_kind 는 그 자리에만 적는다. 제목에 「(감지)」·「(확인)」처럼 종류를 덧붙이지 않는다.",
+          "status 는 모두 \"pending\", order 는 0 부터 1 씩 는다.",
+          "mission_id 와 utterance 는 아래 [요청] 에 준 값을 그대로 옮긴다."
+        ],
+        "prompt_digest": "a47b0918f2ba9c17",
+        "prompt_chars": 8133,
+        "overwritten": [],
+        "load_sec": 0,
+        "prompt_tokens": 4810,
+        "completion_tokens": 332,
+        "stop_reason": "eos",
+        "applied_options": {
+          "temperature": 0,
+          "seed": 0,
+          "n_predict": 2048,
+          "ctx_size": 8192,
+          "n_gpu_layers": 99
+        },
+        "json_recovered": false,
+        "raw_text": "{\n  \"mission_id\": \"MSN-260831-03\",\n  \"utterance\": {\n    \"audio_ref\": null,\n    \"text\": \"월류방어벽 자동 개폐 시스템을 가동해.\",\n    \"engine\": \"script\",\n    \"confidence\": 1\n  },\n  \"milestones\": [\n    {\n      \"milestone_id\": \"MS-A\",\n      \"title\": \"수문 자동 개폐 시스템 작동 확인\",\n      \"order\": 0,\n      \"status\": \"pending\",\n      \"tasks\": [],\n      \"assigned_targets\": [\n        \"actuator-01\"\n      ]\n    },\n    {\n      \"milestone_id\": \"MS-B\",\n      \"title\": \"수문 작동 상태 확인\",\n      \"order\": 1,\n      \"status\": \"pending\",\n      \"tasks\": [],\n      \"assigned_targets\": [\n        \"sensor-01\"\n      ]\n    },\n    {\n      \"milestone_id\": \"MS-C\",\n      \"title\": \"수문 작동 완료 확인\",\n      \"order\": 2,\n      \"status\": \"pending\",\n      \"tasks\": [],\n      \"assigned_targets\": [\n        \"sensor-02\"\n      ]\n    },\n    {\n      \"milestone_id\": \"MS-D\",\n      \"title\": \"수문 작동 상태 기록 및 보고\",\n      \"order\": 3,\n      \"status\": \"pending\",\n      \"tasks\": [],\n      \"assigned_targets\": [\n        \"edge-node-a\"\n      ]\n    }\n  ]\n}\n",
+        "vram_used_mib": 5950,
+        "vram_model_mib": 5837,
+        "served_model_file": "Qwen3-8B-Q4_K_M.gguf",
+        "predicted_per_sec": 50.422305853176645,
+        "prompt_per_sec": 416.0520443284542,
+        "truncated": false,
+        "chat_template_applied": true
+      },
+      "id_obeyed": true,
+      "nodes": 0,
+      "edges_by_rule": 0,
+      "model_deps": 0
+    },
+    {
+      "mission_id": "MSN-260831-03",
+      "variant": 4,
+      "utterance": "월류방어벽 개폐 자동화 가동해",
+      "ok": true,
+      "failure": null,
+      "wall_sec": 19.66,
+      "model_requested": "Qwen3-8B-Q4_K_M",
+      "model_reported": "Qwen3-8B-Q4_K_M",
+      "served_model_file": "Qwen3-8B-Q4_K_M.gguf",
+      "elapsed_sec": 19.332,
+      "schema_errors": [],
+      "schema_pass": true,
+      "grammar": {
+        "source": "contracts/mission.schema.json",
+        "digest": "84cfad7b7fd9801b",
+        "bytes": 5167
+      },
+      "grammar_enforced": true,
+      "examples_used": [
+        "MSN-260831-01",
+        "MSN-260831-02"
+      ],
+      "equipment_given": 10,
+      "node_kinds_given": false,
+      "tasks_given": true,
+      "extra": {
+        "stub": false,
+        "grammar_enforced": true,
+        "places_given": true,
+        "equipment_given": 10,
+        "examples_given": 2,
+        "node_kinds_given": false,
+        "tasks_given": true,
+        "rules_applied": [
+          "출력은 JSON 객체 하나다. 설명·주석·코드펜스를 붙이지 않는다.",
+          "마일스톤은 여러 개다. 임무를 **사람이 중간에 확인할 수 있는 단위**로 나눈다 — 발화 한 줄을 마일스톤 하나로 옮겨 적는 것은 분리가 아니다.",
+          "마일스톤은 **무엇을 이루는가**를 적는다. 어떻게 이루는지는 적지 않는다.",
+          "로봇 기종·모델명(예: 사족보행 로봇의 제품명)을 쓰지 않는다. 어떤 장비가 하는지는 assigned_targets 로만 적는다.",
+          "좌표를 쓰지 않는다. (x, y, z) 나 절대 위치를 적으면 그 마일스톤은 이 건물 전용이 된다.",
+          "속도·가속도·모터 파라미터를 쓰지 않는다. 그것은 실행이 정하는 값이다.",
+          "임무 자체의 조건(시간·수위·거리 임계처럼 발화가 요구한 것)은 적어도 된다. 금지되는 것은 구현 파라미터다.",
+          "장소는 아래 [장소] 목록에 있는 이름만 쓴다. 목록에 없는 방 번호·층·시설을 만들면 실패다.",
+          "assigned_targets 에는 아래 [장비] 목록에 있는 id 만 쓴다. 목록에 없는 장비 id 를 만들면 실패다.",
+          "각 마일스톤의 tasks 에 그 마일스톤을 이루는 태스크를 낸다. 태스크는 **한 번에 하나씩 실행되는 단위**다.",
+          "task_id 는 임무 안에서 겹치지 않게 짓는다 (예: T-1, T-2 …).",
+          "node_kind 는 반드시 적는다 — sense(관측·값을 받아 온다) · decide(판정·조건이 참인가) · act(구동·명령을 낸다) · verify(검증·구동 결과가 의도대로인가) · report(보고·기록하고 알린다) 중 하나다.",
+          "target 은 그 태스크를 수행하는 [장비] 목록의 id 하나다. 장비가 필요 없는 태스크(임무 종료 처리 등)는 null 로 둔다 — 아무 장비나 적지 않는다.",
+          "deps 는 **빈 배열 [] 로 둔다.** 태스크 사이의 순서는 다음 단계가 규칙으로 계산한다. 여기서 적으면 버려진다.",
+          "status 는 \"pending\", attempt 는 1, derived_from 은 null, action_items 는 [], evaluation 은 null 로 둔다. 그 자리는 실행이 채운다.",
+          "node_kind 는 그 자리에만 적는다. 제목에 「(감지)」·「(확인)」처럼 종류를 덧붙이지 않는다.",
+          "status 는 모두 \"pending\", order 는 0 부터 1 씩 는다.",
+          "mission_id 와 utterance 는 아래 [요청] 에 준 값을 그대로 옮긴다."
+        ],
+        "prompt_digest": "c01e002fd0dfe170",
+        "prompt_chars": 8135,
+        "overwritten": [],
+        "load_sec": 0,
+        "prompt_tokens": 4813,
+        "completion_tokens": 373,
+        "stop_reason": "eos",
+        "applied_options": {
+          "temperature": 0,
+          "seed": 0,
+          "n_predict": 2048,
+          "ctx_size": 8192,
+          "n_gpu_layers": 99
+        },
+        "json_recovered": false,
+        "raw_text": "{\n  \"mission_id\": \"MSN-260831-03\",\n  \"utterance\": {\n    \"audio_ref\": null,\n    \"text\": \"월류방어벽 자동 개폐 시스템을 가동해.\",\n    \"engine\": \"script\",\n    \"confidence\": 1\n  },\n  \"milestones\": [\n    {\n      \"milestone_id\": \"MS-A\",\n      \"title\": \"수위 센서 데이터 수집\",\n      \"order\": 0,\n      \"status\": \"pending\",\n      \"tasks\": [],\n      \"assigned_targets\": [\n        \"sensor-01\",\n        \"sensor-02\",\n        \"sensor-04\"\n      ]\n    },\n    {\n      \"milestone_id\": \"MS-B\",\n      \"title\": \"수위 데이터 분석 및 월류 방어벽 개폐 판단\",\n      \"order\": 1,\n      \"status\": \"pending\",\n      \"tasks\": [],\n      \"assigned_targets\": [\n        \"edge-node-a\"\n      ]\n    },\n    {\n      \"milestone_id\": \"MS-C\",\n      \"title\": \"월류 방어벽 개폐 명령 전달\",\n      \"order\": 2,\n      \"status\": \"pending\",\n      \"tasks\": [],\n      \"assigned_targets\": [\n        \"actuator-01\",\n        \"actuator-02\"\n      ]\n    },\n    {\n      \"milestone_id\": \"MS-D\",\n      \"title\": \"개폐 상태 확인 및 결과 보고\",\n      \"order\": 3,\n      \"status\": \"pending\",\n      \"tasks\": [],\n      \"assigned_targets\": [\n        \"sensor-01\",\n        \"sensor-02\",\n        \"sensor-04\"\n      ]\n    }\n  ]\n}\n",
+        "vram_used_mib": 5950,
+        "vram_model_mib": 5837,
+        "served_model_file": "Qwen3-8B-Q4_K_M.gguf",
+        "predicted_per_sec": 49.93246365836101,
+        "prompt_per_sec": 498.3181761554753,
+        "truncated": false,
+        "chat_template_applied": true
+      },
+      "id_obeyed": true,
+      "nodes": 0,
+      "edges_by_rule": 0,
+      "model_deps": 0
+    }
+  ],
+  "scored": [
+    {
+      "variant": "v0",
+      "results": [
+        {
+          "mission_id": "MSN-260831-01",
+          "missing": false,
+          "schema": {
+            "pass": true,
+            "errors": [],
+            "error_count": 0,
+            "unsupported": []
+          },
+          "milestone": {
+            "count": {
+              "gold": 7,
+              "got": 4,
+              "match": false
+            },
+            "order_recall": 0.286,
+            "title_similarity": 0.65,
+            "place_recall": 1,
+            "place_vocab_note": "이 축은 재현율이다 — 「지어냈는가」는 옆의 장소 위반 축이 센다 (260906 신설)",
+            "unmatched": [
+              "MS-B",
+              "MS-C",
+              "MS-E",
+              "MS-F",
+              "MS-G"
+            ]
+          },
+          "place_violation": {
+            "count": 0,
+            "items": [],
+            "note": "방 번호와 층만 센다 — 없는 시설 이름(「중앙 계단실」)은 이 방법으로 못 잡는다"
+          },
+          "target_violation": {
+            "count": 0,
+            "total": 4,
+            "invented": 0,
+            "mischosen": 0,
+            "items": [],
+            "note": "어휘는 정답셋의 assigned_targets 합집합이다. **지어냄**(equipment.json 에도 없다)과 **오선택**(실재하는데 정답이 아니다)을 가른다 — 260907 실측에서 목록을 주자 지어냄이 20건에서 0건이 됐고 남은 것은 전부 오선택이었다"
+          },
+          "abstraction": {
+            "count": 0,
+            "items": [],
+            "note": "임무 조건(시간·수위·거리 임계)은 위반이 아니다 — 정답셋 4편 중 3편이 그것을 담고 있다"
+          },
+          "node_grammar": {
+            "accuracy": 0.059,
+            "scored": 17,
+            "confusion": {
+              "decide→sense": 1,
+              "verify→(없음)": 2,
+              "sense→(없음)": 4,
+              "decide→(없음)": 2,
+              "act→(없음)": 3,
+              "act→sense": 1,
+              "sense→act": 1,
+              "report→(없음)": 2
+            },
+            "note": null
+          },
+          "graph": {
+            "exact": false,
+            "precision": 0.143,
+            "recall": 0.056,
+            "f1": 0.08,
+            "has_cycle": false,
+            "missing": [
+              "T-11b→T-11c",
+              "T-11c→T-12a",
+              "T-12a→T-12b",
+              "T-12b→T-13a",
+              "T-13a→T-13b",
+              "T-13b→T-14a",
+              "T-13b→T-14b",
+              "T-13b→T-14c"
+            ],
+            "extra": [
+              "T-11b→T-3",
+              "T-3→T-4",
+              "T-4→T-5",
+              "T-5→T-6",
+              "T-6→T-14a",
+              "T-14a→T-14b"
+            ]
+          }
+        },
+        {
+          "mission_id": "MSN-260831-02",
+          "missing": false,
+          "schema": {
+            "pass": true,
+            "errors": [],
+            "error_count": 0,
+            "unsupported": []
+          },
+          "milestone": {
+            "count": {
+              "gold": 6,
+              "got": 5,
+              "match": false
+            },
+            "order_recall": 0.333,
+            "title_similarity": 0.492,
+            "place_recall": null,
+            "place_vocab_note": "이 축은 재현율이다 — 「지어냈는가」는 옆의 장소 위반 축이 센다 (260906 신설)",
+            "unmatched": [
+              "MS-B",
+              "MS-D",
+              "MS-E",
+              "MS-F"
+            ]
+          },
+          "place_violation": {
+            "count": 0,
+            "items": [],
+            "note": "방 번호와 층만 센다 — 없는 시설 이름(「중앙 계단실」)은 이 방법으로 못 잡는다"
+          },
+          "target_violation": {
+            "count": 0,
+            "total": 4,
+            "invented": 0,
+            "mischosen": 0,
+            "items": [],
+            "note": "어휘는 정답셋의 assigned_targets 합집합이다. **지어냄**(equipment.json 에도 없다)과 **오선택**(실재하는데 정답이 아니다)을 가른다 — 260907 실측에서 목록을 주자 지어냄이 20건에서 0건이 됐고 남은 것은 전부 오선택이었다"
+          },
+          "abstraction": {
+            "count": 0,
+            "items": [],
+            "note": "임무 조건(시간·수위·거리 임계)은 위반이 아니다 — 정답셋 4편 중 3편이 그것을 담고 있다"
+          },
+          "node_grammar": {
+            "accuracy": 0,
+            "scored": 18,
+            "confusion": {
+              "sense→(없음)": 4,
+              "decide→(없음)": 6,
+              "report→(없음)": 4,
+              "act→(없음)": 2,
+              "verify→(없음)": 2
+            },
+            "note": null
+          },
+          "graph": {
+            "exact": false,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0,
+            "has_cycle": false,
+            "missing": [
+              "T-21a→T-21b",
+              "T-21b→T-22a",
+              "T-22a→T-22b",
+              "T-22b→T-22c",
+              "T-22c→T-23a",
+              "T-23a→T-23b",
+              "T-23b→T-23c",
+              "T-23c→T-24a"
+            ],
+            "extra": []
+          }
+        },
+        {
+          "mission_id": "MSN-260831-03",
+          "missing": false,
+          "schema": {
+            "pass": true,
+            "errors": [],
+            "error_count": 0,
+            "unsupported": []
+          },
+          "milestone": {
+            "count": {
+              "gold": 4,
+              "got": 4,
+              "match": true
+            },
+            "order_recall": 0,
+            "title_similarity": null,
+            "place_recall": null,
+            "place_vocab_note": "이 축은 재현율이다 — 「지어냈는가」는 옆의 장소 위반 축이 센다 (260906 신설)",
+            "unmatched": [
+              "MS-A",
+              "MS-B",
+              "MS-C",
+              "MS-D"
+            ]
+          },
+          "place_violation": {
+            "count": 0,
+            "items": [],
+            "note": "방 번호와 층만 센다 — 없는 시설 이름(「중앙 계단실」)은 이 방법으로 못 잡는다"
+          },
+          "target_violation": {
+            "count": 6,
+            "total": 9,
+            "invented": 0,
+            "mischosen": 6,
+            "items": [
+              {
+                "milestone_id": "MS-A",
+                "found": "sensor-02",
+                "kind": "mischosen"
+              },
+              {
+                "milestone_id": "MS-A",
+                "found": "sensor-04",
+                "kind": "mischosen"
+              },
+              {
+                "milestone_id": "MS-B",
+                "found": "edge-node-a",
+                "kind": "mischosen"
+              },
+              {
+                "milestone_id": "MS-C",
+                "found": "actuator-02",
+                "kind": "mischosen"
+              },
+              {
+                "milestone_id": "MS-D",
+                "found": "sensor-02",
+                "kind": "mischosen"
+              },
+              {
+                "milestone_id": "MS-D",
+                "found": "sensor-04",
+                "kind": "mischosen"
+              }
+            ],
+            "note": "어휘는 정답셋의 assigned_targets 합집합이다. **지어냄**(equipment.json 에도 없다)과 **오선택**(실재하는데 정답이 아니다)을 가른다 — 260907 실측에서 목록을 주자 지어냄이 20건에서 0건이 됐고 남은 것은 전부 오선택이었다"
+          },
+          "abstraction": {
+            "count": 0,
+            "items": [],
+            "note": "임무 조건(시간·수위·거리 임계)은 위반이 아니다 — 정답셋 4편 중 3편이 그것을 담고 있다"
+          },
+          "node_grammar": {
+            "accuracy": 0,
+            "scored": 16,
+            "confusion": {
+              "sense→(없음)": 3,
+              "decide→(없음)": 5,
+              "act→(없음)": 4,
+              "verify→(없음)": 4
+            },
+            "note": null
+          },
+          "graph": {
+            "exact": false,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0,
+            "has_cycle": false,
+            "missing": [
+              "T-41a→T-41b",
+              "T-41b→T-42a",
+              "T-42a→T-42b",
+              "T-42b→T-42c",
+              "T-42c→T-43a",
+              "T-43a→T-43b",
+              "T-43b→T-43c",
+              "T-43c→T-43d"
+            ],
+            "extra": []
+          }
+        }
+      ]
+    },
+    {
+      "variant": "v1",
+      "results": [
+        {
+          "mission_id": "MSN-260831-01",
+          "missing": false,
+          "schema": {
+            "pass": true,
+            "errors": [],
+            "error_count": 0,
+            "unsupported": []
+          },
+          "milestone": {
+            "count": {
+              "gold": 7,
+              "got": 4,
+              "match": false
+            },
+            "order_recall": 0.286,
+            "title_similarity": 0.473,
+            "place_recall": 1,
+            "place_vocab_note": "이 축은 재현율이다 — 「지어냈는가」는 옆의 장소 위반 축이 센다 (260906 신설)",
+            "unmatched": [
+              "MS-B",
+              "MS-C",
+              "MS-E",
+              "MS-F",
+              "MS-G"
+            ]
+          },
+          "place_violation": {
+            "count": 0,
+            "items": [],
+            "note": "방 번호와 층만 센다 — 없는 시설 이름(「중앙 계단실」)은 이 방법으로 못 잡는다"
+          },
+          "target_violation": {
+            "count": 0,
+            "total": 4,
+            "invented": 0,
+            "mischosen": 0,
+            "items": [],
+            "note": "어휘는 정답셋의 assigned_targets 합집합이다. **지어냄**(equipment.json 에도 없다)과 **오선택**(실재하는데 정답이 아니다)을 가른다 — 260907 실측에서 목록을 주자 지어냄이 20건에서 0건이 됐고 남은 것은 전부 오선택이었다"
+          },
+          "abstraction": {
+            "count": 0,
+            "items": [],
+            "note": "임무 조건(시간·수위·거리 임계)은 위반이 아니다 — 정답셋 4편 중 3편이 그것을 담고 있다"
+          },
+          "node_grammar": {
+            "accuracy": 0,
+            "scored": 17,
+            "confusion": {
+              "decide→(없음)": 3,
+              "act→(없음)": 5,
+              "verify→(없음)": 2,
+              "sense→(없음)": 5,
+              "report→(없음)": 2
+            },
+            "note": null
+          },
+          "graph": {
+            "exact": false,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0,
+            "has_cycle": false,
+            "missing": [
+              "T-11a→T-11b",
+              "T-11b→T-11c",
+              "T-11c→T-12a",
+              "T-12a→T-12b",
+              "T-12b→T-13a",
+              "T-13a→T-13b",
+              "T-13b→T-14a",
+              "T-13b→T-14b"
+            ],
+            "extra": []
+          }
+        },
+        {
+          "mission_id": "MSN-260831-02",
+          "missing": false,
+          "schema": {
+            "pass": true,
+            "errors": [],
+            "error_count": 0,
+            "unsupported": []
+          },
+          "milestone": {
+            "count": {
+              "gold": 6,
+              "got": 3,
+              "match": false
+            },
+            "order_recall": 0.167,
+            "title_similarity": 0.5,
+            "place_recall": null,
+            "place_vocab_note": "이 축은 재현율이다 — 「지어냈는가」는 옆의 장소 위반 축이 센다 (260906 신설)",
+            "unmatched": [
+              "MS-B",
+              "MS-C",
+              "MS-D",
+              "MS-E",
+              "MS-F"
+            ]
+          },
+          "place_violation": {
+            "count": 0,
+            "items": [],
+            "note": "방 번호와 층만 센다 — 없는 시설 이름(「중앙 계단실」)은 이 방법으로 못 잡는다"
+          },
+          "target_violation": {
+            "count": 0,
+            "total": 3,
+            "invented": 0,
+            "mischosen": 0,
+            "items": [],
+            "note": "어휘는 정답셋의 assigned_targets 합집합이다. **지어냄**(equipment.json 에도 없다)과 **오선택**(실재하는데 정답이 아니다)을 가른다 — 260907 실측에서 목록을 주자 지어냄이 20건에서 0건이 됐고 남은 것은 전부 오선택이었다"
+          },
+          "abstraction": {
+            "count": 0,
+            "items": [],
+            "note": "임무 조건(시간·수위·거리 임계)은 위반이 아니다 — 정답셋 4편 중 3편이 그것을 담고 있다"
+          },
+          "node_grammar": {
+            "accuracy": 0,
+            "scored": 18,
+            "confusion": {
+              "sense→(없음)": 4,
+              "decide→(없음)": 6,
+              "report→(없음)": 4,
+              "act→(없음)": 2,
+              "verify→(없음)": 2
+            },
+            "note": null
+          },
+          "graph": {
+            "exact": false,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0,
+            "has_cycle": false,
+            "missing": [
+              "T-21a→T-21b",
+              "T-21b→T-22a",
+              "T-22a→T-22b",
+              "T-22b→T-22c",
+              "T-22c→T-23a",
+              "T-23a→T-23b",
+              "T-23b→T-23c",
+              "T-23c→T-24a"
+            ],
+            "extra": []
+          }
+        },
+        {
+          "mission_id": "MSN-260831-03",
+          "missing": false,
+          "schema": {
+            "pass": true,
+            "errors": [],
+            "error_count": 0,
+            "unsupported": []
+          },
+          "milestone": {
+            "count": {
+              "gold": 4,
+              "got": 6,
+              "match": false
+            },
+            "order_recall": 0,
+            "title_similarity": null,
+            "place_recall": null,
+            "place_vocab_note": "이 축은 재현율이다 — 「지어냈는가」는 옆의 장소 위반 축이 센다 (260906 신설)",
+            "unmatched": [
+              "MS-A",
+              "MS-B",
+              "MS-C",
+              "MS-D"
+            ]
+          },
+          "place_violation": {
+            "count": 0,
+            "items": [],
+            "note": "방 번호와 층만 센다 — 없는 시설 이름(「중앙 계단실」)은 이 방법으로 못 잡는다"
+          },
+          "target_violation": {
+            "count": 1,
+            "total": 5,
+            "invented": 0,
+            "mischosen": 1,
+            "items": [
+              {
+                "milestone_id": "MS-C",
+                "found": "edge-node-a",
+                "kind": "mischosen"
+              }
+            ],
+            "note": "어휘는 정답셋의 assigned_targets 합집합이다. **지어냄**(equipment.json 에도 없다)과 **오선택**(실재하는데 정답이 아니다)을 가른다 — 260907 실측에서 목록을 주자 지어냄이 20건에서 0건이 됐고 남은 것은 전부 오선택이었다"
+          },
+          "abstraction": {
+            "count": 0,
+            "items": [],
+            "note": "임무 조건(시간·수위·거리 임계)은 위반이 아니다 — 정답셋 4편 중 3편이 그것을 담고 있다"
+          },
+          "node_grammar": {
+            "accuracy": 0,
+            "scored": 16,
+            "confusion": {
+              "sense→(없음)": 3,
+              "decide→(없음)": 5,
+              "act→(없음)": 4,
+              "verify→(없음)": 4
+            },
+            "note": null
+          },
+          "graph": {
+            "exact": false,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0,
+            "has_cycle": false,
+            "missing": [
+              "T-41a→T-41b",
+              "T-41b→T-42a",
+              "T-42a→T-42b",
+              "T-42b→T-42c",
+              "T-42c→T-43a",
+              "T-43a→T-43b",
+              "T-43b→T-43c",
+              "T-43c→T-43d"
+            ],
+            "extra": []
+          }
+        }
+      ]
+    },
+    {
+      "variant": "v2",
+      "results": [
+        {
+          "mission_id": "MSN-260831-01",
+          "missing": false,
+          "schema": {
+            "pass": true,
+            "errors": [],
+            "error_count": 0,
+            "unsupported": []
+          },
+          "milestone": {
+            "count": {
+              "gold": 7,
+              "got": 4,
+              "match": false
+            },
+            "order_recall": 0.143,
+            "title_similarity": 0.824,
+            "place_recall": 1,
+            "place_vocab_note": "이 축은 재현율이다 — 「지어냈는가」는 옆의 장소 위반 축이 센다 (260906 신설)",
+            "unmatched": [
+              "MS-A",
+              "MS-B",
+              "MS-C",
+              "MS-E",
+              "MS-F",
+              "MS-G"
+            ]
+          },
+          "place_violation": {
+            "count": 0,
+            "items": [],
+            "note": "방 번호와 층만 센다 — 없는 시설 이름(「중앙 계단실」)은 이 방법으로 못 잡는다"
+          },
+          "target_violation": {
+            "count": 1,
+            "total": 4,
+            "invented": 0,
+            "mischosen": 1,
+            "items": [
+              {
+                "milestone_id": "MS-C",
+                "found": "edge-node-a",
+                "kind": "mischosen"
+              }
+            ],
+            "note": "어휘는 정답셋의 assigned_targets 합집합이다. **지어냄**(equipment.json 에도 없다)과 **오선택**(실재하는데 정답이 아니다)을 가른다 — 260907 실측에서 목록을 주자 지어냄이 20건에서 0건이 됐고 남은 것은 전부 오선택이었다"
+          },
+          "abstraction": {
+            "count": 0,
+            "items": [],
+            "note": "임무 조건(시간·수위·거리 임계)은 위반이 아니다 — 정답셋 4편 중 3편이 그것을 담고 있다"
+          },
+          "node_grammar": {
+            "accuracy": 0.059,
+            "scored": 17,
+            "confusion": {
+              "decide→(없음)": 3,
+              "act→(없음)": 4,
+              "verify→(없음)": 2,
+              "sense→(없음)": 5,
+              "report→(없음)": 2
+            },
+            "note": null
+          },
+          "graph": {
+            "exact": false,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0,
+            "has_cycle": false,
+            "missing": [
+              "T-11a→T-11b",
+              "T-11b→T-11c",
+              "T-11c→T-12a",
+              "T-12a→T-12b",
+              "T-12b→T-13a",
+              "T-13a→T-13b",
+              "T-13b→T-14a",
+              "T-13b→T-14b"
+            ],
+            "extra": [
+              "T-1→T-2",
+              "T-2→T-3",
+              "T-3→T-14a"
+            ]
+          }
+        },
+        {
+          "mission_id": "MSN-260831-02",
+          "missing": false,
+          "schema": {
+            "pass": true,
+            "errors": [],
+            "error_count": 0,
+            "unsupported": []
+          },
+          "milestone": {
+            "count": {
+              "gold": 6,
+              "got": 5,
+              "match": false
+            },
+            "order_recall": 0,
+            "title_similarity": null,
+            "place_recall": null,
+            "place_vocab_note": "이 축은 재현율이다 — 「지어냈는가」는 옆의 장소 위반 축이 센다 (260906 신설)",
+            "unmatched": [
+              "MS-A",
+              "MS-B",
+              "MS-C",
+              "MS-D",
+              "MS-E",
+              "MS-F"
+            ]
+          },
+          "place_violation": {
+            "count": 0,
+            "items": [],
+            "note": "방 번호와 층만 센다 — 없는 시설 이름(「중앙 계단실」)은 이 방법으로 못 잡는다"
+          },
+          "target_violation": {
+            "count": 0,
+            "total": 4,
+            "invented": 0,
+            "mischosen": 0,
+            "items": [],
+            "note": "어휘는 정답셋의 assigned_targets 합집합이다. **지어냄**(equipment.json 에도 없다)과 **오선택**(실재하는데 정답이 아니다)을 가른다 — 260907 실측에서 목록을 주자 지어냄이 20건에서 0건이 됐고 남은 것은 전부 오선택이었다"
+          },
+          "abstraction": {
+            "count": 0,
+            "items": [],
+            "note": "임무 조건(시간·수위·거리 임계)은 위반이 아니다 — 정답셋 4편 중 3편이 그것을 담고 있다"
+          },
+          "node_grammar": {
+            "accuracy": 0,
+            "scored": 18,
+            "confusion": {
+              "sense→(없음)": 4,
+              "decide→(없음)": 6,
+              "report→(없음)": 4,
+              "act→(없음)": 2,
+              "verify→(없음)": 2
+            },
+            "note": null
+          },
+          "graph": {
+            "exact": false,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0,
+            "has_cycle": false,
+            "missing": [
+              "T-21a→T-21b",
+              "T-21b→T-22a",
+              "T-22a→T-22b",
+              "T-22b→T-22c",
+              "T-22c→T-23a",
+              "T-23a→T-23b",
+              "T-23b→T-23c",
+              "T-23c→T-24a"
+            ],
+            "extra": []
+          }
+        },
+        {
+          "mission_id": "MSN-260831-03",
+          "missing": false,
+          "schema": {
+            "pass": true,
+            "errors": [],
+            "error_count": 0,
+            "unsupported": []
+          },
+          "milestone": {
+            "count": {
+              "gold": 4,
+              "got": 6,
+              "match": false
+            },
+            "order_recall": 0,
+            "title_similarity": null,
+            "place_recall": null,
+            "place_vocab_note": "이 축은 재현율이다 — 「지어냈는가」는 옆의 장소 위반 축이 센다 (260906 신설)",
+            "unmatched": [
+              "MS-A",
+              "MS-B",
+              "MS-C",
+              "MS-D"
+            ]
+          },
+          "place_violation": {
+            "count": 0,
+            "items": [],
+            "note": "방 번호와 층만 센다 — 없는 시설 이름(「중앙 계단실」)은 이 방법으로 못 잡는다"
+          },
+          "target_violation": {
+            "count": 3,
+            "total": 6,
+            "invented": 0,
+            "mischosen": 3,
+            "items": [
+              {
+                "milestone_id": "MS-C",
+                "found": "edge-node-a",
+                "kind": "mischosen"
+              },
+              {
+                "milestone_id": "MS-E",
+                "found": "sensor-02",
+                "kind": "mischosen"
+              },
+              {
+                "milestone_id": "MS-F",
+                "found": "edge-node-a",
+                "kind": "mischosen"
+              }
+            ],
+            "note": "어휘는 정답셋의 assigned_targets 합집합이다. **지어냄**(equipment.json 에도 없다)과 **오선택**(실재하는데 정답이 아니다)을 가른다 — 260907 실측에서 목록을 주자 지어냄이 20건에서 0건이 됐고 남은 것은 전부 오선택이었다"
+          },
+          "abstraction": {
+            "count": 0,
+            "items": [],
+            "note": "임무 조건(시간·수위·거리 임계)은 위반이 아니다 — 정답셋 4편 중 3편이 그것을 담고 있다"
+          },
+          "node_grammar": {
+            "accuracy": 0,
+            "scored": 16,
+            "confusion": {
+              "sense→(없음)": 3,
+              "decide→(없음)": 5,
+              "act→(없음)": 4,
+              "verify→(없음)": 4
+            },
+            "note": null
+          },
+          "graph": {
+            "exact": false,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0,
+            "has_cycle": false,
+            "missing": [
+              "T-41a→T-41b",
+              "T-41b→T-42a",
+              "T-42a→T-42b",
+              "T-42b→T-42c",
+              "T-42c→T-43a",
+              "T-43a→T-43b",
+              "T-43b→T-43c",
+              "T-43c→T-43d"
+            ],
+            "extra": []
+          }
+        }
+      ]
+    },
+    {
+      "variant": "v3",
+      "results": [
+        {
+          "mission_id": "MSN-260831-01",
+          "missing": false,
+          "schema": {
+            "pass": true,
+            "errors": [],
+            "error_count": 0,
+            "unsupported": []
+          },
+          "milestone": {
+            "count": {
+              "gold": 7,
+              "got": 4,
+              "match": false
+            },
+            "order_recall": 0.286,
+            "title_similarity": 0.675,
+            "place_recall": 1,
+            "place_vocab_note": "이 축은 재현율이다 — 「지어냈는가」는 옆의 장소 위반 축이 센다 (260906 신설)",
+            "unmatched": [
+              "MS-B",
+              "MS-C",
+              "MS-E",
+              "MS-F",
+              "MS-G"
+            ]
+          },
+          "place_violation": {
+            "count": 0,
+            "items": [],
+            "note": "방 번호와 층만 센다 — 없는 시설 이름(「중앙 계단실」)은 이 방법으로 못 잡는다"
+          },
+          "target_violation": {
+            "count": 0,
+            "total": 4,
+            "invented": 0,
+            "mischosen": 0,
+            "items": [],
+            "note": "어휘는 정답셋의 assigned_targets 합집합이다. **지어냄**(equipment.json 에도 없다)과 **오선택**(실재하는데 정답이 아니다)을 가른다 — 260907 실측에서 목록을 주자 지어냄이 20건에서 0건이 됐고 남은 것은 전부 오선택이었다"
+          },
+          "abstraction": {
+            "count": 0,
+            "items": [],
+            "note": "임무 조건(시간·수위·거리 임계)은 위반이 아니다 — 정답셋 4편 중 3편이 그것을 담고 있다"
+          },
+          "node_grammar": {
+            "accuracy": 0.059,
+            "scored": 17,
+            "confusion": {
+              "decide→act": 1,
+              "act→(없음)": 4,
+              "verify→(없음)": 2,
+              "sense→(없음)": 5,
+              "decide→(없음)": 2,
+              "report→(없음)": 2
+            },
+            "note": null
+          },
+          "graph": {
+            "exact": false,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0,
+            "has_cycle": false,
+            "missing": [
+              "T-11a→T-11b",
+              "T-11b→T-11c",
+              "T-11c→T-12a",
+              "T-12a→T-12b",
+              "T-12b→T-13a",
+              "T-13a→T-13b",
+              "T-13b→T-14a",
+              "T-13b→T-14b"
+            ],
+            "extra": [
+              "T-11a→T-2",
+              "T-2→T-3",
+              "T-3→T-14a"
+            ]
+          }
+        },
+        {
+          "mission_id": "MSN-260831-02",
+          "missing": false,
+          "schema": {
+            "pass": true,
+            "errors": [],
+            "error_count": 0,
+            "unsupported": []
+          },
+          "milestone": {
+            "count": {
+              "gold": 6,
+              "got": 5,
+              "match": false
+            },
+            "order_recall": 0.167,
+            "title_similarity": 0.556,
+            "place_recall": null,
+            "place_vocab_note": "이 축은 재현율이다 — 「지어냈는가」는 옆의 장소 위반 축이 센다 (260906 신설)",
+            "unmatched": [
+              "MS-B",
+              "MS-C",
+              "MS-D",
+              "MS-E",
+              "MS-F"
+            ]
+          },
+          "place_violation": {
+            "count": 0,
+            "items": [],
+            "note": "방 번호와 층만 센다 — 없는 시설 이름(「중앙 계단실」)은 이 방법으로 못 잡는다"
+          },
+          "target_violation": {
+            "count": 0,
+            "total": 4,
+            "invented": 0,
+            "mischosen": 0,
+            "items": [],
+            "note": "어휘는 정답셋의 assigned_targets 합집합이다. **지어냄**(equipment.json 에도 없다)과 **오선택**(실재하는데 정답이 아니다)을 가른다 — 260907 실측에서 목록을 주자 지어냄이 20건에서 0건이 됐고 남은 것은 전부 오선택이었다"
+          },
+          "abstraction": {
+            "count": 0,
+            "items": [],
+            "note": "임무 조건(시간·수위·거리 임계)은 위반이 아니다 — 정답셋 4편 중 3편이 그것을 담고 있다"
+          },
+          "node_grammar": {
+            "accuracy": 0,
+            "scored": 18,
+            "confusion": {
+              "sense→(없음)": 4,
+              "decide→(없음)": 6,
+              "report→(없음)": 4,
+              "act→(없음)": 2,
+              "verify→(없음)": 2
+            },
+            "note": null
+          },
+          "graph": {
+            "exact": false,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0,
+            "has_cycle": false,
+            "missing": [
+              "T-21a→T-21b",
+              "T-21b→T-22a",
+              "T-22a→T-22b",
+              "T-22b→T-22c",
+              "T-22c→T-23a",
+              "T-23a→T-23b",
+              "T-23b→T-23c",
+              "T-23c→T-24a"
+            ],
+            "extra": []
+          }
+        },
+        {
+          "mission_id": "MSN-260831-03",
+          "missing": false,
+          "schema": {
+            "pass": true,
+            "errors": [],
+            "error_count": 0,
+            "unsupported": []
+          },
+          "milestone": {
+            "count": {
+              "gold": 4,
+              "got": 4,
+              "match": true
+            },
+            "order_recall": 0,
+            "title_similarity": null,
+            "place_recall": null,
+            "place_vocab_note": "이 축은 재현율이다 — 「지어냈는가」는 옆의 장소 위반 축이 센다 (260906 신설)",
+            "unmatched": [
+              "MS-A",
+              "MS-B",
+              "MS-C",
+              "MS-D"
+            ]
+          },
+          "place_violation": {
+            "count": 0,
+            "items": [],
+            "note": "방 번호와 층만 센다 — 없는 시설 이름(「중앙 계단실」)은 이 방법으로 못 잡는다"
+          },
+          "target_violation": {
+            "count": 2,
+            "total": 4,
+            "invented": 0,
+            "mischosen": 2,
+            "items": [
+              {
+                "milestone_id": "MS-C",
+                "found": "sensor-02",
+                "kind": "mischosen"
+              },
+              {
+                "milestone_id": "MS-D",
+                "found": "edge-node-a",
+                "kind": "mischosen"
+              }
+            ],
+            "note": "어휘는 정답셋의 assigned_targets 합집합이다. **지어냄**(equipment.json 에도 없다)과 **오선택**(실재하는데 정답이 아니다)을 가른다 — 260907 실측에서 목록을 주자 지어냄이 20건에서 0건이 됐고 남은 것은 전부 오선택이었다"
+          },
+          "abstraction": {
+            "count": 0,
+            "items": [],
+            "note": "임무 조건(시간·수위·거리 임계)은 위반이 아니다 — 정답셋 4편 중 3편이 그것을 담고 있다"
+          },
+          "node_grammar": {
+            "accuracy": 0,
+            "scored": 16,
+            "confusion": {
+              "sense→(없음)": 3,
+              "decide→(없음)": 5,
+              "act→(없음)": 4,
+              "verify→(없음)": 4
+            },
+            "note": null
+          },
+          "graph": {
+            "exact": false,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0,
+            "has_cycle": false,
+            "missing": [
+              "T-41a→T-41b",
+              "T-41b→T-42a",
+              "T-42a→T-42b",
+              "T-42b→T-42c",
+              "T-42c→T-43a",
+              "T-43a→T-43b",
+              "T-43b→T-43c",
+              "T-43c→T-43d"
+            ],
+            "extra": []
+          }
+        }
+      ]
+    },
+    {
+      "variant": "v4",
+      "results": [
+        {
+          "mission_id": "MSN-260831-01",
+          "missing": false,
+          "schema": {
+            "pass": true,
+            "errors": [],
+            "error_count": 0,
+            "unsupported": []
+          },
+          "milestone": {
+            "count": {
+              "gold": 7,
+              "got": 5,
+              "match": false
+            },
+            "order_recall": 0.286,
+            "title_similarity": 0.675,
+            "place_recall": 1,
+            "place_vocab_note": "이 축은 재현율이다 — 「지어냈는가」는 옆의 장소 위반 축이 센다 (260906 신설)",
+            "unmatched": [
+              "MS-B",
+              "MS-C",
+              "MS-E",
+              "MS-F",
+              "MS-G"
+            ]
+          },
+          "place_violation": {
+            "count": 0,
+            "items": [],
+            "note": "방 번호와 층만 센다 — 없는 시설 이름(「중앙 계단실」)은 이 방법으로 못 잡는다"
+          },
+          "target_violation": {
+            "count": 1,
+            "total": 5,
+            "invented": 0,
+            "mischosen": 1,
+            "items": [
+              {
+                "milestone_id": "MS-D",
+                "found": "edge-node-a",
+                "kind": "mischosen"
+              }
+            ],
+            "note": "어휘는 정답셋의 assigned_targets 합집합이다. **지어냄**(equipment.json 에도 없다)과 **오선택**(실재하는데 정답이 아니다)을 가른다 — 260907 실측에서 목록을 주자 지어냄이 20건에서 0건이 됐고 남은 것은 전부 오선택이었다"
+          },
+          "abstraction": {
+            "count": 0,
+            "items": [],
+            "note": "임무 조건(시간·수위·거리 임계)은 위반이 아니다 — 정답셋 4편 중 3편이 그것을 담고 있다"
+          },
+          "node_grammar": {
+            "accuracy": 0.059,
+            "scored": 17,
+            "confusion": {
+              "decide→sense": 1,
+              "act→(없음)": 4,
+              "verify→(없음)": 2,
+              "sense→(없음)": 5,
+              "decide→(없음)": 2,
+              "report→(없음)": 2
+            },
+            "note": null
+          },
+          "graph": {
+            "exact": false,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0,
+            "has_cycle": false,
+            "missing": [
+              "T-11a→T-11b",
+              "T-11b→T-11c",
+              "T-11c→T-12a",
+              "T-12a→T-12b",
+              "T-12b→T-13a",
+              "T-13a→T-13b",
+              "T-13b→T-14a",
+              "T-13b→T-14b"
+            ],
+            "extra": [
+              "T-11a→T-2",
+              "T-2→T-3",
+              "T-3→T-4",
+              "T-4→T-14a"
+            ]
+          }
+        },
+        {
+          "mission_id": "MSN-260831-02",
+          "missing": false,
+          "schema": {
+            "pass": true,
+            "errors": [],
+            "error_count": 0,
+            "unsupported": []
+          },
+          "milestone": {
+            "count": {
+              "gold": 6,
+              "got": 4,
+              "match": false
+            },
+            "order_recall": 0,
+            "title_similarity": null,
+            "place_recall": null,
+            "place_vocab_note": "이 축은 재현율이다 — 「지어냈는가」는 옆의 장소 위반 축이 센다 (260906 신설)",
+            "unmatched": [
+              "MS-A",
+              "MS-B",
+              "MS-C",
+              "MS-D",
+              "MS-E",
+              "MS-F"
+            ]
+          },
+          "place_violation": {
+            "count": 0,
+            "items": [],
+            "note": "방 번호와 층만 센다 — 없는 시설 이름(「중앙 계단실」)은 이 방법으로 못 잡는다"
+          },
+          "target_violation": {
+            "count": 0,
+            "total": 3,
+            "invented": 0,
+            "mischosen": 0,
+            "items": [],
+            "note": "어휘는 정답셋의 assigned_targets 합집합이다. **지어냄**(equipment.json 에도 없다)과 **오선택**(실재하는데 정답이 아니다)을 가른다 — 260907 실측에서 목록을 주자 지어냄이 20건에서 0건이 됐고 남은 것은 전부 오선택이었다"
+          },
+          "abstraction": {
+            "count": 0,
+            "items": [],
+            "note": "임무 조건(시간·수위·거리 임계)은 위반이 아니다 — 정답셋 4편 중 3편이 그것을 담고 있다"
+          },
+          "node_grammar": {
+            "accuracy": 0,
+            "scored": 18,
+            "confusion": {
+              "sense→(없음)": 4,
+              "decide→(없음)": 6,
+              "report→(없음)": 4,
+              "act→(없음)": 2,
+              "verify→(없음)": 2
+            },
+            "note": null
+          },
+          "graph": {
+            "exact": false,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0,
+            "has_cycle": false,
+            "missing": [
+              "T-21a→T-21b",
+              "T-21b→T-22a",
+              "T-22a→T-22b",
+              "T-22b→T-22c",
+              "T-22c→T-23a",
+              "T-23a→T-23b",
+              "T-23b→T-23c",
+              "T-23c→T-24a"
+            ],
+            "extra": [
+              "T-1→T-2",
+              "T-2→T-3"
+            ]
+          }
+        },
+        {
+          "mission_id": "MSN-260831-03",
+          "missing": false,
+          "schema": {
+            "pass": true,
+            "errors": [],
+            "error_count": 0,
+            "unsupported": []
+          },
+          "milestone": {
+            "count": {
+              "gold": 4,
+              "got": 4,
+              "match": true
+            },
+            "order_recall": 0,
+            "title_similarity": null,
+            "place_recall": null,
+            "place_vocab_note": "이 축은 재현율이다 — 「지어냈는가」는 옆의 장소 위반 축이 센다 (260906 신설)",
+            "unmatched": [
+              "MS-A",
+              "MS-B",
+              "MS-C",
+              "MS-D"
+            ]
+          },
+          "place_violation": {
+            "count": 0,
+            "items": [],
+            "note": "방 번호와 층만 센다 — 없는 시설 이름(「중앙 계단실」)은 이 방법으로 못 잡는다"
+          },
+          "target_violation": {
+            "count": 6,
+            "total": 9,
+            "invented": 0,
+            "mischosen": 6,
+            "items": [
+              {
+                "milestone_id": "MS-A",
+                "found": "sensor-02",
+                "kind": "mischosen"
+              },
+              {
+                "milestone_id": "MS-A",
+                "found": "sensor-04",
+                "kind": "mischosen"
+              },
+              {
+                "milestone_id": "MS-B",
+                "found": "edge-node-a",
+                "kind": "mischosen"
+              },
+              {
+                "milestone_id": "MS-C",
+                "found": "actuator-02",
+                "kind": "mischosen"
+              },
+              {
+                "milestone_id": "MS-D",
+                "found": "sensor-02",
+                "kind": "mischosen"
+              },
+              {
+                "milestone_id": "MS-D",
+                "found": "sensor-04",
+                "kind": "mischosen"
+              }
+            ],
+            "note": "어휘는 정답셋의 assigned_targets 합집합이다. **지어냄**(equipment.json 에도 없다)과 **오선택**(실재하는데 정답이 아니다)을 가른다 — 260907 실측에서 목록을 주자 지어냄이 20건에서 0건이 됐고 남은 것은 전부 오선택이었다"
+          },
+          "abstraction": {
+            "count": 0,
+            "items": [],
+            "note": "임무 조건(시간·수위·거리 임계)은 위반이 아니다 — 정답셋 4편 중 3편이 그것을 담고 있다"
+          },
+          "node_grammar": {
+            "accuracy": 0,
+            "scored": 16,
+            "confusion": {
+              "sense→(없음)": 3,
+              "decide→(없음)": 5,
+              "act→(없음)": 4,
+              "verify→(없음)": 4
+            },
+            "note": null
+          },
+          "graph": {
+            "exact": false,
+            "precision": 0,
+            "recall": 0,
+            "f1": 0,
+            "has_cycle": false,
+            "missing": [
+              "T-41a→T-41b",
+              "T-41b→T-42a",
+              "T-42a→T-42b",
+              "T-42b→T-42c",
+              "T-42c→T-43a",
+              "T-43a→T-43b",
+              "T-43b→T-43c",
+              "T-43c→T-43d"
+            ],
+            "extra": []
+          }
+        }
+      ]
+    }
+  ]
+}

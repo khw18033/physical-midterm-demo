@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema", "$id": "milestone.schema.json",
+  "type": "object", "additionalProperties": false,
+  "required": ["milestone_id", "title", "order", "status", "tasks", "assigned_targets"],
+  "properties": {
+    "milestone_id": { "type": "string", "minLength": 1 }, "title": { "type": "string" },
+    "order": { "type": "integer", "minimum": 0 },
+    "status": { "$ref": "#/$defs/status" },
+    "tasks": { "type": "array", "items": { "$ref": "task.schema.json" } },
+    "assigned_targets": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "branch": {
+      "$comment": "이 마일스톤이 **어느 마일스톤의 어느 판정 결과로 들어오는가** (260908 · 분기와 되풀이 1단계). 들어오는 쪽에서 적는다 — 「나는 MS-B 의 판정이 pass 일 때 실행된다」. **선택 필드다**: 분기가 없는 계획이 대부분이고, 필수로 올리면 기존 편이 전부 무효가 된다(node_kind·target 을 올린 것과 같은 규칙). 없으면 앞 마일스톤 뒤에 그냥 이어진다. 태스크가 아니라 마일스톤에 둔 이유는 실측이다 — 260907 에 분기를 요구한 발화 둘에서 모델이 전부 마일스톤 단위로 갈라 냈고 태스크 단위로 가른 건은 0건이었다. **배타적이라는 것이 이 필드의 뜻이다**: 같은 from 을 가리키는 마일스톤들은 서로 이어지지 않고 그중 하나만 실행된다. 둘 다 실행되는 병렬은 이 필드로 적지 않는다 — 병렬은 「제약이 없어서 남는 것」이고 deps 가 비어 있는 것으로 이미 표현된다.",
+      "type": "object", "additionalProperties": false,
+      "required": ["from", "when"],
+      "properties": {
+        "from": { "type": "string", "minLength": 1 },
+        "when": { "$ref": "#/$defs/outcome" }
+      }
+    },
+    "repeat_of": {
+      "$comment": "이 마일스톤이 끝났을 때 **어느 마일스톤으로 되돌아가는가** (260908). 나가는 쪽에서 적는다 — branch 와 방향이 반대인 것은 각각 자기 방향에서 이름 붙였기 때문이다. **`deps` 에 넣지 않는다**: graph/layout.ts 의 depths() 가 순환에서 무한 재귀하므로 되돌아가는 것은 그리기 전용 참조 엣지(refEdges)로 편다. 이 표현이 사람이 손으로 적은 것을 왜곡 없이 담는지 확인했다 — 대본 MSN-260831-02 의 재탐색은 마일스톤 단위로 `MS-F --(fail)--> MS-C` 이고, 그것을 태스크로 펴면(끝 노드 → 첫 노드) `T-27c → T-23a` 로 그 대본의 refEdges 와 **글자까지 같다.** **선택 필드다** — 되풀이가 있는 편은 4편 중 1편뿐이다.",
+      "type": "object", "additionalProperties": false,
+      "required": ["to", "when"],
+      "properties": {
+        "to": { "type": "string", "minLength": 1 },
+        "when": { "$ref": "#/$defs/outcome" }
+      }
+    }
+  },
+  "$defs": {
+    "status": { "enum": ["pending", "running", "done", "failed", "skipped", "awaiting_evaluation", "not_executed", "rerunning"] },
+    "outcome": {
+      "$comment": "갈래를 정하는 판정 결과. **`evaluation.result` 의 어휘를 그대로 쓴다** — 새 어휘를 만들지 않으면 「판정으로 갈린다」가 계약 안에서 이어지고, 그 판정이 무엇인지는 그 마일스톤의 decide·verify 태스크의 evaluation.criteria 가 답한다. 값을 채우는 것이 아니라 **어느 값일 때인지를 가리키는 것**이므로 계획 시점에 적어도 계층이 어긋나지 않는다. 상태 어휘(done·failed)를 안 쓴 이유가 있다: 「사람 탐지」 마일스톤은 성공적으로 끝나고 그 *결과값*이 갈래를 정한다 — 못 찾은 것은 실패가 아니다. `inconclusive` 는 뺐다. 판정을 못 한 것은 계획의 갈래가 아니라 실행이 다룰 예외이고, 넣으면 모델이 대응하는 것이 없는 세 번째 갈래를 만든다.",
+      "enum": ["pass", "fail"]
+    }
+  }
+}

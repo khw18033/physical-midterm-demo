@@ -1,0 +1,355 @@
+{
+  "extracted_from": {
+    "scene": "Unity_Map/Assets/Scenes/N45F_Map.unity",
+    "script": "scripts/extract-places.mjs"
+  },
+  "warning": "생성 서비스는 이 파일을 읽지 않는다 — verify:places 가 그 경로를 검사한다.",
+  "frame": "site-global = N45F_Map.unity 월드 좌표, 단위 m. 줄자 실측 기반이며 측량 등급이 아니다(places/README.md).",
+  "geometry": [
+    {
+      "place_id": "door-501b",
+      "position": {
+        "x": -20.38,
+        "y": 4.02,
+        "z": -45.97,
+        "frame": "site-global"
+      }
+    },
+    {
+      "place_id": "door-501f",
+      "position": {
+        "x": -25.84,
+        "y": 4.02,
+        "z": -45.97,
+        "frame": "site-global"
+      }
+    },
+    {
+      "place_id": "door-502b",
+      "position": {
+        "x": -27.95,
+        "y": 4.02,
+        "z": -45.97,
+        "frame": "site-global"
+      }
+    },
+    {
+      "place_id": "door-502f",
+      "position": {
+        "x": -33.22,
+        "y": 4.02,
+        "z": -45.97,
+        "frame": "site-global"
+      }
+    },
+    {
+      "place_id": "door-503",
+      "position": {
+        "x": -37.84,
+        "y": 4.02,
+        "z": -45.97,
+        "frame": "site-global"
+      }
+    },
+    {
+      "place_id": "door-504b",
+      "position": {
+        "x": -43.28,
+        "y": 4.02,
+        "z": -45.97,
+        "frame": "site-global"
+      }
+    },
+    {
+      "place_id": "door-504f",
+      "position": {
+        "x": -46.82,
+        "y": 4.02,
+        "z": -45.97,
+        "frame": "site-global"
+      }
+    },
+    {
+      "place_id": "door-505b",
+      "position": {
+        "x": -48.72,
+        "y": 4.02,
+        "z": -45.97,
+        "frame": "site-global"
+      }
+    },
+    {
+      "place_id": "door-505f",
+      "position": {
+        "x": -53.95,
+        "y": 4.02,
+        "z": -45.97,
+        "frame": "site-global"
+      }
+    },
+    {
+      "place_id": "door-506",
+      "position": {
+        "x": -45.23,
+        "y": 4.02,
+        "z": -43.2,
+        "frame": "site-global"
+      }
+    },
+    {
+      "place_id": "door-507",
+      "position": {
+        "x": -43.55,
+        "y": 4.02,
+        "z": -43.2,
+        "frame": "site-global"
+      }
+    },
+    {
+      "place_id": "door-508",
+      "position": {
+        "x": -37.92,
+        "y": 4.02,
+        "z": -43.2,
+        "frame": "site-global"
+      }
+    },
+    {
+      "place_id": "door-509",
+      "position": {
+        "x": -36.24,
+        "y": 4.02,
+        "z": -43.2,
+        "frame": "site-global"
+      }
+    },
+    {
+      "place_id": "door-510",
+      "position": {
+        "x": -32.64,
+        "y": 4.02,
+        "z": -43.2,
+        "frame": "site-global"
+      }
+    },
+    {
+      "place_id": "door-511",
+      "position": {
+        "x": -28,
+        "y": 4.02,
+        "z": -43.2,
+        "frame": "site-global"
+      }
+    },
+    {
+      "place_id": "door-512",
+      "position": {
+        "x": -26.31,
+        "y": 4.02,
+        "z": -43.2,
+        "frame": "site-global"
+      }
+    },
+    {
+      "place_id": "door-513",
+      "position": {
+        "x": -12.65,
+        "y": 4.02,
+        "z": -32.25,
+        "frame": "site-global"
+      }
+    },
+    {
+      "place_id": "door-514",
+      "position": {
+        "x": -12.65,
+        "y": 4.02,
+        "z": -22.98,
+        "frame": "site-global"
+      }
+    },
+    {
+      "place_id": "door-515",
+      "position": {
+        "x": -12.65,
+        "y": 4.02,
+        "z": -19.39,
+        "frame": "site-global"
+      }
+    },
+    {
+      "place_id": "door-516",
+      "position": {
+        "x": -12.65,
+        "y": 4.02,
+        "z": -15.65,
+        "frame": "site-global"
+      }
+    },
+    {
+      "place_id": "door-517",
+      "position": {
+        "x": -12.65,
+        "y": 4.02,
+        "z": -12.22,
+        "frame": "site-global"
+      }
+    },
+    {
+      "place_id": "door-518b",
+      "position": {
+        "x": -10.1,
+        "y": 4.02,
+        "z": -12.42,
+        "frame": "site-global"
+      }
+    },
+    {
+      "place_id": "door-518f",
+      "position": {
+        "x": -10.1,
+        "y": 4.02,
+        "z": -24.64,
+        "frame": "site-global"
+      }
+    },
+    {
+      "place_id": "door-519",
+      "position": {
+        "x": -10.1,
+        "y": 4.02,
+        "z": -26.48,
+        "frame": "site-global"
+      }
+    },
+    {
+      "place_id": "door-520b",
+      "position": {
+        "x": -10.1,
+        "y": 4.02,
+        "z": -30.84,
+        "frame": "site-global"
+      }
+    },
+    {
+      "place_id": "door-520f",
+      "position": {
+        "x": -10.1,
+        "y": 4.02,
+        "z": -42.52,
+        "frame": "site-global"
+      }
+    },
+    {
+      "place_id": "elevator-5f",
+      "position": {
+        "x": -7.36,
+        "y": 8.11,
+        "z": -45.29,
+        "frame": "site-global"
+      }
+    },
+    {
+      "place_id": "restroom-5f",
+      "position": {
+        "x": -3.45,
+        "y": 8.11,
+        "z": -49.92,
+        "frame": "site-global"
+      }
+    },
+    {
+      "place_id": "stair-5f-west",
+      "position": {
+        "x": -52.32,
+        "y": 8.11,
+        "z": -40.88,
+        "frame": "site-global"
+      }
+    },
+    {
+      "place_id": "stair-5f-east",
+      "position": {
+        "x": -9.9,
+        "y": 8.11,
+        "z": -49.96,
+        "frame": "site-global"
+      }
+    },
+    {
+      "place_id": "stair-5f-north",
+      "position": {
+        "x": -11.37,
+        "y": 8.11,
+        "z": -10.82,
+        "frame": "site-global"
+      }
+    },
+    {
+      "place_id": "corridor-5f-main",
+      "axis": "z",
+      "at": -44.57,
+      "span": {
+        "from": -53.95,
+        "to": -20.38
+      },
+      "frame": "site-global"
+    },
+    {
+      "place_id": "corridor-5f-wing",
+      "axis": "x",
+      "at": -11.37,
+      "span": {
+        "from": -42.52,
+        "to": -12.22
+      },
+      "frame": "site-global"
+    },
+    {
+      "place_id": "room-503",
+      "frame": "site-global",
+      "bounds": {
+        "x": {
+          "from": -40.46,
+          "to": -33.06
+        },
+        "z": {
+          "from": -55.26,
+          "to": -45.86
+        }
+      },
+      "size_m": {
+        "width": 7.4,
+        "depth": 9.4
+      },
+      "interior": {
+        "scene": "Unity_Map/Assets/XRI/lab.unity",
+        "anchor": "Door ↔ door-503",
+        "rotation_deg": 0,
+        "offset": {
+          "x": -40.46,
+          "z": -55.26
+        }
+      },
+      "anchors": {
+        "StartPoint": {
+          "x": -38.62,
+          "z": -53.64
+        },
+        "GoalPoint": {
+          "x": -37.66,
+          "z": -47.14
+        },
+        "go1": {
+          "x": -38.62,
+          "z": -52.26
+        },
+        "Anchor360": {
+          "x": -39.16,
+          "z": -48.76
+        }
+      },
+      "note": "y(높이)는 없다 — 씬의 벽 높이는 편의값이고 실측이 아니다(2026-09-06 확인)."
+    }
+  ]
+}

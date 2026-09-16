@@ -1,0 +1,155 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://hybrid-dt-framework/contracts/event-rule-set.schema.json",
+  "title": "Event Rule Set",
+  "description": "F6 (REQ-601~602): 조건→뷰 액션 규칙의 선언 형식. 규칙을 평가하는 엔진은 공통이며 도메인 중립이고, 여기에 담기는 규칙 '내용'은 분야별 확장(E4)이다. 조건식에는 도메인 용어가 아닌 컴포넌트/필드 참조만 등장한다.",
+  "type": "object",
+  "required": ["id", "version", "rules"],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*[a-z0-9]$"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "displayName": { "type": "string" },
+    "description": { "type": "string" },
+    "extensionPoint": {
+      "type": "string",
+      "enum": ["E4"],
+      "description": "분야별 규칙 세트는 확장점 E4로 표기한다. 코어에 내장되는 규칙은 없으므로 사실상 모든 실제 규칙 세트가 E4에 해당한다."
+    },
+    "rules": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/rule" }
+    }
+  },
+  "$defs": {
+    "rule": {
+      "type": "object",
+      "required": ["id", "when", "then"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-zA-Z_][a-zA-Z0-9_-]*$"
+        },
+        "description": { "type": "string" },
+        "priority": {
+          "type": "integer",
+          "default": 0,
+          "description": "동시에 여러 규칙이 발동할 때의 평가 우선순위. 값이 클수록 먼저 적용된다."
+        },
+        "when": {
+          "$ref": "#/$defs/condition",
+          "description": "발동 조건."
+        },
+        "then": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/action" },
+          "description": "조건 충족 시 실행할 뷰 액션 목록."
+        },
+        "cooldownMs": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "재발동 억제 시간. 임계값 근처에서 액션이 반복 발동하는 것을 방지한다."
+        }
+      }
+    },
+    "condition": {
+      "description": "비교식이거나, and/or/not으로 결합된 복합식.",
+      "oneOf": [
+        { "$ref": "#/$defs/comparison" },
+        { "$ref": "#/$defs/andCondition" },
+        { "$ref": "#/$defs/orCondition" },
+        { "$ref": "#/$defs/notCondition" }
+      ]
+    },
+    "comparison": {
+      "type": "object",
+      "required": ["field", "operator", "value"],
+      "additionalProperties": false,
+      "properties": {
+        "field": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]*[a-z0-9]\\.[a-zA-Z_][a-zA-Z0-9_]*$",
+          "description": "'<componentId>.<fieldName>' 형식의 참조. F8 validator가 실제 디스크립터에 존재하는 필드인지 대조한다."
+        },
+        "operator": {
+          "type": "string",
+          "enum": ["gt", "gte", "lt", "lte", "eq", "neq", "in", "notIn"]
+        },
+        "value": {
+          "description": "비교 대상 값. operator가 in/notIn이면 배열이어야 한다.",
+          "type": ["number", "string", "boolean", "array"]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "operator": { "enum": ["in", "notIn"] } },
+            "required": ["operator"]
+          },
+          "then": { "properties": { "value": { "type": "array" } } }
+        }
+      ]
+    },
+    "andCondition": {
+      "type": "object",
+      "required": ["and"],
+      "additionalProperties": false,
+      "properties": {
+        "and": {
+          "type": "array",
+          "minItems": 2,
+          "items": { "$ref": "#/$defs/condition" }
+        }
+      }
+    },
+    "orCondition": {
+      "type": "object",
+      "required": ["or"],
+      "additionalProperties": false,
+      "properties": {
+        "or": {
+          "type": "array",
+          "minItems": 2,
+          "items": { "$ref": "#/$defs/condition" }
+        }
+      }
+    },
+    "notCondition": {
+      "type": "object",
+      "required": ["not"],
+      "additionalProperties": false,
+      "properties": {
+        "not": { "$ref": "#/$defs/condition" }
+      }
+    },
+    "action": {
+      "type": "object",
+      "required": ["type"],
+      "additionalProperties": false,
+      "description": "뷰 액션. 코어 내장 타입: focus-entity(대상 확대), switch-view(전용 뷰 전환), highlight(강조), open-panel(패널 열기). 확장 액션을 등록할 수 있으므로 type을 enum으로 닫지 않는다.",
+      "properties": {
+        "type": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]*[a-z0-9]$"
+        },
+        "target": {
+          "type": "string",
+          "description": "액션 대상 참조(Zone/Node/Entity id 또는 view id). F3 공간 계층의 식별자 체계를 따른다."
+        },
+        "params": {
+          "type": "object",
+          "description": "액션별 파라미터. 액션 구현체가 스키마를 소유한다."
+        }
+      }
+    }
+  }
+}

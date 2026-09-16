@@ -1,0 +1,18 @@
+{
+  "id": "stream-gateway",
+  "type": "stream-gateway",
+  "version": "1.0.0",
+  "displayName": "Stream Gateway",
+  "description": "NFR-005 검증용: Prometheus가 아닌 두 번째 DataSource 타입. 코어는 type 키만 다르게 볼 뿐 동일한 인터페이스로 다룬다.",
+  "endpoint": "ws://stream-gateway:8080",
+  "capabilities": {
+    "instantQuery": false,
+    "rangeQuery": false,
+    "streaming": true
+  },
+  "auth": {
+    "mode": "bearer",
+    "secretRef": "vault://hybrid-dt/stream-gateway-token"
+  },
+  "defaultTimeoutMs": 10000
+}

@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://hybrid-dt-framework/contracts/component-descriptor.schema.json",
+  "title": "Component Descriptor",
+  "description": "F1 (REQ-101~104): 컨테이너가 내보내는 데이터와 표현 방식을 선언하는 도메인 중립 스키마.",
+  "type": "object",
+  "required": ["id", "version", "fields"],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*[a-z0-9]$",
+      "description": "컴포넌트 고유 식별자. Zone/Node/Entity 계층(F3)에서 참조되는 키."
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "REQ-104: 디스크립터 버전(semver). core-engine은 두 버전의 major가 다르면 비호환으로 간주해 경고를 표시한다."
+    },
+    "displayName": {
+      "type": "string",
+      "description": "대시보드에 표시할 사람이 읽을 수 있는 이름."
+    },
+    "description": {
+      "type": "string"
+    },
+    "fields": {
+      "type": "array",
+      "minItems": 1,
+      "description": "REQ-101/102: 이 컴포넌트가 내보내는 데이터 필드 목록. 최소 1개 이상이어야 등록 가능.",
+      "items": { "$ref": "#/$defs/field" }
+    }
+  },
+  "$defs": {
+    "field": {
+      "type": "object",
+      "required": ["name", "type", "required"],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "pattern": "^[a-zA-Z_][a-zA-Z0-9_]*$"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["number", "string", "boolean", "enum", "object", "array", "binary-stream"],
+          "description": "필드의 데이터 타입. binary-stream은 REQ-502에 따라 영상·음성 등 연속 스트림을 1급으로 선언하기 위한 타입이며, streaming=true 렌더러(F5)가 소비한다."
+        },
+        "required": {
+          "type": "boolean",
+          "description": "REQ-102: true면 필수 필드. core-engine은 값 누락 시 해당 컴포넌트 등록을 거부한다."
+        },
+        "unit": {
+          "type": "string",
+          "description": "REQ-103: 단위 (예: celsius, meter, percent). type=number 필드에만 의미 있음."
+        },
+        "valueRange": {
+          "type": "object",
+          "description": "REQ-103: 값 범위. type=number 필드에만 적용.",
+          "additionalProperties": false,
+          "properties": {
+            "min": { "type": "number" },
+            "max": { "type": "number" }
+          }
+        },
+        "samplingIntervalMs": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "REQ-103: 샘플링 주기(밀리초). 스트리밍/폴링 필드에 사용."
+        },
+        "enumValues": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "type=enum 필드의 허용 값 목록."
+        },
+        "representationHint": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]*[a-z0-9]$",
+          "description": "F5 렌더러 카탈로그(renderer.schema.json)의 type 키 참조. 등록된 렌더러인지, 그리고 이 필드의 type을 그 렌더러가 acceptsFieldTypes로 받는지는 F8 validator가 카탈로그와 대조해 검사한다. 신규 렌더러 등록(REQ-503)을 막지 않기 위해 enum으로 닫지 않는다(NFR-006)."
+        },
+        "description": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

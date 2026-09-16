@@ -1,0 +1,1 @@
+{"milestone_id":"MS-D","title":"사람을 못 찾았으면 계속 이동","order":3,"status":"pending","tasks":[],"assigned_targets":["robot-01"],"branch":{"from":"MS-B","when":"fail"}}

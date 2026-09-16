@@ -1,0 +1,54 @@
+{
+  "target_class": "door",
+  "ok": true,
+  "target_resolution": {
+    "target_class": "door",
+    "position_cm": [
+      922.8382525306339,
+      327.79439999999994
+    ],
+    "source": "gt_fixed",
+    "detail": "datasets/25300_gt.png GT 점으로 고정된 도면상 위치"
+  },
+  "robot_position_cm": [
+    236.2,
+    126.9
+  ],
+  "current_heading_map_deg": 106.3,
+  "target_position_cm": [
+    922.8,
+    327.8
+  ],
+  "map_bearing_to_target_deg": 16.3,
+  "turn_instruction": "왼쪽(반시계)으로 90.0도 회전",
+  "distance_to_target_cm": 715.4,
+  "standoff_cm": 80.0,
+  "forward_distance_cm": 635.4,
+  "goal_cm": [
+    846.1,
+    305.3
+  ],
+  "path_calculation": {
+    "step1_map_bearing_to_target": {
+      "formula": "atan2(target_position_cm.y - robot_position_cm.y, target_position_cm.x - robot_position_cm.x) mod 360",
+      "substituted": "atan2(200.9, 686.6) mod 360 = 16.3"
+    },
+    "step2_turn_amount": {
+      "formula": "turn_amount_deg = |((map_bearing_to_target_deg - current_heading_map_deg + 180) mod 360) - 180|",
+      "substituted": "|((16.3 - 106.3 + 180) mod 360) - 180| = 90.0 (왼쪽(반시계))"
+    },
+    "step3_distance_to_target": {
+      "formula": "distance_to_target_cm = hypot(target_position_cm.x - robot_position_cm.x, target_position_cm.y - robot_position_cm.y)",
+      "substituted": "hypot(686.6, 200.9) = 715.4"
+    },
+    "step4_forward_distance": {
+      "formula": "forward_distance_cm = distance_to_target_cm - standoff_cm(target_class)",
+      "substituted": "715.4 - 80.0 = 635.4"
+    },
+    "step5_goal_position": {
+      "formula": "goal_cm = robot_position_cm + forward_distance_cm * unit_vector(robot->target)",
+      "substituted": "(236.2, 126.9) + 635.4 * (0.960, 0.281) = (846.1, 305.3)"
+    }
+  },
+  "pedestal_obstacle_clear": true
+}

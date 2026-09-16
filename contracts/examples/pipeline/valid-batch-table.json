@@ -1,0 +1,36 @@
+{
+  "id": "batch-history-table",
+  "version": "1.0.0",
+  "displayName": "Batch History → Table",
+  "description": "REQ-401: 배열 필드를 table 렌더러로 직접 해석하는 경로.",
+  "serializationFormat": "json",
+  "nodes": [
+    {
+      "id": "src",
+      "kind": "source",
+      "executionLocation": "server",
+      "source": {
+        "dataSourceRef": "prom-main",
+        "queryMode": "instant",
+        "query": "batch_history{component=\"batch-processor-01\"}"
+      }
+    },
+    {
+      "id": "out",
+      "kind": "sink",
+      "executionLocation": "client",
+      "sink": {
+        "rendererType": "table",
+        "componentRef": "batch-processor-01",
+        "fieldRef": "recentBatches",
+        "rendererConfig": {
+          "columns": ["batchId", "durationMs", "result"],
+          "maxRows": 8
+        }
+      }
+    }
+  ],
+  "edges": [
+    { "from": "src", "to": "out" }
+  ]
+}

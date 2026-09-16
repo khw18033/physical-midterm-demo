@@ -1,0 +1,1 @@
+{"milestone_id":"MS-F","title":"특정 사각지대의 마지막 탐지 시각이 10분 초과 시 재탐색","order":5,"status":"pending","tasks":[],"assigned_targets":["camera-02","robot-01"],"repeat_of":{"to":"MS-C","when":"fail"}}

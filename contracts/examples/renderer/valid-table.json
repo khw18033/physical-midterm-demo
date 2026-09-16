@@ -1,0 +1,20 @@
+{
+  "type": "table",
+  "version": "1.0.0",
+  "displayName": "Table",
+  "description": "코어 내장 렌더러. 배열·객체 형태의 구조화된 값을 행/열로 표시한다.",
+  "acceptsFieldTypes": ["array", "object"],
+  "streaming": false,
+  "executionLocation": "client",
+  "configSchema": {
+    "type": "object",
+    "properties": {
+      "columns": {
+        "type": "array",
+        "items": { "type": "string" }
+      },
+      "maxRows": { "type": "integer" }
+    }
+  },
+  "implementationRef": "core/renderers/table"
+}

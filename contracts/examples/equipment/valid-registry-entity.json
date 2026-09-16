@@ -1,0 +1,7 @@
+{
+  "equipment_id": "robot-01",
+  "label": "로봇 01",
+  "aliases": ["1호기", "503 구역 로봇", "선두 로봇"],
+  "kind": "robot",
+  "zone_id": "zone-503"
+}

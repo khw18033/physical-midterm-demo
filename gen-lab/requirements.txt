@@ -1,0 +1,18 @@
+# -*- coding: utf-8 -*-
+# ↑ pip 은 requirements.txt 를 로케일 인코딩(한국어 Windows: cp949)으로 읽는다.
+#   한글 주석이 있으면 이 줄이 없을 때 UnicodeDecodeError 로 설치가 통째로 실패한다.
+#
+# 스텁의 의존성은 이것뿐이다. jsonschema 를 넣지 않는다 — 계약 검증기는 server/main.py 안에
+# 최소 구현으로 들어 있고(viz-debugger/scripts/lib/json-schema.mjs 와 같은 범위),
+# 「띄우려면 먼저 설치해야 한다」를 늘리지 않는 편이 낫다.
+#
+# 260906 에 엔진(llama.cpp)을 붙였는데 **여기에 더한 것이 없다.** 실제로 쓴 것만 적는
+# 규칙대로다 — 엔진은 `llama-server` 바이너리에 HTTP 로 말을 걸고, 그 HTTP 는 표준
+# 라이브러리(urllib)로 한다. requests·httpx 를 넣을 이유가 없었다.
+#
+# `llama-cpp-python` 도 없다. in-process 로 가면 그때 생기고, 그 결정은 아직 안 했다
+# (Windows + CUDA 휠 설치가 까다로워 바이너리로 시작했다 — gen-lab/README.md).
+#
+# 바이너리와 가중치는 pip 이 다루는 것이 아니라 받아 두는 것이다. 절차는 README 에 있다.
+fastapi>=0.111
+uvicorn[standard]>=0.30

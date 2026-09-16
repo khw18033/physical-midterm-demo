@@ -1,0 +1,57 @@
+{
+  "target_class": "door",
+  "localization_ok": true,
+  "absolute_bearing_formula": "absolute_bearing_deg = (rotation_deg + current_heading_map_deg) mod 360",
+  "distance_formula": "distance_cm = calibrate_depth_to_cm(rel_depth, bbox)",
+  "distance_note": "이 distance_cm은 target_class 자신의 depth 추정치다 -- door/pedestal처럼 도면상 고정 위치가 따로 있는 랜드마크는 실제 경로 계산에는 이 값 대신 고정 위치까지의 거리를 쓴다(해당 클래스 디렉터리의 evidence.json 참고).",
+  "frames": [
+    {
+      "frame": "frame_000001.jpg",
+      "rotation_deg": 0.0,
+      "found": false
+    },
+    {
+      "frame": "frame_000020.jpg",
+      "rotation_deg": 45.0,
+      "found": false
+    },
+    {
+      "frame": "frame_000039.jpg",
+      "rotation_deg": 90.0,
+      "found": false
+    },
+    {
+      "frame": "frame_000057.jpg",
+      "rotation_deg": 135.0,
+      "found": false
+    },
+    {
+      "frame": "frame_000076.jpg",
+      "rotation_deg": 180.0,
+      "found": false
+    },
+    {
+      "frame": "frame_000095.jpg",
+      "rotation_deg": 225.0,
+      "found": false
+    },
+    {
+      "frame": "frame_000113.jpg",
+      "rotation_deg": 270.0,
+      "found": true,
+      "absolute_bearing_deg": 16.3,
+      "rel_depth": 10.02380084991455,
+      "distance_cm": 0.0,
+      "in_valid_calibration_range": false
+    },
+    {
+      "frame": "frame_000132.jpg",
+      "rotation_deg": 315.0,
+      "found": true,
+      "absolute_bearing_deg": 61.3,
+      "rel_depth": 12.922344207763672,
+      "distance_cm": 0.0,
+      "in_valid_calibration_range": false
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "id": "temperature-sensor-01",
+  "version": "1.0.0",
+  "displayName": "Temperature Sensor 01",
+  "description": "도메인 중립 예시: 온도 값과 상태를 내보내는 컴포넌트.",
+  "fields": [
+    {
+      "name": "temperature",
+      "type": "number",
+      "required": true,
+      "unit": "celsius",
+      "valueRange": { "min": -40, "max": 120 },
+      "samplingIntervalMs": 1000,
+      "representationHint": "graph",
+      "description": "현재 측정 온도."
+    },
+    {
+      "name": "status",
+      "type": "enum",
+      "required": true,
+      "enumValues": ["ok", "warning", "error"],
+      "representationHint": "text"
+    },
+    {
+      "name": "note",
+      "type": "string",
+      "required": false,
+      "representationHint": "text"
+    }
+  ]
+}

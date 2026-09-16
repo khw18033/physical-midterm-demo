@@ -1,0 +1,1 @@
+{"mission_id":"mission-002","utterance":{"audio_ref":"audio/002.webm","text":"503호에서 복도에 있는 엘리베이터 앞까지 이동해줘","engine":"faster-whisper","confidence":0.933,"confidence_signals":{"primary":-0.088,"no_speech":0.021,"unit_mean":0.933}},"milestones":[]}

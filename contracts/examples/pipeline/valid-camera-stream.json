@@ -1,0 +1,36 @@
+{
+  "id": "camera-feed-stream",
+  "version": "1.0.0",
+  "displayName": "Camera Feed → Video Stream",
+  "description": "REQ-502: 스트리밍을 1급 컴포넌트로 다루는 경로. queryMode=stream이며 대상 DataSource가 streaming capability를 가져야 한다(F8이 검사).",
+  "serializationFormat": "json",
+  "nodes": [
+    {
+      "id": "src",
+      "kind": "source",
+      "executionLocation": "server",
+      "source": {
+        "dataSourceRef": "stream-gateway",
+        "queryMode": "stream",
+        "query": "camera-01/videoFeed"
+      }
+    },
+    {
+      "id": "out",
+      "kind": "sink",
+      "executionLocation": "client",
+      "sink": {
+        "rendererType": "video-stream",
+        "componentRef": "camera-01",
+        "fieldRef": "videoFeed",
+        "rendererConfig": {
+          "codec": "h264",
+          "autoplay": true
+        }
+      }
+    }
+  ],
+  "edges": [
+    { "from": "src", "to": "out" }
+  ]
+}

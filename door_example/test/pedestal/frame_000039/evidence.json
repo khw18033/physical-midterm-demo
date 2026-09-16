@@ -1,0 +1,36 @@
+{
+  "target_class": "pedestal",
+  "frame": "frame_000039.jpg",
+  "rotation_deg": 90.0,
+  "box_xyxy": [
+    78.43,
+    0.83,
+    230.67,
+    232.68
+  ],
+  "feature_similarities": {
+    "a pedestal's flat top surface": 0.2237,
+    "a pedestal's vertical upright body": 0.2382,
+    "a pedestal's a small circular button": 0.2198,
+    "a pedestal's a dark base trim": 0.2203,
+    "a pedestal's cream white and dark two-tone finish": 0.2126,
+    "a pedestal's smooth curved vertical surface": 0.229,
+    "a pedestal's dark base trim": 0.2221,
+    "a pedestal's a small black circular button": 0.2192
+  },
+  "final_score": 0.2382,
+  "mandatory_gates": {
+    "reference_image_gate": {
+      "required": true,
+      "passed": true,
+      "similarity": 0.9735813140869141,
+      "threshold_min": 0.93
+    },
+    "saturation_gate": {
+      "required": true,
+      "passed": true,
+      "median_saturation": 13.0,
+      "max_saturation": 30
+    }
+  }
+}

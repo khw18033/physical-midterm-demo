@@ -1,0 +1,15 @@
+{
+  "target_class": "door",
+  "requested_by_command": true,
+  "is_localization_landmark": true,
+  "features_compared": [
+    "a door's handle",
+    "a door's hinge",
+    "a door's lock",
+    "a door's threshold",
+    "a door's light blue color",
+    "a door's round metal knob",
+    "a door's closer device at the top",
+    "a door's glossy surface"
+  ]
+}

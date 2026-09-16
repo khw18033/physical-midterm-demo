@@ -1,0 +1,23 @@
+{
+  "id": "camera-01",
+  "version": "1.0.0",
+  "displayName": "Camera 01",
+  "description": "도메인 중립 예시: REQ-502 검증용. binary-stream 필드를 선언해 스트리밍 렌더러가 1급으로 도달 가능한지 확인한다.",
+  "fields": [
+    {
+      "name": "videoFeed",
+      "type": "binary-stream",
+      "required": true,
+      "samplingIntervalMs": 33,
+      "representationHint": "video-stream",
+      "description": "연속 영상 스트림. 텍스트 패널에 끼워 넣지 않고 전용 렌더러가 소비한다."
+    },
+    {
+      "name": "connectionState",
+      "type": "enum",
+      "required": true,
+      "enumValues": ["connected", "reconnecting", "disconnected"],
+      "representationHint": "text"
+    }
+  ]
+}

@@ -1,0 +1,839 @@
+{
+  "schema": "contracts/place.schema.json",
+  "extracted_from": {
+    "scene": "Unity_Map/Assets/Scenes/N45F_Map.unity",
+    "script": "scripts/extract-places.mjs"
+  },
+  "held_open": [
+    "room-415"
+  ],
+  "held_open_note": "아직 재지 않은 자리다 — 좌표도 인접도 없다. 4층 맵 데이터가 없어서 415호는 섬으로 둔다(260907). places.geometry.json 에 이들의 자리는 없어야 하고 verify:places 가 그것을 검사한다.",
+  "note": "좌표는 여기 없다 — places.geometry.json 이 든다. **방은 번호로만 부른다** — 기능 이름(강의실·연구실)은 넣지 않는다: 씬에 없는 정보이고 방 용도는 바뀐다.",
+  "places": [
+    {
+      "place_id": "room-501",
+      "label": "501호",
+      "aliases": [
+        "501",
+        "501호"
+      ],
+      "kind": "room",
+      "floor": 5,
+      "adjacent": [
+        "door-501b",
+        "door-501f"
+      ],
+      "zone_id": "zone-503"
+    },
+    {
+      "place_id": "room-502",
+      "label": "502호",
+      "aliases": [
+        "502",
+        "502호"
+      ],
+      "kind": "room",
+      "floor": 5,
+      "adjacent": [
+        "door-502b",
+        "door-502f"
+      ],
+      "zone_id": "zone-503"
+    },
+    {
+      "place_id": "room-503",
+      "label": "503호",
+      "aliases": [
+        "503",
+        "503호"
+      ],
+      "kind": "room",
+      "floor": 5,
+      "adjacent": [
+        "door-503"
+      ],
+      "zone_id": "zone-503"
+    },
+    {
+      "place_id": "room-504",
+      "label": "504호",
+      "aliases": [
+        "504",
+        "504호"
+      ],
+      "kind": "room",
+      "floor": 5,
+      "adjacent": [
+        "door-504b",
+        "door-504f"
+      ],
+      "zone_id": "zone-503"
+    },
+    {
+      "place_id": "room-505",
+      "label": "505호",
+      "aliases": [
+        "505",
+        "505호"
+      ],
+      "kind": "room",
+      "floor": 5,
+      "adjacent": [
+        "door-505b",
+        "door-505f"
+      ],
+      "zone_id": "zone-503"
+    },
+    {
+      "place_id": "room-506",
+      "label": "506호",
+      "aliases": [
+        "506",
+        "506호"
+      ],
+      "kind": "room",
+      "floor": 5,
+      "adjacent": [
+        "door-506"
+      ],
+      "zone_id": "zone-503"
+    },
+    {
+      "place_id": "room-507",
+      "label": "507호",
+      "aliases": [
+        "507",
+        "507호"
+      ],
+      "kind": "room",
+      "floor": 5,
+      "adjacent": [
+        "door-507"
+      ],
+      "zone_id": "zone-503"
+    },
+    {
+      "place_id": "room-508",
+      "label": "508호",
+      "aliases": [
+        "508",
+        "508호"
+      ],
+      "kind": "room",
+      "floor": 5,
+      "adjacent": [
+        "door-508"
+      ],
+      "zone_id": "zone-503"
+    },
+    {
+      "place_id": "room-509",
+      "label": "509호",
+      "aliases": [
+        "509",
+        "509호"
+      ],
+      "kind": "room",
+      "floor": 5,
+      "adjacent": [
+        "door-509"
+      ],
+      "zone_id": "zone-503"
+    },
+    {
+      "place_id": "room-510",
+      "label": "510호",
+      "aliases": [
+        "510",
+        "510호"
+      ],
+      "kind": "room",
+      "floor": 5,
+      "adjacent": [
+        "door-510"
+      ],
+      "zone_id": "zone-503"
+    },
+    {
+      "place_id": "room-511",
+      "label": "511호",
+      "aliases": [
+        "511",
+        "511호"
+      ],
+      "kind": "room",
+      "floor": 5,
+      "adjacent": [
+        "door-511"
+      ],
+      "zone_id": "zone-503"
+    },
+    {
+      "place_id": "room-512",
+      "label": "512호",
+      "aliases": [
+        "512",
+        "512호"
+      ],
+      "kind": "room",
+      "floor": 5,
+      "adjacent": [
+        "door-512"
+      ],
+      "zone_id": "zone-503"
+    },
+    {
+      "place_id": "room-513",
+      "label": "513호",
+      "aliases": [
+        "513",
+        "513호"
+      ],
+      "kind": "room",
+      "floor": 5,
+      "adjacent": [
+        "door-513"
+      ],
+      "zone_id": "zone-503"
+    },
+    {
+      "place_id": "room-514",
+      "label": "514호",
+      "aliases": [
+        "514",
+        "514호"
+      ],
+      "kind": "room",
+      "floor": 5,
+      "adjacent": [
+        "door-514"
+      ],
+      "zone_id": "zone-503"
+    },
+    {
+      "place_id": "room-515",
+      "label": "515호",
+      "aliases": [
+        "515",
+        "515호"
+      ],
+      "kind": "room",
+      "floor": 5,
+      "adjacent": [
+        "door-515"
+      ],
+      "zone_id": "zone-503"
+    },
+    {
+      "place_id": "room-516",
+      "label": "516호",
+      "aliases": [
+        "516",
+        "516호"
+      ],
+      "kind": "room",
+      "floor": 5,
+      "adjacent": [
+        "door-516"
+      ],
+      "zone_id": "zone-503"
+    },
+    {
+      "place_id": "room-517",
+      "label": "517호",
+      "aliases": [
+        "517",
+        "517호"
+      ],
+      "kind": "room",
+      "floor": 5,
+      "adjacent": [
+        "door-517"
+      ],
+      "zone_id": "zone-503"
+    },
+    {
+      "place_id": "room-518",
+      "label": "518호",
+      "aliases": [
+        "518",
+        "518호"
+      ],
+      "kind": "room",
+      "floor": 5,
+      "adjacent": [
+        "door-518b",
+        "door-518f"
+      ],
+      "zone_id": "zone-503"
+    },
+    {
+      "place_id": "room-519",
+      "label": "519호",
+      "aliases": [
+        "519",
+        "519호"
+      ],
+      "kind": "room",
+      "floor": 5,
+      "adjacent": [
+        "door-519"
+      ],
+      "zone_id": "zone-503"
+    },
+    {
+      "place_id": "room-520",
+      "label": "520호",
+      "aliases": [
+        "520",
+        "520호"
+      ],
+      "kind": "room",
+      "floor": 5,
+      "adjacent": [
+        "door-520b",
+        "door-520f"
+      ],
+      "zone_id": "zone-503"
+    },
+    {
+      "place_id": "door-501b",
+      "label": "501호 뒷문",
+      "aliases": [
+        "501호 문",
+        "501 문"
+      ],
+      "kind": "door",
+      "floor": 5,
+      "adjacent": [
+        "corridor-5f-main",
+        "room-501"
+      ],
+      "zone_id": "zone-503"
+    },
+    {
+      "place_id": "door-501f",
+      "label": "501호 앞문",
+      "aliases": [
+        "501호 문",
+        "501 문"
+      ],
+      "kind": "door",
+      "floor": 5,
+      "adjacent": [
+        "corridor-5f-main",
+        "room-501"
+      ],
+      "zone_id": "zone-503"
+    },
+    {
+      "place_id": "door-502b",
+      "label": "502호 뒷문",
+      "aliases": [
+        "502호 문",
+        "502 문"
+      ],
+      "kind": "door",
+      "floor": 5,
+      "adjacent": [
+        "corridor-5f-main",
+        "room-502"
+      ],
+      "zone_id": "zone-503"
+    },
+    {
+      "place_id": "door-502f",
+      "label": "502호 앞문",
+      "aliases": [
+        "502호 문",
+        "502 문"
+      ],
+      "kind": "door",
+      "floor": 5,
+      "adjacent": [
+        "corridor-5f-main",
+        "room-502"
+      ],
+      "zone_id": "zone-503"
+    },
+    {
+      "place_id": "door-503",
+      "label": "503호 문",
+      "aliases": [
+        "503호 문",
+        "503 문"
+      ],
+      "kind": "door",
+      "floor": 5,
+      "adjacent": [
+        "corridor-5f-main",
+        "room-503"
+      ],
+      "zone_id": "zone-503"
+    },
+    {
+      "place_id": "door-504b",
+      "label": "504호 뒷문",
+      "aliases": [
+        "504호 문",
+        "504 문"
+      ],
+      "kind": "door",
+      "floor": 5,
+      "adjacent": [
+        "corridor-5f-main",
+        "room-504"
+      ],
+      "zone_id": "zone-503"
+    },
+    {
+      "place_id": "door-504f",
+      "label": "504호 앞문",
+      "aliases": [
+        "504호 문",
+        "504 문"
+      ],
+      "kind": "door",
+      "floor": 5,
+      "adjacent": [
+        "corridor-5f-main",
+        "room-504"
+      ],
+      "zone_id": "zone-503"
+    },
+    {
+      "place_id": "door-505b",
+      "label": "505호 뒷문",
+      "aliases": [
+        "505호 문",
+        "505 문"
+      ],
+      "kind": "door",
+      "floor": 5,
+      "adjacent": [
+        "corridor-5f-main",
+        "room-505"
+      ],
+      "zone_id": "zone-503"
+    },
+    {
+      "place_id": "door-505f",
+      "label": "505호 앞문",
+      "aliases": [
+        "505호 문",
+        "505 문"
+      ],
+      "kind": "door",
+      "floor": 5,
+      "adjacent": [
+        "corridor-5f-main",
+        "room-505"
+      ],
+      "zone_id": "zone-503"
+    },
+    {
+      "place_id": "door-506",
+      "label": "506호 문",
+      "aliases": [
+        "506호 문",
+        "506 문"
+      ],
+      "kind": "door",
+      "floor": 5,
+      "adjacent": [
+        "corridor-5f-main",
+        "room-506"
+      ],
+      "zone_id": "zone-503"
+    },
+    {
+      "place_id": "door-507",
+      "label": "507호 문",
+      "aliases": [
+        "507호 문",
+        "507 문"
+      ],
+      "kind": "door",
+      "floor": 5,
+      "adjacent": [
+        "corridor-5f-main",
+        "room-507"
+      ],
+      "zone_id": "zone-503"
+    },
+    {
+      "place_id": "door-508",
+      "label": "508호 문",
+      "aliases": [
+        "508호 문",
+        "508 문"
+      ],
+      "kind": "door",
+      "floor": 5,
+      "adjacent": [
+        "corridor-5f-main",
+        "room-508"
+      ],
+      "zone_id": "zone-503"
+    },
+    {
+      "place_id": "door-509",
+      "label": "509호 문",
+      "aliases": [
+        "509호 문",
+        "509 문"
+      ],
+      "kind": "door",
+      "floor": 5,
+      "adjacent": [
+        "corridor-5f-main",
+        "room-509"
+      ],
+      "zone_id": "zone-503"
+    },
+    {
+      "place_id": "door-510",
+      "label": "510호 문",
+      "aliases": [
+        "510호 문",
+        "510 문"
+      ],
+      "kind": "door",
+      "floor": 5,
+      "adjacent": [
+        "corridor-5f-main",
+        "room-510"
+      ],
+      "zone_id": "zone-503"
+    },
+    {
+      "place_id": "door-511",
+      "label": "511호 문",
+      "aliases": [
+        "511호 문",
+        "511 문"
+      ],
+      "kind": "door",
+      "floor": 5,
+      "adjacent": [
+        "corridor-5f-main",
+        "room-511"
+      ],
+      "zone_id": "zone-503"
+    },
+    {
+      "place_id": "door-512",
+      "label": "512호 문",
+      "aliases": [
+        "512호 문",
+        "512 문"
+      ],
+      "kind": "door",
+      "floor": 5,
+      "adjacent": [
+        "corridor-5f-main",
+        "room-512"
+      ],
+      "zone_id": "zone-503"
+    },
+    {
+      "place_id": "door-513",
+      "label": "513호 문",
+      "aliases": [
+        "513호 문",
+        "513 문"
+      ],
+      "kind": "door",
+      "floor": 5,
+      "adjacent": [
+        "corridor-5f-wing",
+        "room-513"
+      ],
+      "zone_id": "zone-503"
+    },
+    {
+      "place_id": "door-514",
+      "label": "514호 문",
+      "aliases": [
+        "514호 문",
+        "514 문"
+      ],
+      "kind": "door",
+      "floor": 5,
+      "adjacent": [
+        "corridor-5f-wing",
+        "room-514"
+      ],
+      "zone_id": "zone-503"
+    },
+    {
+      "place_id": "door-515",
+      "label": "515호 문",
+      "aliases": [
+        "515호 문",
+        "515 문"
+      ],
+      "kind": "door",
+      "floor": 5,
+      "adjacent": [
+        "corridor-5f-wing",
+        "room-515"
+      ],
+      "zone_id": "zone-503"
+    },
+    {
+      "place_id": "door-516",
+      "label": "516호 문",
+      "aliases": [
+        "516호 문",
+        "516 문"
+      ],
+      "kind": "door",
+      "floor": 5,
+      "adjacent": [
+        "corridor-5f-wing",
+        "room-516"
+      ],
+      "zone_id": "zone-503"
+    },
+    {
+      "place_id": "door-517",
+      "label": "517호 문",
+      "aliases": [
+        "517호 문",
+        "517 문"
+      ],
+      "kind": "door",
+      "floor": 5,
+      "adjacent": [
+        "corridor-5f-wing",
+        "room-517"
+      ],
+      "zone_id": "zone-503"
+    },
+    {
+      "place_id": "door-518b",
+      "label": "518호 뒷문",
+      "aliases": [
+        "518호 문",
+        "518 문"
+      ],
+      "kind": "door",
+      "floor": 5,
+      "adjacent": [
+        "corridor-5f-wing",
+        "room-518"
+      ],
+      "zone_id": "zone-503"
+    },
+    {
+      "place_id": "door-518f",
+      "label": "518호 앞문",
+      "aliases": [
+        "518호 문",
+        "518 문"
+      ],
+      "kind": "door",
+      "floor": 5,
+      "adjacent": [
+        "corridor-5f-wing",
+        "room-518"
+      ],
+      "zone_id": "zone-503"
+    },
+    {
+      "place_id": "door-519",
+      "label": "519호 문",
+      "aliases": [
+        "519호 문",
+        "519 문"
+      ],
+      "kind": "door",
+      "floor": 5,
+      "adjacent": [
+        "corridor-5f-wing",
+        "room-519"
+      ],
+      "zone_id": "zone-503"
+    },
+    {
+      "place_id": "door-520b",
+      "label": "520호 뒷문",
+      "aliases": [
+        "520호 문",
+        "520 문"
+      ],
+      "kind": "door",
+      "floor": 5,
+      "adjacent": [
+        "corridor-5f-wing",
+        "room-520"
+      ],
+      "zone_id": "zone-503"
+    },
+    {
+      "place_id": "door-520f",
+      "label": "520호 앞문",
+      "aliases": [
+        "520호 문",
+        "520 문"
+      ],
+      "kind": "door",
+      "floor": 5,
+      "adjacent": [
+        "corridor-5f-wing",
+        "room-520"
+      ],
+      "zone_id": "zone-503"
+    },
+    {
+      "place_id": "corridor-5f-main",
+      "label": "5층 동서 복도",
+      "aliases": [
+        "복도",
+        "5층 복도",
+        "메인 복도"
+      ],
+      "kind": "corridor",
+      "floor": 5,
+      "adjacent": [
+        "corridor-5f-wing",
+        "door-501b",
+        "door-501f",
+        "door-502b",
+        "door-502f",
+        "door-503",
+        "door-504b",
+        "door-504f",
+        "door-505b",
+        "door-505f",
+        "door-506",
+        "door-507",
+        "door-508",
+        "door-509",
+        "door-510",
+        "door-511",
+        "door-512",
+        "elevator-5f",
+        "restroom-5f",
+        "stair-5f-east",
+        "stair-5f-west"
+      ],
+      "zone_id": "zone-503"
+    },
+    {
+      "place_id": "corridor-5f-wing",
+      "label": "5층 남북 복도",
+      "aliases": [
+        "복도",
+        "5층 복도",
+        "측면 복도"
+      ],
+      "kind": "corridor",
+      "floor": 5,
+      "adjacent": [
+        "corridor-5f-main",
+        "door-513",
+        "door-514",
+        "door-515",
+        "door-516",
+        "door-517",
+        "door-518b",
+        "door-518f",
+        "door-519",
+        "door-520b",
+        "door-520f",
+        "elevator-5f",
+        "restroom-5f",
+        "stair-5f-east",
+        "stair-5f-north"
+      ],
+      "zone_id": "zone-503"
+    },
+    {
+      "place_id": "elevator-5f",
+      "label": "엘리베이터",
+      "aliases": [
+        "엘레베이터",
+        "승강기"
+      ],
+      "kind": "elevator",
+      "floor": 5,
+      "adjacent": [
+        "corridor-5f-main",
+        "corridor-5f-wing"
+      ],
+      "zone_id": "zone-503"
+    },
+    {
+      "place_id": "restroom-5f",
+      "label": "화장실",
+      "aliases": [
+        "화장실",
+        "남녀 화장실"
+      ],
+      "kind": "zone",
+      "floor": 5,
+      "adjacent": [
+        "corridor-5f-main",
+        "corridor-5f-wing"
+      ],
+      "zone_id": "zone-503"
+    },
+    {
+      "place_id": "stair-5f-west",
+      "label": "서편 계단",
+      "aliases": [
+        "계단",
+        "비상계단"
+      ],
+      "kind": "stair",
+      "floor": 5,
+      "adjacent": [
+        "corridor-5f-main"
+      ],
+      "zone_id": "zone-503"
+    },
+    {
+      "place_id": "stair-5f-east",
+      "label": "동편 계단",
+      "aliases": [
+        "계단",
+        "비상계단"
+      ],
+      "kind": "stair",
+      "floor": 5,
+      "adjacent": [
+        "corridor-5f-main",
+        "corridor-5f-wing"
+      ],
+      "zone_id": "zone-503"
+    },
+    {
+      "place_id": "stair-5f-north",
+      "label": "북편 계단",
+      "aliases": [
+        "계단",
+        "비상계단"
+      ],
+      "kind": "stair",
+      "floor": 5,
+      "adjacent": [
+        "corridor-5f-wing"
+      ],
+      "zone_id": "zone-503"
+    },
+    {
+      "place_id": "room-415",
+      "label": "415호",
+      "aliases": [
+        "415",
+        "415호"
+      ],
+      "kind": "room",
+      "floor": 4,
+      "adjacent": [],
+      "zone_id": null
+    }
+  ]
+}

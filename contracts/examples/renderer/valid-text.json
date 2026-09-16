@@ -1,0 +1,17 @@
+{
+  "type": "text",
+  "version": "1.0.0",
+  "displayName": "Text",
+  "description": "코어 내장 렌더러. 단일 값을 레이블과 함께 표시한다.",
+  "acceptsFieldTypes": ["number", "string", "boolean", "enum"],
+  "streaming": false,
+  "executionLocation": "client",
+  "configSchema": {
+    "type": "object",
+    "properties": {
+      "showUnit": { "type": "boolean" },
+      "emphasis": { "type": "string" }
+    }
+  },
+  "implementationRef": "core/renderers/text"
+}

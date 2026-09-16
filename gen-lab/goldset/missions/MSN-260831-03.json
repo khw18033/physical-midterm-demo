@@ -1,0 +1,270 @@
+{
+  "mission_id": "MSN-260831-03",
+  "world": "registry",
+  "source": "viz-debugger/scenarios/MSN-260831-03.json (읽기 전용)",
+  "utterance": {
+    "text": "월류방어벽 자동 개폐 시스템을 가동해.",
+    "engine": "script",
+    "confidence": 1,
+    "audio_ref": null
+  },
+  "match": {
+    "must": [
+      [
+        "월류방어벽",
+        "방어벽",
+        "수문"
+      ]
+    ],
+    "any": [
+      "가동",
+      "개폐",
+      "작동"
+    ],
+    "normalize": "공백 제거 · 소문자"
+  },
+  "milestones": [
+    {
+      "milestone_id": "MS-A",
+      "order": 0,
+      "title": "기본적으로 대기 중",
+      "assigned_targets": [
+        "sensor-01"
+      ],
+      "task_ids": [
+        "T-41a",
+        "T-41b"
+      ]
+    },
+    {
+      "milestone_id": "MS-B",
+      "order": 1,
+      "title": "하천 수위가 30초 이상 상승 곡선을 그릴 시 프로세스 ON, 대기 상태로 진입",
+      "assigned_targets": [
+        "sensor-01"
+      ],
+      "task_ids": [
+        "T-42a",
+        "T-42b",
+        "T-42c"
+      ]
+    },
+    {
+      "milestone_id": "MS-C",
+      "order": 2,
+      "title": "위험 수위에 도달하고 10초 이상 유지 시 닫기",
+      "assigned_targets": [
+        "sensor-01",
+        "actuator-01"
+      ],
+      "task_ids": [
+        "T-43a",
+        "T-43b",
+        "T-43c",
+        "T-43d",
+        "T-43e"
+      ]
+    },
+    {
+      "milestone_id": "MS-D",
+      "order": 3,
+      "title": "수위가 위험 수위보다 낮으면서 하락 곡선을 3분 이상 그릴 시 다시 열기, 프로세스 OFF",
+      "assigned_targets": [
+        "sensor-01",
+        "actuator-01"
+      ],
+      "task_ids": [
+        "T-44a",
+        "T-44b",
+        "T-44c",
+        "T-44d",
+        "T-44e",
+        "T-44f"
+      ]
+    }
+  ],
+  "tasks": [
+    {
+      "task_id": "T-41a",
+      "title": "수위 구독",
+      "milestone_id": "MS-A",
+      "node_kind": "sense",
+      "target": "sensor-01",
+      "deps": []
+    },
+    {
+      "task_id": "T-41b",
+      "title": "평시 판정",
+      "milestone_id": "MS-A",
+      "node_kind": "decide",
+      "target": "sensor-01",
+      "deps": [
+        "T-41a"
+      ]
+    },
+    {
+      "task_id": "T-42a",
+      "title": "상승 구간 누적",
+      "milestone_id": "MS-B",
+      "node_kind": "sense",
+      "target": "sensor-01",
+      "deps": [
+        "T-41b"
+      ]
+    },
+    {
+      "task_id": "T-42b",
+      "title": "상승 30초 지속 판정",
+      "milestone_id": "MS-B",
+      "node_kind": "decide",
+      "target": "sensor-01",
+      "deps": [
+        "T-42a"
+      ]
+    },
+    {
+      "task_id": "T-42c",
+      "title": "프로세스 ON",
+      "milestone_id": "MS-B",
+      "node_kind": "act",
+      "target": "sensor-01",
+      "deps": [
+        "T-42b"
+      ]
+    },
+    {
+      "task_id": "T-43a",
+      "title": "위험 수위 도달 판정",
+      "milestone_id": "MS-C",
+      "node_kind": "decide",
+      "target": "sensor-01",
+      "deps": [
+        "T-42c"
+      ]
+    },
+    {
+      "task_id": "T-43b",
+      "title": "위험 수위 10초 유지 판정",
+      "milestone_id": "MS-C",
+      "node_kind": "decide",
+      "target": "sensor-01",
+      "deps": [
+        "T-43a"
+      ]
+    },
+    {
+      "task_id": "T-43c",
+      "title": "close_gate 발행",
+      "milestone_id": "MS-C",
+      "node_kind": "act",
+      "target": "actuator-01",
+      "deps": [
+        "T-43b"
+      ]
+    },
+    {
+      "task_id": "T-43d",
+      "title": "ACK·상관 키 수신",
+      "milestone_id": "MS-C",
+      "node_kind": "verify",
+      "target": "actuator-01",
+      "deps": [
+        "T-43c"
+      ]
+    },
+    {
+      "task_id": "T-43e",
+      "title": "개도율 0% 확인",
+      "milestone_id": "MS-C",
+      "node_kind": "verify",
+      "target": "actuator-01",
+      "deps": [
+        "T-43d"
+      ]
+    },
+    {
+      "task_id": "T-44a",
+      "title": "하락 구간 누적",
+      "milestone_id": "MS-D",
+      "node_kind": "sense",
+      "target": "sensor-01",
+      "deps": [
+        "T-43e"
+      ]
+    },
+    {
+      "task_id": "T-44b",
+      "title": "하락 3분 지속 판정",
+      "milestone_id": "MS-D",
+      "node_kind": "decide",
+      "target": "sensor-01",
+      "deps": [
+        "T-44a"
+      ]
+    },
+    {
+      "task_id": "T-44c",
+      "title": "open_gate 발행",
+      "milestone_id": "MS-D",
+      "node_kind": "act",
+      "target": "actuator-01",
+      "deps": [
+        "T-44b"
+      ]
+    },
+    {
+      "task_id": "T-44d",
+      "title": "ACK·상관 키 수신",
+      "milestone_id": "MS-D",
+      "node_kind": "verify",
+      "target": "actuator-01",
+      "deps": [
+        "T-44c"
+      ]
+    },
+    {
+      "task_id": "T-44e",
+      "title": "개도율 100% 확인",
+      "milestone_id": "MS-D",
+      "node_kind": "verify",
+      "target": "actuator-01",
+      "deps": [
+        "T-44d"
+      ]
+    },
+    {
+      "task_id": "T-44f",
+      "title": "프로세스 OFF",
+      "milestone_id": "MS-D",
+      "node_kind": "act",
+      "target": "sensor-01",
+      "deps": [
+        "T-44e"
+      ]
+    }
+  ],
+  "shape": {
+    "tasks": 16,
+    "edges": 15,
+    "roots": 1,
+    "sinks": 1,
+    "joins": 0,
+    "max_depth": 15,
+    "has_cycle": false,
+    "ref_edges": 0,
+    "node_kinds": [
+      "act",
+      "decide",
+      "sense",
+      "verify"
+    ],
+    "labeled": true
+  },
+  "not_extracted": {
+    "events": "실행 기록 — 생성기가 만들 것이 아니라 실행이 만든다",
+    "worldTimeline": "세계 값 — 위와 같다",
+    "params": "편별 상수(위험 수위 등) — 임무 설계가 아니라 환경 설정이다",
+    "actionItems": "어댑터 전개 결과 — VZ-G-04 의 몫이다",
+    "refEdges": "태스크 단위 참조 엣지는 안 뽑는다 — **마일스톤 단위(milestones[].repeat_of)로 올렸다** (260908). 태스크 엣지는 규칙(solveDeps)이 그 주석에서 편다"
+  }
+}

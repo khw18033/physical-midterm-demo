@@ -1,0 +1,62 @@
+{
+  "target_class": "door",
+  "frame": "frame_000132.jpg",
+  "rotation_deg": 315.0,
+  "box_xyxy": [
+    32.06,
+    103.27,
+    51.99,
+    141.85
+  ],
+  "feature_similarities": {
+    "a door's handle": 0.2228,
+    "a door's hinge": 0.2298,
+    "a door's lock": 0.2259,
+    "a door's threshold": 0.2281,
+    "a door's light blue color": 0.268,
+    "a door's round metal knob": 0.21,
+    "a door's closer device at the top": 0.2238,
+    "a door's glossy surface": 0.2362
+  },
+  "final_score": 0.268,
+  "mandatory_gates": {
+    "color_gate": {
+      "required": true,
+      "passed": true,
+      "candidates": {
+        "a door's light blue color": 0.2689858078956604,
+        "a door's white color": 0.24159549176692963,
+        "a door's gray color": 0.24803122878074646,
+        "a door's black color": 0.24313032627105713,
+        "a door's brown color": 0.24053703248500824,
+        "a door's red color": 0.23530206084251404,
+        "a door's yellow color": 0.2279558926820755,
+        "a door's green color": 0.24361638724803925
+      },
+      "winning_color": "a door's light blue color"
+    },
+    "shape_gate": {
+      "required": true,
+      "passed": true,
+      "candidates": {
+        "a rectangular shape": 0.2340109944343567,
+        "a square shape": 0.23218467831611633,
+        "a round shape": 0.22165237367153168,
+        "an irregular shape": 0.23211850225925446
+      },
+      "winning_shape": "a rectangular shape"
+    },
+    "reference_image_gate": {
+      "required": true,
+      "passed": true,
+      "similarity": 0.7763183116912842,
+      "threshold_min": 0.75
+    },
+    "saturation_gate": {
+      "required": true,
+      "passed": true,
+      "median_saturation": 129.0,
+      "min_saturation": 85
+    }
+  }
+}

@@ -1,0 +1,120 @@
+{
+  "ok": true,
+  "rotation_sequence": {
+    "description": "로봇이 오른쪽(시계) 방향으로 정확히 45도씩 회전하며 촬영한 8개 프레임(0/45/90/135/180/225/270/315도).",
+    "rotation_direction": "clockwise (오른쪽)",
+    "nominal_step_deg": 45.0,
+    "frames": [
+      {
+        "frame": "frame_000001.jpg",
+        "rotation_deg": 0.0
+      },
+      {
+        "frame": "frame_000020.jpg",
+        "rotation_deg": 45.0
+      },
+      {
+        "frame": "frame_000039.jpg",
+        "rotation_deg": 90.0
+      },
+      {
+        "frame": "frame_000057.jpg",
+        "rotation_deg": 135.0
+      },
+      {
+        "frame": "frame_000076.jpg",
+        "rotation_deg": 180.0
+      },
+      {
+        "frame": "frame_000095.jpg",
+        "rotation_deg": 225.0
+      },
+      {
+        "frame": "frame_000113.jpg",
+        "rotation_deg": 270.0
+      },
+      {
+        "frame": "frame_000132.jpg",
+        "rotation_deg": 315.0
+      }
+    ]
+  },
+  "observations": {
+    "door": [
+      {
+        "frame": "frame_000113.jpg",
+        "rotation_deg": 270.0,
+        "clip_score": 0.2695910930633545,
+        "original_image": "/home/jin24/Physical-Project-mk2-jny-backup/demo/test/door/frame_000113/original.jpg",
+        "rpn_overlay_image": "/home/jin24/Physical-Project-mk2-jny-backup/demo/test/door/frame_000113/rpn_overlay.jpg",
+        "absolute_bearing_deg": 16.3,
+        "absolute_bearing_formula": "absolute_bearing_deg = (rotation_deg + current_heading_map_deg) mod 360"
+      },
+      {
+        "frame": "frame_000132.jpg",
+        "rotation_deg": 315.0,
+        "clip_score": 0.26803839206695557,
+        "original_image": "/home/jin24/Physical-Project-mk2-jny-backup/demo/test/door/frame_000132/original.jpg",
+        "rpn_overlay_image": "/home/jin24/Physical-Project-mk2-jny-backup/demo/test/door/frame_000132/rpn_overlay.jpg",
+        "absolute_bearing_deg": 61.3,
+        "absolute_bearing_formula": "absolute_bearing_deg = (rotation_deg + current_heading_map_deg) mod 360"
+      }
+    ],
+    "pedestal": [
+      {
+        "frame": "frame_000039.jpg",
+        "rotation_deg": 90.0,
+        "clip_score": 0.23819297552108765,
+        "rel_depth": 1.171342134475708,
+        "distance_cm": 30.476409875637657,
+        "in_valid_calibration_range": true,
+        "original_image": "/home/jin24/Physical-Project-mk2-jny-backup/demo/test/pedestal/frame_000039/original.jpg",
+        "rpn_overlay_image": "/home/jin24/Physical-Project-mk2-jny-backup/demo/test/pedestal/frame_000039/rpn_overlay.jpg",
+        "absolute_bearing_deg": 196.3,
+        "absolute_bearing_formula": "absolute_bearing_deg = (rotation_deg + current_heading_map_deg) mod 360"
+      }
+    ]
+  },
+  "pedestal_distance_avg_cm": 30.5,
+  "pedestal_distance_avg_formula": {
+    "formula": "pedestal_distance_avg_cm = mean(distance_cm_i for i in pedestal_observations)",
+    "substituted": "mean(30.5) = 30.5"
+  },
+  "pedestal_bearing_rotation_frame_deg": 90.0,
+  "pedestal_bearing_formula": {
+    "formula": "pedestal_bearing_rotation_frame_deg = mean(rotation_deg_i for i in pedestal_observations)",
+    "substituted": "mean(90.0) = 90.0"
+  },
+  "pedestal_surface_point_cm": [
+    207.0,
+    118.3
+  ],
+  "door_position_cm_fixed_from_gt": [
+    922.8,
+    327.8
+  ],
+  "robot_position_cm": [
+    236.2,
+    126.9
+  ],
+  "map_bearing_to_pedestal_deg": 196.3,
+  "current_heading_map_deg": 106.3,
+  "rotation_calculation": {
+    "step1_map_bearing_to_pedestal": {
+      "formula": "atan2(pedestal_surface_point_cm.y - robot_position_cm.y, pedestal_surface_point_cm.x - robot_position_cm.x) mod 360",
+      "substituted": "atan2(118.3 - 126.9, 207.0 - 236.2) mod 360 = 196.3"
+    },
+    "step2_pedestal_bearing_rotation_frame": {
+      "formula": "pedestal_bearing_rotation_frame_deg = mean(rotation_deg_i for i in pedestal_observations)",
+      "substituted": "mean(90.0) = 90.0"
+    },
+    "step3_current_heading_map_deg": {
+      "formula": "current_heading_map_deg = (map_bearing_to_pedestal_deg - pedestal_bearing_rotation_frame_deg) mod 360",
+      "substituted": "(196.3 - 90.0) mod 360 = 106.3",
+      "note": "문 자신의 관측각으로 오프셋을 구하면 순환 논리가 되므로(실측으로 확인됨) 단상 관측각으로 교차검증한다."
+    },
+    "step4_absolute_bearing_per_observation": {
+      "formula": "absolute_bearing_deg = (rotation_deg + current_heading_map_deg) mod 360"
+    }
+  }
+}

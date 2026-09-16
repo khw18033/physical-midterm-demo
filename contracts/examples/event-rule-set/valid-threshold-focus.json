@@ -1,0 +1,57 @@
+{
+  "id": "sample-threshold-rules",
+  "version": "1.0.0",
+  "displayName": "Sample Threshold Rule Set",
+  "description": "규칙 엔진 검증용 도메인 중립 예시. 조건식에 컴포넌트/필드 참조만 등장하고 도메인 용어는 쓰지 않는다.",
+  "extensionPoint": "E4",
+  "rules": [
+    {
+      "id": "high-temperature-focus",
+      "description": "온도가 임계를 넘고 상태가 정상이 아니면 해당 대상을 확대하고 전용 뷰로 전환한다.",
+      "priority": 10,
+      "cooldownMs": 30000,
+      "when": {
+        "and": [
+          {
+            "field": "temperature-sensor-01.temperature",
+            "operator": "gt",
+            "value": 80
+          },
+          {
+            "field": "temperature-sensor-01.status",
+            "operator": "in",
+            "value": ["warning", "error"]
+          }
+        ]
+      },
+      "then": [
+        {
+          "type": "focus-entity",
+          "target": "zone-a/node-1/temperature-sensor-01",
+          "params": { "zoomLevel": 2 }
+        },
+        {
+          "type": "switch-view",
+          "target": "detail-view"
+        }
+      ]
+    },
+    {
+      "id": "recovered-highlight-clear",
+      "when": {
+        "not": {
+          "field": "temperature-sensor-01.status",
+          "operator": "neq",
+          "value": "ok"
+        }
+      },
+      "then": [
+        {
+          "type": "highlight",
+          "target": "zone-a/node-1/temperature-sensor-01",
+          "params": { "style": "none" }
+        }
+      ]
+    }
+  ]
+}

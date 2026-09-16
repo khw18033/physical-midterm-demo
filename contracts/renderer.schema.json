@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://hybrid-dt-framework/contracts/renderer.schema.json",
+  "title": "Renderer Descriptor",
+  "description": "F5 (REQ-501~503): 렌더러 카탈로그에 등록되는 표현 타입 정의. 신규 렌더러는 이 스키마를 만족하는 디스크립터를 등록하는 것만으로 카탈로그에 추가되며, 코어 수정이 필요 없다(NFR-006).",
+  "type": "object",
+  "required": ["type", "version", "acceptsFieldTypes", "streaming"],
+  "additionalProperties": false,
+  "properties": {
+    "type": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*[a-z0-9]$",
+      "description": "렌더러 타입 키. Component Descriptor(F1)의 representationHint와 Pipeline(F4) sink 노드의 rendererType이 이 값을 참조한다. 코어 내장 타입: text, table, graph, image, video-stream, audio. 확장 렌더러(E3)는 자유롭게 새 키를 등록할 수 있다."
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "displayName": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "acceptsFieldTypes": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "description": "이 렌더러가 표현할 수 있는 Component Descriptor 필드 타입 목록. F8 validator가 디스크립터의 field.type과 대조해 잘못된 렌더러 지정을 잡아낸다.",
+      "items": {
+        "type": "string",
+        "enum": ["number", "string", "boolean", "enum", "object", "array", "binary-stream"]
+      }
+    },
+    "streaming": {
+      "type": "boolean",
+      "description": "REQ-502: 연속 스트림을 1급으로 소비하는 렌더러인지 여부. true면 단발성 값이 아닌 지속 연결(영상/음성 등)을 전제로 프로비저닝된다."
+    },
+    "executionLocation": {
+      "type": "string",
+      "enum": ["client", "server", "any"],
+      "default": "client",
+      "description": "이 렌더러가 실행 가능한 위치. Pipeline(F4) sink 노드의 executionLocation과 정합성이 검사된다."
+    },
+    "configSchema": {
+      "type": "object",
+      "description": "렌더러별 옵션의 JSON Schema (예: 그래프의 축 설정, 영상의 코덱). 코어는 내용을 해석하지 않고 렌더러 구현체에 그대로 전달한다."
+    },
+    "implementationRef": {
+      "type": "string",
+      "description": "REQ-503: 구현체 위치 참조(모듈 경로, 플러그인 ID 등). 해석 방식은 런타임 구현에 위임한다."
+    },
+    "extensionPoint": {
+      "type": "string",
+      "enum": ["E3"],
+      "description": "분야별 전용 렌더러인 경우 확장점 E3으로 표기한다. 코어 내장 렌더러는 이 필드를 생략한다."
+    }
+  }
+}

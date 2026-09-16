@@ -1,0 +1,17 @@
+{
+  "type": "graph",
+  "version": "1.0.0",
+  "displayName": "Time Series Graph",
+  "description": "코어 내장 렌더러. 수치 필드를 시간축 그래프로 표현한다.",
+  "acceptsFieldTypes": ["number"],
+  "streaming": false,
+  "executionLocation": "client",
+  "configSchema": {
+    "type": "object",
+    "properties": {
+      "yAxisLabel": { "type": "string" },
+      "showLegend": { "type": "boolean" }
+    }
+  },
+  "implementationRef": "core/renderers/graph"
+}

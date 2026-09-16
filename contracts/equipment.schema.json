@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "equipment.schema.json",
+  "$comment": "장비 어휘 한 칸. place.schema.json 과 같은 자리의 계약이다 — 장소가 places.json 으로 그라운딩되듯 장비는 equipment.json 으로 그라운딩된다. 260906 실측에서 목록을 준 장소 축은 위반 0건이고 안 준 장비 축은 22~48% 였다. 여기 없는 것은 assigned_targets 에 쓸 수 없다.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["equipment_id", "label", "aliases", "kind"],
+  "properties": {
+    "equipment_id": {
+      "$comment": "임무 객체의 milestone.assigned_targets 에 그대로 들어가는 식별자다. registry.json 의 entity id 와 같은 이름 공간이다.",
+      "type": "string",
+      "minLength": 1
+    },
+    "label": {
+      "$comment": "사람이 부르는 이름. **모르면 null 이다** — 지어내지 않는다. 정답셋에만 나오는 식별자는 레지스트리에 이름이 없고, 그 사실을 빈칸으로 남긴다(places 의 자리표시와 같은 원칙).",
+      "type": ["string", "null"]
+    },
+    "aliases": {
+      "$comment": "발화 정규화용. 원천은 registry.json 의 aliases[] 다 — stt/vocab.py 가 hotword 를 뽑는 그 필드와 같은 것을 본다. 여기서 새로 짓지 않는다.",
+      "type": "array",
+      "items": { "type": "string" },
+      "uniqueItems": true
+    },
+    "kind": {
+      "$comment": "registry.json 의 entity_type 을 **그대로** 옮긴다. place.schema.json 의 kind 와 달리 enum 이 아닌 이유가 여기 있다 — 장소의 종류는 추출기가 스스로 정하지만 장비의 종류는 남의 파일이 정한다. enum 으로 박으면 레지스트리에 종류가 하나 늘 때 두 벌이 조용히 갈라진다. 모르면 null 이다.",
+      "type": ["string", "null"]
+    },
+    "zone_id": {
+      "$comment": "shared/registry.ts 의 CURRENT_ZONE_ID 와 맞춘다. 모르면 null.",
+      "type": ["string", "null"]
+    }
+  }
+}

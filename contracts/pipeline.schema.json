@@ -1,0 +1,168 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://hybrid-dt-framework/contracts/pipeline.schema.json",
+  "title": "Interpretation Pipeline",
+  "description": "F4 (REQ-401~404): 원본 데이터를 표현으로 바꾸는 해석 경로를 노드 그래프로 기술한다. transform 노드가 없으면 직접 해석(REQ-401), 하나 이상 있으면 간접 해석(REQ-402)이다. 두 경우 모두 동일한 스키마로 표현된다.",
+  "type": "object",
+  "required": ["id", "version", "serializationFormat", "nodes", "edges"],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*[a-z0-9]$"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "displayName": { "type": "string" },
+    "description": { "type": "string" },
+    "serializationFormat": {
+      "type": "string",
+      "enum": ["json", "cbor", "protobuf", "msgpack"],
+      "description": "REQ-403: 노드 간 데이터 전달에 사용하는 직렬화 포맷. 서버/클라이언트 경계를 넘는 구간에 적용된다."
+    },
+    "extensionPoint": {
+      "type": "string",
+      "enum": ["E5"],
+      "description": "분야별 파이프라인 프리셋인 경우 확장점 E5로 표기한다."
+    },
+    "nodes": {
+      "type": "array",
+      "minItems": 2,
+      "description": "최소 source 1개와 sink 1개가 있어야 의미 있는 파이프라인이 된다.",
+      "items": { "$ref": "#/$defs/node" }
+    },
+    "edges": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/edge" },
+      "description": "노드 간 연결. 그래프의 비순환성 및 참조 무결성(존재하지 않는 노드 id 참조 금지)은 스키마로 표현할 수 없으므로 F8 validator가 검사한다."
+    }
+  },
+  "$defs": {
+    "node": {
+      "type": "object",
+      "required": ["id", "kind", "executionLocation"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-zA-Z_][a-zA-Z0-9_-]*$"
+        },
+        "kind": {
+          "type": "string",
+          "enum": ["source", "transform", "sink"],
+          "description": "REQ-403: source/transform/sink 계약 구분."
+        },
+        "executionLocation": {
+          "type": "string",
+          "enum": ["server", "client"],
+          "description": "REQ-404: 이 단계를 실행할 위치."
+        },
+        "source": { "$ref": "#/$defs/sourceConfig" },
+        "transform": { "$ref": "#/$defs/transformConfig" },
+        "sink": { "$ref": "#/$defs/sinkConfig" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "kind": { "const": "source" } }, "required": ["kind"] },
+          "then": {
+            "required": ["source"],
+            "properties": { "transform": false, "sink": false }
+          }
+        },
+        {
+          "if": { "properties": { "kind": { "const": "transform" } }, "required": ["kind"] },
+          "then": {
+            "required": ["transform"],
+            "properties": { "source": false, "sink": false }
+          }
+        },
+        {
+          "if": { "properties": { "kind": { "const": "sink" } }, "required": ["kind"] },
+          "then": {
+            "required": ["sink"],
+            "properties": { "source": false, "transform": false }
+          }
+        }
+      ]
+    },
+    "sourceConfig": {
+      "type": "object",
+      "required": ["dataSourceRef", "queryMode", "query"],
+      "additionalProperties": false,
+      "description": "F7 DataSource에서 원본 데이터를 읽어오는 진입 노드.",
+      "properties": {
+        "dataSourceRef": {
+          "type": "string",
+          "description": "DataSource Descriptor(F7)의 id 참조."
+        },
+        "queryMode": {
+          "type": "string",
+          "enum": ["instant", "range", "stream"],
+          "description": "질의 방식. 대상 DataSource의 capabilities가 이를 지원하는지는 F8 validator가 검사한다."
+        },
+        "query": {
+          "type": "string",
+          "description": "질의 문자열. 문법은 DataSource 구현체(예: PromQL)에 위임하며 코어는 해석하지 않는다."
+        },
+        "timeoutMs": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "DataSource의 defaultTimeoutMs를 이 노드에서만 재정의."
+        }
+      }
+    },
+    "transformConfig": {
+      "type": "object",
+      "required": ["operator"],
+      "additionalProperties": false,
+      "description": "REQ-402: 전처리 체인의 한 단계.",
+      "properties": {
+        "operator": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]*[a-z0-9]$",
+          "description": "변환 연산자 키. 코어 내장 연산자: map, filter, aggregate, resample, unit-convert, join. 확장 연산자는 레지스트리에 추가 등록할 수 있으므로 enum으로 닫지 않는다."
+        },
+        "params": {
+          "type": "object",
+          "description": "연산자별 파라미터. 스키마는 연산자 구현체가 소유하며 코어는 그대로 전달한다."
+        }
+      }
+    },
+    "sinkConfig": {
+      "type": "object",
+      "required": ["rendererType", "componentRef", "fieldRef"],
+      "additionalProperties": false,
+      "description": "해석 결과를 특정 렌더러로 내보내는 종단 노드.",
+      "properties": {
+        "rendererType": {
+          "type": "string",
+          "description": "Renderer Descriptor(F5)의 type 참조."
+        },
+        "componentRef": {
+          "type": "string",
+          "description": "Component Descriptor(F1)의 id 참조."
+        },
+        "fieldRef": {
+          "type": "string",
+          "description": "Component Descriptor 내 field.name 참조."
+        },
+        "rendererConfig": {
+          "type": "object",
+          "description": "렌더러의 configSchema를 만족하는 옵션 값."
+        }
+      }
+    },
+    "edge": {
+      "type": "object",
+      "required": ["from", "to"],
+      "additionalProperties": false,
+      "properties": {
+        "from": { "type": "string" },
+        "to": { "type": "string" }
+      }
+    }
+  }
+}

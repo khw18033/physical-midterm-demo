@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "place.schema.json",
+  "$comment": "장소 위상(topology) 한 칸. 좌표·거리·정지 여유는 여기 없다 — places.geometry.json 이 따로 든다. 생성 서비스는 이 층만 받는다: 좌표를 보면 모델이 503호 전용이 된다.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["place_id", "label", "aliases", "kind", "floor", "adjacent"],
+  "properties": {
+    "place_id": { "type": "string", "minLength": 1 },
+    "label": { "type": "string", "minLength": 1 },
+    "aliases": {
+      "$comment": "발화 정규화용. STT 오인식 표기도 넣는다 (엘레베이터).",
+      "type": "array", "items": { "type": "string" }, "uniqueItems": true
+    },
+    "kind": { "enum": ["room", "corridor", "door", "elevator", "stair", "zone"] },
+    "floor": { "type": ["integer", "null"] },
+    "adjacent": {
+      "$comment": "무방향. 양쪽에 다 적고 정합성은 verify:places 가 본다. 아직 모르면 빈 배열 — 「연결 예정」과 같은 원칙이다.",
+      "type": "array", "items": { "type": "string" }, "uniqueItems": true
+    },
+    "zone_id": {
+      "$comment": "shared/registry.ts 의 CURRENT_ZONE_ID 와 맞춘다.",
+      "type": ["string", "null"]
+    }
+  }
+}

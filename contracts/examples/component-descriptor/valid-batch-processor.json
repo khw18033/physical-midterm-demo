@@ -1,0 +1,33 @@
+{
+  "id": "batch-processor-01",
+  "version": "1.0.0",
+  "displayName": "Batch Processor 01",
+  "description": "도메인 중립 예시: 큐 적재량과 최근 처리 이력을 내보내는 컴포넌트. table 렌더러 검증용 array 필드를 포함한다.",
+  "fields": [
+    {
+      "name": "queueDepth",
+      "type": "number",
+      "required": true,
+      "unit": "count",
+      "valueRange": { "min": 0, "max": 500 },
+      "samplingIntervalMs": 2000,
+      "representationHint": "graph",
+      "description": "대기 중인 작업 수."
+    },
+    {
+      "name": "recentBatches",
+      "type": "array",
+      "required": true,
+      "samplingIntervalMs": 5000,
+      "representationHint": "table",
+      "description": "최근 처리된 배치 이력."
+    },
+    {
+      "name": "state",
+      "type": "enum",
+      "required": true,
+      "enumValues": ["idle", "running", "backpressure"],
+      "representationHint": "text"
+    }
+  ]
+}

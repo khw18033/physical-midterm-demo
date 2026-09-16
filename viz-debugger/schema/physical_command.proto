@@ -1,0 +1,85 @@
+// 이 파일은 **복사본이다. 우리가 고치지 않는다.**
+//
+// 원본: https://github.com/khw18033/Physical-Project-mk2/blob/HW/schema/physical_command.proto
+// 가져온 날: 2026-09-10 · 원본 커밋: 7abf470
+// 다시 가져오기: npm run schema:pull
+//
+// 스키마를 고쳐야 할 일이 생기면 HW 브랜치에 요청한다 — 여기서 고치면 두 벌이 되고,
+// 바이트가 어긋나는 순간 로봇이 우리 명령을 못 알아듣는다(verify:command-encode).
+
+// 피지컬팀 mk2 — 물리 명령 통신 규약 정본 (Interface Specification §3)
+// 실제 통신의 source of truth. JSON(physical-command.schema.json)은 디버깅용 표현.
+syntax = "proto3";
+package physical;
+
+// 모든 payload 의 최상위 봉투. 어떤 메시지인지는 oneof body 가 결정한다(§2).
+// 토픽 이름에는 방향만 담고 종류는 담지 않는다.
+message PhysicalCommandEnvelope {
+  oneof body {
+    Command                 command          = 1;  // 엣지→장치
+    CancelCommandRequest    cancel_request   = 2;  // 엣지→장치
+    CommandAcceptance       acceptance       = 3;  // 장치→엣지
+    CommandStatus           status           = 4;  // 장치→엣지
+    CommandResult           result           = 5;  // 장치→엣지
+    CancelCommandResponse   cancel_response  = 6;  // 장치→엣지
+    Capability              capability       = 7;  // 장치→엣지
+  }
+}
+
+// 종료 상태 — CommandResult.status 는 반드시 이 셋 중 하나(§4).
+enum TerminalStatus {
+  TERMINAL_STATUS_UNSPECIFIED = 0;
+  SUCCEEDED = 1;
+  ABORTED   = 2;
+  CANCELED  = 3;
+}
+
+message Command {
+  string command_id = 1;                 // 재전송 식별용 고유값
+  string target     = 2;
+  string action     = 3;
+  map<string, double> parameters = 4;    // 예: {distance: 1.0}
+  int64  deadline_unix_ms = 5;           // 선택. 0 이면 없음. 이 시각 넘으면 시작 금지(§5-2)
+}
+
+message CancelCommandRequest {
+  string command_id = 1;
+}
+
+// code 는 자유 문자열이나 gRPC 상태 코드 관례를 따른다(§3):
+// INVALID_ARGUMENT, FAILED_PRECONDITION, UNIMPLEMENTED, PERMISSION_DENIED,
+// RESOURCE_EXHAUSTED, ALREADY_EXISTS
+message Rejection { string code = 1; string message = 2; }
+message Failure   { string code = 1; string message = 2; }
+
+message CommandAcceptance {
+  string    command_id = 1;
+  bool      accepted   = 2;
+  Rejection rejection  = 3;              // accepted=false 일 때만 의미
+}
+
+// 실행 중 중간 상태(선택). state = ACCEPTED | EXECUTING | CANCELING
+message CommandStatus {
+  string command_id = 1;
+  string state      = 2;
+  string detail     = 3;
+}
+
+message CommandResult {
+  string         command_id = 1;
+  TerminalStatus status     = 2;         // 반드시 종료 상태(§4)
+  map<string, double> result = 3;        // 예: {distance_moved: 1.0}
+  Failure        failure    = 4;         // status=ABORTED 일 때 사유
+}
+
+// 취소 절차 진입 수락(§4). 아직 멈췄다는 뜻 아님.
+message CancelCommandResponse {
+  string command_id = 1;
+  bool   accepted   = 2;
+}
+
+// 장치가 지원하는 action 목록(최초 연결/변경 시). 미선언 action 은 거부(§5-4).
+message Capability {
+  string device_id = 1;
+  repeated string actions = 2;
+}

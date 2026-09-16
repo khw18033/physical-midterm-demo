@@ -1,0 +1,54 @@
+{
+  "missionId": "MSN-260826-01",
+  "utterance": { "text": "415호에서 503호로 이동해줘", "engine": "faster-whisper-large-v3", "confidence": 0.94, "audioRef": "utt-260826-1006.wav" },
+  "durationSec": 95,
+  "milestones": [
+    { "id": "MS-A", "title": "415호 출발 및 복도 진입", "status": "done", "assignedTargets": ["go1-02"] },
+    { "id": "MS-B", "title": "복도 통과 → 엘리베이터 홀 도달", "status": "done", "assignedTargets": ["go1-02"] },
+    { "id": "MS-C", "title": "엘리베이터 탑승 → 5층 하차", "status": "failed", "assignedTargets": ["go1-02", "arm-03", "cam-4f"] },
+    { "id": "MS-D", "title": "5층 복도 이동 → 503호 진입", "status": "not_executed", "assignedTargets": [] },
+    { "id": "MS-E", "title": "503호 내부 진입 확인", "status": "pending", "assignedTargets": ["cam-5f"] },
+    { "id": "MS-F", "title": "도착 보고", "status": "pending", "assignedTargets": [] },
+    { "id": "MS-G", "title": "임무 종료", "status": "pending", "assignedTargets": [] }
+  ],
+  "hardware": [
+    { "id": "go1-02", "kind": "Unitree Go1", "connection": "online", "battery": 78, "rssi": -52, "latency": 18, "ip": "192.168.10.42", "firmware": "v1.9.3", "temperature": 46, "heartbeat": "0.4s 전" },
+    { "id": "arm-03", "kind": "매니퓰레이터", "connection": "offline", "battery": 0, "rssi": -99, "latency": 0, "ip": "192.168.10.63", "firmware": "v2.1.0", "temperature": 28, "heartbeat": "연결 끊김" },
+    { "id": "cam-4f", "kind": "고정 카메라 4층", "connection": "online", "battery": 100, "rssi": -44, "latency": 11, "ip": "192.168.10.84", "firmware": "v4.2.1", "temperature": 39, "heartbeat": "0.2s 전" },
+    { "id": "cam-5f", "kind": "고정 카메라 5층", "connection": "maintenance", "battery": 100, "rssi": -58, "latency": 34, "ip": "192.168.10.85", "firmware": "v4.1.8", "temperature": 41, "heartbeat": "점검 중" },
+    { "id": "go1-05", "kind": "Unitree Go1", "connection": "online", "battery": 34, "rssi": -61, "latency": 26, "ip": "192.168.10.45", "firmware": "v1.9.2", "temperature": 49, "heartbeat": "0.7s 전" },
+    { "id": "amr-11", "kind": "AMR", "connection": "online", "battery": 91, "rssi": -47, "latency": 18, "ip": "192.168.10.71", "firmware": "v3.0.4", "temperature": 43, "heartbeat": "0.3s 전" },
+    { "id": "drone-01", "kind": "드론", "connection": "offline", "battery": 12, "rssi": -96, "latency": 0, "ip": "192.168.10.91", "firmware": "v0.8.7", "temperature": 31, "heartbeat": "연결 끊김" }
+  ],
+  "tasks": [
+    { "id": "T-31", "title": "엘리베이터 홀 이동", "deps": [], "target": "go1-02", "actionItems": [
+      { "id": "AI-3101", "label": "보행 모드 전환", "params": { "mode": "sport" }, "status": "done" },
+      { "id": "AI-3102", "label": "직진 이동", "params": { "distance_m": 3.4, "speed_mps": 0.6 }, "status": "done" },
+      { "id": "AI-3103", "label": "좌회전", "params": { "angle_deg": 90, "angular_speed_dps": 28 }, "status": "done" },
+      { "id": "AI-3104", "label": "정지 · 자세 정렬", "params": {}, "status": "awaiting_evaluation" }
+    ] },
+    { "id": "T-32", "title": "상행 호출 버튼 누르기", "deps": ["T-31"], "target": "arm-03", "actionItems": [] },
+    { "id": "T-33", "title": "대기 위치 정렬", "deps": ["T-31"], "target": "go1-02", "actionItems": [] },
+    { "id": "T-34", "title": "도어 개방 확인", "deps": ["T-32", "T-33"], "target": "cam-4f", "actionItems": [] },
+    { "id": "T-35", "title": "엘리베이터 탑승", "deps": ["T-34"], "target": "go1-02", "actionItems": [] },
+    { "id": "T-36", "title": "5층 버튼 누르기", "deps": ["T-35"], "target": "arm-03", "actionItems": [] },
+    { "id": "T-37", "title": "5층 하차", "deps": ["T-36"], "target": "go1-02", "actionItems": [] }
+  ],
+  "events": [
+    { "seq": 1, "atSec": 0, "nodeId": "T-31", "status": "pending", "kind": "created", "producedBy": "ai" },
+    { "seq": 2, "atSec": 4, "nodeId": "T-31", "status": "running", "kind": "started", "producedBy": "backend" },
+    { "seq": 3, "atSec": 12, "nodeId": "T-31", "status": "awaiting_evaluation", "kind": "evaluated", "producedBy": "backend" },
+    { "seq": 4, "atSec": 14, "nodeId": "T-31", "status": "done", "kind": "evaluated", "producedBy": "backend" },
+    { "seq": 5, "atSec": 22, "nodeId": "T-32", "status": "skipped", "kind": "evaluated", "producedBy": "backend" },
+    { "seq": 6, "atSec": 22, "nodeId": "T-33", "status": "running", "kind": "started", "producedBy": "backend" },
+    { "seq": 7, "atSec": 31, "nodeId": "T-33", "status": "failed", "kind": "failed", "producedBy": "backend" },
+    { "seq": 8, "atSec": 33, "nodeId": "T-33", "status": "rerunning", "kind": "derived", "producedBy": "human", "attempt": 2 },
+    { "seq": 9, "atSec": 46, "nodeId": "T-33", "status": "done", "kind": "evaluated", "producedBy": "backend", "attempt": 2 },
+    { "seq": 10, "atSec": 50, "nodeId": "T-34", "status": "running", "kind": "started", "producedBy": "backend" },
+    { "seq": 11, "atSec": 63, "nodeId": "T-34", "status": "done", "kind": "evaluated", "producedBy": "backend" },
+    { "seq": 12, "atSec": 69, "nodeId": "T-35", "status": "running", "kind": "started", "producedBy": "backend" },
+    { "seq": 13, "atSec": 93, "nodeId": "T-35", "status": "failed", "kind": "failed", "producedBy": "backend" },
+    { "seq": 14, "atSec": 93, "nodeId": "T-36", "status": "not_executed", "kind": "failed", "producedBy": "backend" },
+    { "seq": 15, "atSec": 93, "nodeId": "T-37", "status": "not_executed", "kind": "failed", "producedBy": "backend" }
+  ]
+}

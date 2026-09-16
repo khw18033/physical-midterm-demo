@@ -1,0 +1,35 @@
+{
+  "id": "sensor-status-text",
+  "version": "1.0.0",
+  "displayName": "Sensor Status → Text",
+  "description": "REQ-401: enum 필드를 text 렌더러로 직접 해석하는 경로.",
+  "serializationFormat": "json",
+  "nodes": [
+    {
+      "id": "src",
+      "kind": "source",
+      "executionLocation": "server",
+      "source": {
+        "dataSourceRef": "prom-main",
+        "queryMode": "instant",
+        "query": "sensor_status{component=\"temperature-sensor-01\"}"
+      }
+    },
+    {
+      "id": "out",
+      "kind": "sink",
+      "executionLocation": "client",
+      "sink": {
+        "rendererType": "text",
+        "componentRef": "temperature-sensor-01",
+        "fieldRef": "status",
+        "rendererConfig": {
+          "emphasis": "strong"
+        }
+      }
+    }
+  ],
+  "edges": [
+    { "from": "src", "to": "out" }
+  ]
+}
