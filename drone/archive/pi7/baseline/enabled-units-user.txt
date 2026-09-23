@@ -1,0 +1,11 @@
+UNIT FILE                STATE   PRESET
+mpris-proxy.service      enabled enabled
+dirmngr.socket           enabled enabled
+gpg-agent-browser.socket enabled enabled
+gpg-agent-extra.socket   enabled enabled
+gpg-agent-ssh.socket     enabled enabled
+gpg-agent.socket         enabled enabled
+keyboxd.socket           enabled enabled
+ssh-agent.socket         enabled enabled
+
+8 unit files listed.

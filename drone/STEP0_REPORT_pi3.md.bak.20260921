@@ -1,0 +1,255 @@
+# 0단계 보고 — 드론 전용 라즈베리파이(`pi3`) 현황 조사
+
+- **대상**: Raspberry Pi 5 Model B **Rev 1.1** (hostname `pi3`), X500 v2 컴패니언 컴퓨터
+- **작성**: 2026-09-21 16:51 KST
+- **근거 프롬프트**: `~/작업프롬프트_라즈베리파이세팅_260921.md` (개정 3)
+- **상태**: 0단계 완료 / **시스템 변경 0건** (`~/drone` 정리 제외) / 1단계 승인 대기
+
+> `pi7`(Go1)에서 옮겨 온 `STEP0_REPORT.md`는 참고용으로 같은 폴더에 그대로 두었다.
+> 이 문서가 **이 장비의 기준 보고서**다.
+
+---
+
+## 0-1. 옮겨 온 폴더 정리
+
+### 정리 전 → 정리 후
+
+```
+~/drone/                          ~/drone/
+├── STEP0_REPORT.md      (pi7)    ├── STEP0_REPORT.md        (pi7, 참고용 — 그대로 둠)
+├── PROGRESS.md          (pi7)    ├── STEP0_REPORT_pi3.md    (← 이 문서, 신규)
+└── baseline/            (pi7)    ├── PROGRESS.md            (pi3용 신규)
+                                  ├── baseline/              (pi3 신규 스냅샷, 14개 파일)
+                                  └── archive/pi7/
+                                      ├── PROGRESS.md        (이동)
+                                      └── baseline/          (이동, 17개 파일)
+```
+
+`baseline/`과 기존 `PROGRESS.md`를 `~/drone/archive/pi7/`로 이동 완료. 비교 기준으로 쓰지 않는다.
+
+### 절대 경로 점검 — **불일치 0건**
+
+| 항목 | 값 |
+|---|---|
+| 현재 사용자 / 홈 | `physical` / `/home/physical` |
+| 폴더 안 파일의 `/home/…` 접두 | `/home/physical` **396건, 다른 접두 없음** |
+| 판정 | `pi7`과 사용자명이 같아 **경로 수정 불필요** |
+
+해당 396건은 전부 `archive/pi7/baseline/` 안의 Go1 자산 해시 목록(`go1-code-sha256.txt` 391건,
+`go1-services-status.txt` 4건)이고, 이 장비에는 존재하지 않는 경로다. 보관 기록이므로 손대지 않았다.
+
+---
+
+## 0-2. 시스템
+
+| 항목 | 값 |
+|---|---|
+| 모델 | **Raspberry Pi 5 Model B Rev 1.1** (revision `d04171`) |
+| OS | Debian GNU/Linux 13 (trixie), 13.7 |
+| 아키텍처 / 커널 | aarch64 / `6.18.50+rpt-rpi-2712` |
+| 호스트명 | **`pi3`** |
+| Python | 3.13.5 (`/usr/bin/python3`) |
+| 부트 설정 파일 | **`/boot/firmware/config.txt`** (실사용). `/boot/config.txt`는 91바이트 안내문 |
+| `dtparam=uart0` / `enable_uart` | **둘 다 설정 없음** |
+| 시리얼 장치 | `/dev/ttyAMA10` **하나뿐**. `/dev/serial0 → ttyAMA10`. `ttyAMA0`·`ttyS0` 없음 |
+| GPIO14/15 (uart0) | DT **`status = disabled`**, `pinctrl get 14,15` → 둘 다 **`none`** |
+| 시리얼 콘솔 | **사용 중**. `/proc/cmdline`에 `console=ttyAMA10,115200`, `serial-getty@ttyAMA10` active/running |
+| 블루투스 | `bluetooth.service` enabled/active, `hci0`는 `107d50c000.serial`(내부 전용). `hciuart` = **not-found** |
+| 현재 사용자 그룹 | `physical` — **`dialout` 이미 포함** (adm, sudo, gpio, i2c, spi, video 등 포함) |
+
+### UART 실체 (Pi 5 구조) — `pi7` 조사 결과와 동일
+
+| DT 별칭 | 노드 | 물리 위치 | 현재 상태 |
+|---|---|---|---|
+| `uart0` / `serial0` | `rp1/serial@30000` | **GPIO14/15 = 40핀 8·10번** ← FC TELEM1 연결 대상 | **disabled** |
+| `uart10` / `serial10` | `soc/serial@7d001000` → `ttyAMA10` | 전용 3핀 디버그 커넥터 | okay, **부팅 콘솔 + getty 점유** |
+
+DT 별칭 `serial0`(= GPIO14/15)가 disabled라 tty가 없어, udev(`99-com.rules`)의 대체 분기가 동작해
+**현재 `/dev/serial0`는 디버그 UART를 가리킨다. FC 포트가 아니다.**
+
+### 부팅 설정 원문
+
+`/boot/firmware/cmdline.txt` (1줄):
+```
+console=serial0,115200 console=tty1 root=PARTUUID=c48591e8-02 rootfstype=ext4 fsck.repair=yes rootwait ds=nocloud;i=rpi-imager-1789975797186 cfg80211.ieee80211_regdom=KR
+```
+`/proc/cmdline` 치환 결과: `… console=ttyAMA10,115200 console=tty1 …`
+
+`config.txt`는 Raspberry Pi OS 기본값 그대로(`dtparam=audio=on`, `camera_auto_detect=1`,
+`dtoverlay=vc4-kms-v3d`, `arm_64bit=1`, `arm_boost=1`, `[pi5] dtoverlay=nospi10`). **UART 관련 줄 없음.**
+
+### 설치돼 있는 도구
+
+| 도구 | 상태 |
+|---|---|
+| gcc / g++ | ✅ 14.2.0 |
+| make | ✅ 4.4.1 |
+| pkg-config | ✅ 1.8.1 |
+| curl | ✅ 8.14.1 |
+| python3-venv | ✅ 3.13.5-1 (`import venv` OK) |
+| tailscale | ✅ 1.102.4 |
+| **git** | ❌ 미설치 |
+| **meson** | ❌ 미설치 |
+| **ninja-build** | ❌ 미설치 |
+| **python3-pip** | ❌ 미설치 (`python3 -m pip` 없음) |
+| cmake | ❌ 미설치 |
+
+→ 2단계에서 `git python3-pip meson ninja-build` 설치 필요. `python3-venv`·`gcc`·`g++`·`pkg-config`는 이미 있음.
+
+---
+
+## 0-3. 네트워크
+
+| 항목 | 값 |
+|---|---|
+| 활성 인터페이스 | `wlan0` (무선) — **`192.168.50.254/24`** |
+| Wi-Fi SSID | **`SysAILAB_5GHz`** (신호 63), 프로파일 `netplan-wlan0-SysAILAB_5GHz` |
+| 기본 게이트웨이 | `192.168.50.1` (dev `wlan0`, DHCP) |
+| **연구실 망(`192.168.50.0/24`) 접속** | ✅ **붙어 있음** |
+| `eth0` | 프로파일 `netplan-eth0` 존재하나 **미연결/비활성** |
+| `tailscale0` | `100.85.243.54/32` |
+
+### 사용 중 포트 (`ss -tulnp`)
+
+| 포트 | 프로토콜 | 용도 |
+|---|---|---|
+| 22 | tcp | sshd |
+| 41641 | udp | tailscaled |
+| 5353 | udp | avahi (mDNS) |
+| 56113 / 43281 | udp | (avahi 임시 포트) |
+| 36445 / 44213 / 39857 / 45333 | tcp (127.0.0.1) | VS Code 서버 등 로컬 |
+| 37550 / 44019 | tcp (tailscale IP) | tailscaled |
+| **14540 / 14550 / 5760** | — | **전부 비어 있음** ✅ |
+
+### 방화벽
+
+| 항목 | 상태 |
+|---|---|
+| ufw | **미설치** |
+| nftables.service | disabled / inactive |
+| firewalld | not-found |
+| iptables | 정책 전부 `ACCEPT`. 규칙은 **tailscale이 만든 `ts-input`/`ts-forward` 체인뿐** |
+
+→ **5760 개방에 별도 규칙이 필요 없다.** (5단계에서 재확인)
+
+---
+
+## 0-4. Tailscale — **이미 설치·로그인 완료**
+
+프롬프트 5단계는 "새 장비라 설치와 로그인이 필요할 가능성이 높다"고 봤지만, **이미 끝나 있다.**
+
+| 항목 | 값 |
+|---|---|
+| 설치 | ✅ 1.102.4 |
+| `tailscaled` | **enabled / active** (재부팅 후 자동 접속됨) |
+| BackendState | `Running` |
+| 이 장비 이름 / IP | **`pi3`** / **`100.85.243.54`**, `fd7a:115c:a1e0::e30:f337` |
+| MagicDNS 이름 | `pi3.tailcb6bfb.ts.net` |
+| tailnet | `khw671@gmail.com`, 피어 12대 |
+
+### 지상국
+
+| 이름 | Tailscale IP | OS | 상태 |
+|---|---|---|---|
+| **`desktop-oaujese`** | **`100.125.71.51`** | Windows | **온라인** ← 프롬프트 지정 지상국 |
+| `pi7` (MQTT 브로커) | `100.72.109.9` | Linux | 온라인 |
+| `desktop-0ib285f` / `pi4` / `sysai-server2` | — | — | 온라인 |
+| `desktop-oft3u6h` / `laptop-isk6l1rq` / `pi1` / `pi2` / `pi6` / `ubuntu3-…` | — | — | offline |
+
+→ 5단계의 설치·`tailscale up` 로그인은 **생략 가능**. QGC 접속 주소는 **`100.85.243.54:5760`**.
+→ 다만 tailnet 이름이 `pi3`이다. 드론 장비에 맞는 이름(예: `drone-x500`)으로 바꿀지는 **사용자 결정 사항**.
+
+---
+
+## 0-5. 기준 스냅샷
+
+`~/drone/baseline/`에 신규 저장 완료 (2026-09-21T16:51:33+09:00). 대조 방법은 `baseline/README.md`.
+
+| 파일 | 내용 |
+|---|---|
+| `TIMESTAMP` | 스냅샷 시각 |
+| `system-info.txt` | 모델/리비전/호스트명/커널/OS/Python/사용자 그룹 |
+| `enabled-units.txt` / `enabled-units-user.txt` | enabled 시스템 유닛 **36개** / 사용자 세션 **8개** |
+| `ss-tulnp.txt` | 열린 포트 전체 |
+| `ip-4-addr.txt` | IPv4 주소 + 라우팅 |
+| `nmcli-connections.txt` | NetworkManager 연결 프로파일 4개 |
+| `tailscale-status.txt` | tailnet 피어 12대 |
+| `config.txt.snapshot` / `cmdline.txt.snapshot` | 부트 설정 원본 2개 |
+| `proc-cmdline.txt` | `/proc/cmdline` (펌웨어 치환 후 실제 커널 인자) |
+| `boot-config-sha256.txt` | 부트 설정 2개 해시 |
+| `serial-devices.txt` | 시리얼 장치 노드 + `pinctrl get 14,15` + DT status + serial-getty |
+| `firewall.txt` | iptables 규칙 / nftables / ufw |
+
+**0단계에서 새로 만든 것은 `~/drone/baseline/`, `~/drone/archive/pi7/`(이동), `~/drone/PROGRESS.md`,
+이 문서뿐이다. `/etc`·`/boot`·systemd·패키지는 일절 건드리지 않았다.**
+
+---
+
+## `pi7` 조사 결과 중 이 장비에 그대로 적용되는 것 / 아닌 것
+
+| `pi7` 결론 | `pi3`에서 |
+|---|---|
+| Pi 5는 `dtparam=uart0=on`으로 GPIO UART를 켠다 | ✅ 그대로 적용 (이 장비도 Pi 5) |
+| `enable_uart=1` 불필요 | ✅ 그대로 |
+| `dtoverlay=disable-bt` / `systemctl disable hciuart` **금지** | ✅ 그대로 (`hciuart` 유닛 없음) |
+| `/dev/serial0`가 디버그 UART를 가리킴 → 실측 확인 필수 | ✅ 동일하게 확인됨 |
+| `cmdline.txt`의 `console=serial0,115200` 위험 | ✅ 동일하게 확인됨 |
+| `dialout` 그룹 이미 포함 | ✅ 동일 |
+| Go1 서비스·코드·MQTT 브로커·`eth0` `192.168.123.x` 조사 | ❌ **이 장비와 무관** (여기엔 Go1 자산이 전혀 없음) |
+| 포트 충돌 없음 | ✅ 이 장비에서 재확인 완료 |
+
+---
+
+## ⚠ 1단계 전 짚어 둘 것
+
+### 부팅 콘솔이 FC 배선으로 옮겨갈 수 있음 (`pi7`과 동일한 위험)
+
+`cmdline.txt`에 **`console=serial0,115200`이 리터럴로** 들어 있고, 펌웨어가 이를 실제 장치로 치환한다
+(현재 결과: `ttyAMA10`). `dtparam=uart0=on`을 켜면 `serial0` 별칭이 **GPIO14/15를 가리키게 되어**,
+부팅 콘솔과 로그인 getty가 **FC 배선 위로 올라가** 부팅 텍스트가 FC로 쏟아지고 MAVLink가 깨진다.
+
+→ `console=serial0,115200` → **`console=ttyAMA10,115200`으로 명시 고정**한다.
+   디버그 커넥터 콘솔은 살아 있고, GPIO14/15에는 콘솔이 올라가지 않는다. (개정 3 프롬프트 지침과 일치)
+
+### FC 장치 경로는 아직 확정할 수 없다
+
+GPIO14/15가 disabled라 tty 노드 자체가 없다. `dtparam=uart0=on` + 재부팅 후 **`/dev/ttyAMA0`으로
+생길 것으로 예상**되나 실측 확인이 필요하다. 이후 설정에는 `serial0` 대신 실측 경로를 명시한다.
+
+---
+
+## 1단계 제안 — **승인 요청** (Pi 5 경로)
+
+### 바꿀 것
+
+| # | 작업 | 대상 | 백업 |
+|---|---|---|---|
+| 1 | `dtparam=uart0=on` 추가 (`[all]` 섹션) | `/boot/firmware/config.txt` | `.bak.20260921` |
+| 2 | `console=serial0,115200` → `console=ttyAMA10,115200` | `/boot/firmware/cmdline.txt` | `.bak.20260921` |
+| 3 | 재부팅 | — | 규칙 2 — **별도 승인 후** |
+
+두 파일 모두 수정 후 `diff`를 보여 준다.
+
+### 하지 않을 것
+
+`enable_uart=1` · `dtoverlay=disable-bt` · `systemctl disable hciuart` · `dialout` 추가(이미 소속) ·
+`serial-getty@ttyAMA10` 조작(디버그 콘솔은 그대로 유지)
+
+### 재부팅 후 확인 항목
+
+1. `/dev/serial0`·`/dev/ttyAMA0`·`/dev/ttyAMA10`의 실제 연결 대상
+2. `pinctrl get 14,15`가 UART 기능(`a0`)으로 바뀌었는지
+3. `/proc/cmdline`의 콘솔이 `ttyAMA10`인지, **GPIO UART 장치에 `serial-getty`가 뜨지 않았는지**
+4. 기준 스냅샷 대비 부트 설정 2개 외 변화 없음
+5. 확정된 FC 장치 경로를 `~/drone/config/drone.env`에 `FC_DEVICE=`로 기록
+
+---
+
+## 사람이 확인해야 할 것
+
+- **FC 파라미터** — QGroundControl에서 `MAV_0_CONFIG=TELEM1`, `MAV_0_MODE=Onboard`,
+  `SER_TEL1_BAUD=921600`, `UXRCE_DDS_CFG=0` 설정. TELEM2(Air Unit)의 `MAV_1_*`·`SER_TEL2_BAUD`는 현재 값 유지
+- **배선** — FC TELEM1 TX → 10번 핀(GPIO15), FC RX → 8번 핀(GPIO14), GND → 6번 핀
+- **Tailscale 이름** — 현재 `pi3`. 드론용 이름으로 바꿀지 결정 (바꾸면 QGC 접속 주소 표기도 같이 바뀜)
+- **지상국 확정** — `desktop-oaujese` (`100.125.71.51`) 온라인 확인됨
+- **시리얼 콘솔 방식** — 위 제안은 "디버그 콘솔 유지 + GPIO 오염 차단". 콘솔 완전 제거를 원하면 알려 줄 것

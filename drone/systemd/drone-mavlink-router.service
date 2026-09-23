@@ -1,0 +1,25 @@
+[Unit]
+Description=드론 MAVLink 라우터 (FC TELEM2 ↔ QGC/제어코드)
+Documentation=file:/home/physical/drone/config/mavlink-router.conf
+# drone.target 이 내려가면 같이 내려간다.
+PartOf=drone.target
+
+[Service]
+Type=simple
+User=physical
+Group=physical
+# /dev/ttyAMA0 접근용. root 로 돌리지 않는다.
+SupplementaryGroups=dialout
+EnvironmentFile=/etc/drone-node.env
+# systemd 는 ExecStart 의 '실행 파일 경로'에는 변수를 못 쓴다. 인자에만 쓸 수 있다.
+ExecStart=/usr/bin/mavlink-routerd -c ${DRONE_ROUTER_CONF}
+Restart=on-failure
+RestartSec=3
+# 제어 명령을 보내는 프로그램이 아니다. 순수 전송 계층이다.
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=read-only
+PrivateTmp=yes
+
+[Install]
+WantedBy=drone.target

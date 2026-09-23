@@ -1,0 +1,583 @@
+# 드론 연동 환경 세팅 — 진행 기록 (`pi3`)
+
+대상: Raspberry Pi 5 Model B Rev 1.1 (hostname `pi3`) / Debian 13 trixie 13.7
+용도: X500 v2 쿼드콥터 컴패니언 컴퓨터 (FC = 코아 H743, PX4, TELEM1 연결)
+시작: 2026-09-21 (프롬프트 개정 3)
+
+> `pi7`(Go1 장비) 시절 기록은 `archive/pi7/`에 보관. 이 장비와 무관하다.
+
+## 0단계 — 새 장비 현황 조사 (완료, 무변경)
+
+2026-09-21 16:51 KST 완료. **`~/drone` 정리 외에 시스템은 아무것도 바꾸지 않았다.**
+새로 만든 것: `~/drone/baseline/`(신규 스냅샷), `~/drone/archive/pi7/`(이동), 이 파일,
+`~/drone/STEP0_REPORT_pi3.md`.
+
+### 확인된 핵심 사실
+- **Pi 5 Rev 1.1** → `pi7`의 Pi 5 판단을 그대로 적용한다.
+  `dtparam=uart0=on` 사용, `enable_uart=1`·`dtoverlay=disable-bt`·`hciuart` 금지(`hciuart` 유닛 없음).
+- GPIO14/15(uart0, RP1 `serial@30000`)는 현재 **DT status=disabled**, `pinctrl` 기능 `none`.
+  시리얼 장치는 `/dev/ttyAMA10` 하나뿐이고 **`/dev/serial0`는 디버그 UART를 가리킨다** — FC 포트가 아니다.
+- `cmdline.txt`에 **`console=serial0,115200` 리터럴 존재** → UART를 켜면 부팅 콘솔이 FC 배선으로
+  옮겨갈 위험. `console=ttyAMA10,115200`으로 명시 고정할 것.
+- 사용자 `physical`은 **`dialout` 이미 포함**.
+- 드론 포트 **14540 / 14550 / 5760 전부 비어 있음.** 방화벽 없음(ufw 미설치, nftables inactive,
+  iptables는 tailscale 체인뿐) → 5760 개방 규칙 불필요.
+- 네트워크: `wlan0` **192.168.50.254/24**, SSID `SysAILAB_5GHz`, GW `192.168.50.1` → 연구실 망 접속됨.
+- **Tailscale은 이미 설치·로그인돼 있다.** `pi3` / **`100.85.243.54`**, `tailscaled` enabled+active.
+  → 5단계의 설치·로그인 작업은 생략 가능. QGC 접속 주소는 `100.85.243.54:5760`.
+- 미설치 도구: **git, meson, ninja-build, python3-pip** (2단계에서 설치). gcc·g++·make·pkg-config·
+  python3-venv·curl은 이미 있음.
+- `/etc/device_id` 없음 → 4단계에서 `x500-001`로 새로 만든다.
+- 기존 `drone-*` 유닛 없음, mavlink 도구 없음. 깨끗한 상태.
+
+### 보고서
+전체 조사 결과: **`~/drone/STEP0_REPORT_pi3.md`**
+기준 스냅샷: `~/drone/baseline/` (대조 방법은 `baseline/README.md`)
+`pi7` 참고 자료: `~/drone/STEP0_REPORT.md`, `~/drone/archive/pi7/`
+
+### 다음 단계
+사용자 승인(2026-09-21) → 1단계 진행. Tailscale 이름은 `pi3` 그대로 유지하기로 결정.
+
+## 1단계 — UART 설정 (완료, 재부팅·검증 끝)
+
+2026-09-21 16:56 KST 적용 → 16:59 재부팅 → 검증 완료. 부트 설정 2개만 수정했다.
+GPIO14/15가 UART 기능으로 올라왔고 FC 장치 경로를 `/dev/ttyAMA0` 으로 확정했다.
+
+### 백업 (롤백 지점)
+
+| 백업 파일 | sha256 | 0단계 스냅샷과 |
+|---|---|---|
+| `/boot/firmware/config.txt.bak.20260921` | `90a4468215…c98c3` | **일치 ✔** |
+| `/boot/firmware/cmdline.txt.bak.20260921` | `dc6694ae6f…92a75` | **일치 ✔** |
+
+롤백: `sudo cp -a /boot/firmware/<파일>.bak.20260921 /boot/firmware/<파일>` 후 재부팅.
+
+### 바꾼 것
+
+**1. `/boot/firmware/config.txt`** — `[all]` 섹션 끝에 3줄 추가 (변경 후 `9f1bb0b7d7…0efa8`)
+
+```diff
+ [all]
++# 드론 FC(TELEM1) 연결용 GPIO14/15 UART 활성화 — 2026-09-21
++# Pi 5 전용 방식. 구형 Pi용 UART/BT 설정은 이 보드에 쓰지 않는다
++dtparam=uart0=on
+```
+
+**2. `/boot/firmware/cmdline.txt`** — 콘솔 지정만 치환 (변경 후 `b32c7dc093…c15e67`)
+
+```diff
+-console=serial0,115200 console=tty1 root=PARTUUID=c48591e8-02 …
++console=ttyAMA10,115200 console=tty1 root=PARTUUID=c48591e8-02 …
+```
+
+개행 없는 1줄 구조 유지(169→170바이트, `wc -l`=0). `serial0` 잔존 0건.
+이유: `uart0`를 켜면 `serial0` 별칭이 GPIO14/15로 옮겨가 부팅 콘솔·getty가 **FC 배선 위로**
+올라간다. `ttyAMA10` 고정으로 디버그 커넥터 콘솔은 유지하고 GPIO 오염만 막는다.
+
+### 하지 않은 것 (모델에 맞지 않거나 불필요)
+
+`enable_uart=1` · `dtoverlay=disable-bt` · `systemctl disable hciuart`(유닛 자체가 not-found) ·
+`dialout` 추가(이미 소속) · `serial-getty@ttyAMA10` 조작 · 재부팅
+
+주석 제외 grep 확인: `enable_uart` 0건, `disable-bt` 0건, `hciuart` 0건, `dtparam=uart0=on` 1건.
+
+### 적용 직후 검증 (재부팅 전)
+
+| 항목 | 결과 |
+|---|---|
+| enabled 유닛 | 스냅샷과 **차이 없음 ✔** |
+| 열린 포트 | 스냅샷과 **차이 없음 ✔** |
+| NetworkManager 프로파일 | 스냅샷과 **차이 없음 ✔** |
+| 사용자 그룹 | 변화 없음 ✔ |
+| 시리얼 장치 | `/dev/serial0 → ttyAMA10` 그대로, `pinctrl 14,15` = `none` (재부팅 전이므로 정상) |
+| 부트 설정 2개 | **의도적으로 변경됨** (스냅샷 대비 FAILED = 예상된 결과) |
+
+→ **부트 설정 2개 외에 바뀐 것은 없다.**
+
+### 재부팅 후 검증 (2026-09-21 16:59 재부팅, 완료)
+
+| # | 확인 항목 | 결과 | 판정 |
+|---|---|---|---|
+| 1 | 시리얼 장치 실제 연결 대상 | `ttyAMA0` → `1f00030000.serial` = **RP1 uart0 = GPIO14/15**<br>`ttyAMA10` → `107d001000.serial` = 디버그 커넥터<br>`serial0` → **`ttyAMA10`** | ✅ |
+| 2 | `pinctrl get 14,15` | `14: a4 … TXD0` / `15: a4 … RXD0`, DT uart0 status=okay | ✅ |
+| 3 | 콘솔 + getty | `/proc/cmdline` = `console=ttyAMA10,115200 console=tty1`<br>활성 콘솔 `ttyAMA10 tty1`, getty는 `serial-getty@ttyAMA10`뿐<br>**`ttyAMA0`에 getty 없음** | ✅ |
+| 4 | 스냅샷 대비 변화 | enabled 유닛 0 / NetworkManager 0 / 그룹 동일<br>포트는 재부팅으로 PID·임시포트만 변동, 신규 서비스 0<br>14540·14550·5760 여전히 빔 | ✅ |
+
+### ⚠ pi7 보고서의 예상과 달랐던 점
+
+`/dev/serial0`이 `ttyAMA0`으로 **옮겨가지 않았다.** `cmdline.txt`에 `console=ttyAMA10`을 고정한
+결과 udev(`99-com.rules`)가 `serial0` 심볼릭 링크를 콘솔 장치 쪽에 붙였기 때문이다.
+→ **`serial0`을 FC 포트로 쓰면 틀린다. 반드시 `/dev/ttyAMA0`을 쓸 것.**
+
+### FC 장치 경로 확정
+
+`~/drone/config/drone.env` 에 기록:
+```
+FC_DEVICE=/dev/ttyAMA0
+FC_BAUD=921600
+```
+근거: `/dev/ttyAMA0` → `1f00030000.serial` = DT `uart0` = `rp1/serial@30000` = GPIO14/15.
+사용자가 `dialout` 소속이라 읽기/쓰기 접근 가능.
+
+## 2단계 — 소프트웨어 설치 (완료)
+
+2026-09-21 17:17 KST 완료. 사용자가 `sudo -v` 로 타임스탬프를 갱신해 줘서 잔여분을 마쳤다.
+(`/etc/sudoers.d/010_global-tty` 의 `Defaults timestamp_type=global` 덕에 세션 간 공유된다.)
+
+### apt
+
+| 패키지 | 버전 | 비고 |
+|---|---|---|
+| git | 1:2.47.3-0+deb13u1 | 신규 |
+| meson | 1.7.0-1 | 신규 |
+| ninja-build | 1.12.1-1+b1 | 신규 |
+| python3-pip | 25.1.1+dfsg-1+rpt1 | 신규 |
+| **systemd-dev** | 257.13-1~deb13u1 | **신규 — 프롬프트 목록에 없음** |
+| python3-venv | 3.13.5-1 | 이미 있었음 |
+| pkg-config / gcc / g++ | 1.8.1-4 / 14.2.0 / 14.2.0 | 이미 있었음 |
+
+**`systemd-dev` 를 추가한 이유**: `meson setup` 이 `dependency('systemd')` 에서 멈춘다.
+`systemdsystemunitdir` 경로를 pkg-config 로 알아내는 용도이고, 이게 없으면 빌드가 시작되지 않는다.
+설치 후 `pkg-config --variable=systemdsystemunitdir systemd` → `/usr/lib/systemd/system`.
+
+### ~/drone/venv (전역 `sudo pip install` 없음 — 규칙 2 준수)
+
+| 패키지 | 버전 |
+|---|---|
+| pymavlink | 2.4.49 |
+| MAVProxy | 1.8.74 |
+| mavsdk | 3.17.4 |
+| paho-mqtt | 2.1.0 |
+| (의존성) | lxml 6.1.3, fastcrc 0.5.0, pyserial 3.5, numpy 2.5.3, grpcio 1.84.0, protobuf 7.36.2, pynmeagps 1.1.7, typing_extensions 4.16.0 |
+
+### mavlink-router
+
+| 항목 | 값 |
+|---|---|
+| 소스 | `~/drone/src/mavlink-router` (`git clone --recursive`) |
+| 버전 | **v4-16-g2362c62** (커밋 `2362c620`) |
+| 서브모듈 | `modules/mavlink_c_library_v2` @ `052b8579` ✔ |
+| 빌드 | `meson setup build .` → `ninja -C build` — 경고 0건, 오류 0건 |
+| 설치 | `sudo ninja -C build install` → `/usr/bin/mavlink-routerd` |
+| 유닛 | `/usr/lib/systemd/system/mavlink-router.service` |
+| **유닛 상태** | **`disabled` / `inactive`** — 활성화하지 않았다. 자동 실행은 4단계 `drone-` 유닛으로 한다 |
+
+설치된 것은 바이너리 1개와 유닛 파일 1개뿐이다(`meson install --dry-run` 으로 미리 확인).
+저장소의 예제 바이너리(`px4-offboard-mode` 등)는 설치되지 않았고 실행한 적도 없다.
+
+전체 기록: `~/drone/config/installed-versions.txt`
+
+### 설치 후 변경 범위 검증
+
+| 항목 | 결과 |
+|---|---|
+| enabled 유닛 (스냅샷 대비) | **변화 없음 ✔** — `mavlink-router` 는 enabled 목록에 없다 |
+| 드론 포트 14540/14550/5760 | 전부 비어 있음 ✔ |
+| `mavlink-routerd` 프로세스 | 실행 중 아님 ✔ |
+| `/etc/mavlink-router` | 생성되지 않음 (설정은 4단계에서 `~/drone/config/` 에 만든다) |
+| 부트 설정 | 1단계 변경분 그대로, 추가 변경 없음 |
+
+## 3단계 — 수동 연결 확인 (스크립트 완료, **FC 링크 실패**)
+
+### 작성 완료: `~/drone/scripts/check_link.py`
+
+프롬프트 3단계 요구사항을 모두 구현했다. 읽기 전용이며 보내는 것은
+heartbeat · `PARAM_REQUEST_READ` · `SET_MESSAGE_INTERVAL`(스트림 요청)뿐이다.
+arm/takeoff/모드변경/모터테스트/offboard/파라미터 쓰기는 일절 없다.
+
+- `--device` 기본값 = `drone.env` 의 `FC_DEVICE`, `udpin:0.0.0.0:14540` 형식도 허용
+- `--baud` 기본 921600, 실패 시 57600 자동 재시도 (`--no-fallback` 로 끌 수 있음)
+- heartbeat 최대 10초 대기 → sysid/compid, autopilot, 기체 타입, arm 상태, custom mode 출력
+- 5초간 메시지 종류별 개수와 Hz 표
+- ATTITUDE roll/pitch/yaw 도 단위 6줄 (없으면 `SET_MESSAGE_INTERVAL` 로 스트림 요청)
+- `MAV_0_CONFIG`/`MAV_0_MODE`/`SER_TEL1_BAUD` + `MAV_1_CONFIG`/`MAV_1_MODE`/`SER_TEL2_BAUD`
+  + `UXRCE_DDS_CFG` 읽기 → TELEM1 인스턴스인지, TELEM2 Air Unit 이 살아 있는지 판정
+- 종료 코드 0/1 (4단계 `drone-detect.service` 가 재사용)
+- 실패 시 원인 후보 6가지 출력
+
+**PX4 정수 파라미터 처리**: PX4는 정수 파라미터를 PARAM_VALUE 의 float 필드에 **bit-cast**
+해서 보낸다(ArduPilot 은 수치 캐스트). 그대로 읽으면 101 이 1.4e-43 으로 나온다.
+`param_type` 이 정수형이면 비트를 int32 로 재해석하도록 했고, 양쪽 방식 모두 검증했다.
+
+### 오프라인 검증 (FC 없이 확인 가능한 부분)
+
+| 항목 | 결과 |
+|---|---|
+| 문법 검사 / `--help` | ✅ |
+| PX4 bit-cast 파라미터 변환 (101, 2, 921600, 0, 102) | ✅ 전부 일치 |
+| ArduPilot 수치 캐스트 / REAL32 실수 파라미터 | ✅ |
+| enum 표시 (`fmt_cfg`, `fmt_mode`) | ✅ |
+| PX4 custom_mode 디코딩 (MANUAL/POSCTL/AUTO.MISSION/TAKEOFF/LAND/OFFBOARD) | ✅ |
+| UDP 경로 (`udpin:`) — 보드레이트 재시도 건너뜀, 실패 경로 | ✅ 종료 코드 1 |
+
+### ❌ FC 링크 실패 — 원인은 배선 또는 FC 전원
+
+`./venv/bin/python scripts/check_link.py` → 921600, 57600 둘 다 heartbeat 없음. 종료 코드 1.
+
+원인을 좁힌 결과:
+
+| 확인 | 결과 | 의미 |
+|---|---|---|
+| 원시 바이트 수신 (921600/115200/57600/38400/19200/9600) | **전 구간 0바이트** | 보드레이트 문제가 아니다 |
+| 포트 열기 / `stty` | 정상 | 장치 경로 정상 |
+| `/dev/ttyAMA0` 점유 프로세스 | **없음** | 콘솔·다른 프로세스 충돌 아님 |
+| `pinctrl get 14,15` | `TXD0` / `RXD0` | UART 기능 정상 |
+| **GPIO15 풀다운 시험** | 풀다운 → **`lo`**, 풀업 → `hi` | **10번 핀을 구동하는 외부 신호가 없다** |
+
+풀다운 시험이 결정적이다. FC TELEM1 TX 가 연결돼 전원이 들어와 있으면 idle-high 로 선을
+붙들어 풀다운을 이기고 `hi` 로 읽혀야 한다. `lo` 로 떨어졌다는 건 **핀이 떠 있다**는 뜻이다.
+(시험 후 핀은 원래 상태 `a4 pu` 로 복구했다. GPIO15 는 입력이라 FC 쪽으로 아무것도 보내지 않았다.)
+
+→ 라즈베리파이 쪽 설정은 정상이다. **FC 전원 / TELEM1 커넥터 / 점퍼선**을 사람이 확인해야 한다.
+
+## 다음 단계 — 사용자 확인 대기
+
+1. **FC 배선·전원 확인** (3단계 통과 조건)
+   - FC 에 전원이 들어와 있는가
+   - FC TELEM1 TX → 라즈베리파이 **10번 핀**(GPIO15), FC RX → **8번 핀**(GPIO14), GND → **6번 핀**
+   - TX↔TX / RX↔RX 로 바뀌어 꽂히지 않았는가
+   - 확인 후: `cd ~/drone && ./venv/bin/python scripts/check_link.py`
+2. FC 파라미터 (QGroundControl, 사람이 설정)
+   - `MAV_0_CONFIG=TELEM1`, `MAV_0_MODE=Onboard`, `SER_TEL1_BAUD=921600`, `UXRCE_DDS_CFG=0`
+   - TELEM2 Air Unit 의 `MAV_1_*`·`SER_TEL2_BAUD` 는 현재 값 유지
+   - 링크가 붙으면 `check_link.py` 가 이 값들을 읽어서 판정해 준다
+
+## 4단계 — 부팅 시 자동 연결 준비 (구현 완료, FC 실물 검증만 남음)
+
+2026-09-21 17:40 KST. pi7 과 같은 결로 **systemd 유닛 + `/etc` env 파일** 구조로 만들었다.
+
+### /etc 파일 (pi7 의 `/etc/hw-node.env`·`/etc/device_id` 와 같은 결)
+
+| 경로 | 내용 |
+|---|---|
+| `/etc/device_id` | `x500-001` (MQTT clientId 겸용. pi7 의 `go1-001`·`wl-001` 과 겹치지 않음) |
+| `/etc/drone-node.env` | FC 장치·보드레이트, 감지 타이밍, 포트, Tailscale·MQTT 주소 |
+
+`~/drone/config/drone.env` 는 **`/etc/drone-node.env` 를 가리키는 심볼릭 링크**다.
+사본이 아니라 같은 파일이라 두 곳이 어긋날 수 없다. 고치려면 sudo 가 필요하다.
+(기존 파일은 `config/drone.env.superseded.20260921` 로 남겨 뒀다.)
+
+### 유닛
+
+| 유닛 | 역할 | 실행 사용자 | 부팅 자동 시작 |
+|---|---|---|---|
+| `drone-detect.service` | FC 감지 → `drone.target` start/stop, `state/mode` 기록 | **root** (target 을 start/stop 해야 함) | **예** |
+| `drone.target` | 드론 모드 묶음 | — | **아니오** (`static`) |
+| `drone-mavlink-router.service` | `/usr/bin/mavlink-routerd -c ~/drone/config/mavlink-router.conf` | `physical` + `dialout` | 아니오 (target 소속) |
+| `drone-linkmon.service` | 링크 끊김·복구 기록 (**읽기 전용**) | `physical` | 아니오 (target 소속) |
+
+`systemctl list-unit-files` 에서 router·linkmon 도 `enabled` 로 보이지만, 이는 `drone.target`
+소속이라는 뜻일 뿐이다. `drone.target` 이 `static` 이라 부팅 때 켜지지 않으므로
+**부팅 시 실제로 뜨는 건 `drone-detect` 하나뿐**이다 (`multi-user.target.wants` 로 확인).
+
+유닛 원본은 `~/drone/systemd/` 에 두고 `/etc/systemd/system/` 에 설치했다.
+`systemd-analyze verify` 4개 전부 통과.
+
+### 라우터 설정 `~/drone/config/mavlink-router.conf`
+
+| 엔드포인트 | 용도 |
+|---|---|
+| `[UartEndpoint fc]` `/dev/ttyAMA0`, Baud `921600,57600` | FC TELEM1. 목록으로 두면 유효 패킷이 올 때까지 순환한다 |
+| TCP 5760 | QGroundControl (Tailscale `100.85.243.54:5760`) |
+| `[UdpEndpoint local_ctrl]` 14540 | MAVSDK 제어 코드 (6단계 스크립트) |
+| `[UdpEndpoint linkmon]` **14541** | `drone-linkmon` 전용 |
+| `[UdpEndpoint detect]` **14542** | `drone-detect` 의 끊김 감시 전용 |
+
+**14541·14542 는 프롬프트 설정 예시에 없던 것을 추가했다.** linkmon 과 detect 가 14540 을
+쓰면 MAVSDK 제어 코드와 포트를 다투게 된다. 소비자마다 전용 포트를 준 것이다.
+
+### 상태 기계 (`scripts/fc_detect.py`)
+
+```
+mode=none ──FC heartbeat 발견──> 포트 해제 확인 ──> drone.target start ──> mode=drone
+    ^                                                                        │
+    └──── drone.target stop <── heartbeat 가 LINK_TIMEOUT(15s) 끊김 <────────┘
+```
+
+- FC 가 없으면 `DETECT_INTERVAL`(10초) 간격으로 조용히 재시도. 같은 사유의 로그는 한 번만 찍는다
+- FC 전원이 늦게 들어와도 재시도 중에 잡힌다
+- 감지 후 시리얼 포트를 닫고 `/proc/*/fd` 로 **실제 해제를 확인한 뒤** 라우터를 띄운다
+- 다른 프로세스가 포트를 잡고 있으면 그 회차는 건너뛴다 (라우터와 충돌 방지)
+- 상태는 `~/drone/state/mode` 에 `drone` / `none`
+
+### ⚠ 검증 중 찾은 실제 버그 — heartbeat 판별
+
+가짜 FC(pty)로 시험하다 발견했다. 원래 코드는 `msg.get_srcSystem() != m.mav.srcSystem` 으로
+자기 자신을 걸러냈는데:
+
+1. **PX4 기본 `MAV_SYS_ID` 는 1 이고 컴패니언도 관례상 sysid 1**(compid 191)을 쓴다.
+   sysid 만 비교하니 **FC heartbeat 를 '내가 보낸 것'으로 오인해 버렸다.**
+   → 실제 FC 를 연결했어도 감지가 통째로 실패했을 버그다.
+2. 라우터를 거치면 QGC·MAVSDK 의 heartbeat 도 들어온다. 그걸 링크 생존 신호로 세면
+   **FC 가 없는데도 링크가 살아 있다고 오판**한다.
+
+공용 모듈 `scripts/dronelink.py` 의 `is_vehicle_heartbeat()` 로 고쳤다:
+`(sysid, compid)` 를 **함께** 비교하고, `autopilot != MAV_AUTOPILOT_INVALID` 인 것만 FC 로 인정한다.
+`fc_detect.py`·`linkmon.py`·`check_link.py` 세 곳 모두 적용했고 8가지 경우로 단위 검증했다.
+
+### 검증 결과 (FC 실물 없이 가능한 범위)
+
+| 경우 | 방법 | 결과 |
+|---|---|---|
+| FC 없이 부팅 (7단계 표 2행) | 실제 서비스 기동 | `mode = none`, `drone.target` inactive, 포트 전부 닫힘, **에러 반복 없음**(로그 9줄, 재시작 0회, CPU 0.39초) ✔ |
+| FC 발견 → 드론 모드 | pty 가짜 FC(PX4 heartbeat 2Hz) | heartbeat 수신 → 포트 해제 확인 → `drone.target` start → `mode = drone` ✔ |
+| 드론 모드 구성 | 위와 동시 | router+linkmon active, TCP 5760 LISTEN, UDP 14541/14542 bind, `/dev/ttyAMA0` 점유자 = `mavlink-routerd` ✔ |
+| 링크 끊김 → 복귀 (7단계 표 4행) | 라우터가 무신호 ttyAMA0 을 보게 함 | 15초 후 `drone.target` stop → `mode = none` → 재감지 ✔ |
+| 순환 반복 | 위 과정 4회 연속 | 발견 4 / 해제확인 4 / start 4 / 끊김 3 / stop 3 — 누수 없이 반복 ✔ |
+| 유닛 문법 | `systemd-analyze verify` | 4개 전부 통과 ✔ |
+
+**아직 못 한 것**: 실제 FC 로 붙는 경로. FC 배선이 연결되면 그대로 동작할 것으로 보지만
+확인 전까지 단정하지 않는다. 7단계 재부팅 검증도 남아 있다.
+
+### 규칙 1-4 확인 — 자동 실행에 제어 명령 없음
+
+| 확인 | 결과 |
+|---|---|
+| 부팅 시 자동 시작 유닛 | `drone-detect` 하나뿐 |
+| `arm_disarm_test` / `takeoff_land` 가 유닛에 포함? | **없음** ✔ |
+| `fc_detect.py` 가 보내는 것 | heartbeat 뿐 |
+| `linkmon.py` 가 보내는 것 | **없음** (송신 0바이트, `DevicePolicy=closed` 로 시리얼 접근도 차단) |
+| 라우터 | 순수 전송 계층 |
+
+## 5단계 — 지상국 연결 (Tailscale) — 확인만, 변경 없음
+
+프롬프트는 "새 장비라 설치와 로그인이 필요할 가능성이 높다"고 봤지만 **이미 끝나 있었다.**
+설치·`tailscale up`·옵션 변경 **아무것도 하지 않았다.** 이름도 `pi3` 그대로 두었다(사용자 지시).
+
+| 항목 | 값 |
+|---|---|
+| 버전 / 유닛 | 1.102.4 / `tailscaled` **enabled + active** (재부팅 후 자동 접속됨) |
+| 이 장비 | `pi3` / **`100.85.243.54`** / `pi3.tailcb6bfb.ts.net` |
+| BackendState | `Running` |
+| 지상국 | `desktop-oaujese` / **`100.125.71.51`** — 온라인 |
+| **QGC 접속 주소** | **TCP `100.85.243.54:5760`** |
+| 방화벽 | ufw 미설치, nftables inactive, iptables INPUT 정책 `ACCEPT`(tailscale 체인뿐) → **5760 개방 규칙 불필요** |
+| MQTT 브로커 후보 | `/etc/drone-node.env` 에 `MQTT_HOST=192.168.50.172`, `MQTT_HOST_TS=100.72.109.9`, `MQTT_PORT=1883` 기록. **이번엔 연결하지 않았다** |
+
+사용자 확인 필요: 지상국에서 `tailscale ping pi3`, QGC 에서 TCP `100.85.243.54:5760`.
+(단 QGC 는 `drone.target` 이 떠 있어야 붙는다 = FC 연결이 먼저다.)
+
+참고: `pi7`(MQTT 브로커)은 현재 offline 이다. 다음 작업에서 브로커에 붙을 때 확인이 필요하다.
+
+## 6단계 — 제어 스크립트 (작성만, 실행하지 않음)
+
+`~/drone/scripts/` 에 MAVSDK-Python 으로 작성. 연결 기본값은 `udpin://0.0.0.0:14540` 이고
+`--address` 로 바꿀 수 있다. 설치된 mavsdk 3.17.4 가 `udpin://` 형식을 지원하는 것을
+확인했으므로 `udp://:14540` 로 낮출 필요가 없었다.
+
+| 파일 | 위험도 | 동작 | 실행 여부 |
+|---|---|---|---|
+| `telemetry_watch.py` | ★☆☆ 없음 | 위치·고도·자세·배터리·비행모드·arm·GPS/home 상태를 1Hz 출력. **명령 없음** | **실행해도 됨** |
+| `arm_disarm_test.py` | ★★☆ 높음 | arm → 3초 → disarm. 이륙하지 않음 | 실행 안 함 |
+| `takeoff_land.py` | ★★★ 매우 높음 | 위치 추정 확인 → arm → takeoff 1.5m → 8초 → land → 착륙 확인 | 실행 안 함 |
+
+각 파일 맨 위에 **용도 · 실행 조건 · 위험도**를 주석으로 적었다.
+
+### 안전장치
+
+- 두 위험 스크립트는 `"yes"` 를 **직접 입력**해야 진행한다
+- **stdin 이 터미널이 아니면 거부한다** — 자동화·파이프로 실수로 돌아가는 것을 막는다
+  (비대화형 실행 시험 → 둘 다 종료 코드 1 로 거부 확인 ✔)
+- `takeoff_land.py` 는 `is_global_position_ok` + `is_home_position_ok` 가 아니면 이륙하지 않는다
+- 이미 ARM 상태면 두 스크립트 모두 중단한다
+- takeoff 실패 시 disarm 시도, land 실패 시 "즉시 조종기로 개입" 경고
+- 어느 것도 systemd 유닛에 들어 있지 않다
+
+참고: 설치된 `mavsdk` 패키지가 실행할 때마다 "`mavsdk-grpc` 로 이름이 바뀐다"는
+FutureWarning 을 띄운다. 동작에는 문제가 없다. 다음 작업에서 정리할지 결정하면 된다.
+
+## 7단계 — 재부팅 검증 (진행 중)
+
+점검 도구: `~/drone/scripts/step7_check.sh` — sudo 불필요, 읽기 전용.
+각 경우가 끝날 때마다 실행해 기대 결과와 대조한다.
+
+### ⚠ 전원 구조 (2026-09-21 사용자 확인) — 검증 방법을 바꾼 이유
+
+**드론 배터리 하나로 FC 와 라즈베리파이가 같이 켜지고 같이 꺼진다. FC 만 따로 끄고 켤 수 없다.**
+
+이 때문에 프롬프트 7단계 표의 "FC 전원 ON/OFF" 를 그대로 할 수 없다.
+사용자 지시로 **TELEM 점퍼선을 뽑았다 꽂는 것**으로 대체한다.
+FC 입장에서 링크가 끊겼다 붙는 것은 동일하므로 검증 목적은 그대로 달성된다.
+
+중요한 부수 효과: **라즈베리파이가 돌고 있다는 사실 자체가 FC 에도 전원이 들어와 있다는 증거다.**
+같은 배터리를 쓰기 때문이다. 따라서 앞선 진단에서 "FC 전원 OFF" 가능성은 완전히 배제된다.
+
+### 진행 순서 (개정)
+
+**D 가 실제 운용 방식(배터리 연결 → 둘 다 부팅)이므로 가장 중요하다.**
+
+| 순서 | 표의 경우 | 실제로 할 일 | 재부팅 |
+|---|---|---|---|
+| A | 표 2행: FC 없이 부팅 | (완료) 링크 없는 상태로 부팅 | 완료 |
+| **C** | 표 4행: 드론 모드 중 링크 차단 | 드론 모드일 때 **TELEM 점퍼선 뽑기** | 불필요 |
+| **B** | 표 3행: 나중에 링크 복구 | **점퍼선 다시 꽂기** | 불필요 |
+| **D** | 표 1행: FC 연결 상태로 부팅 | 점퍼 꽂힌 채 **배터리로 재부팅** ← **가장 중요** | 필요 |
+
+C → B 순서인 이유: 드론 모드에 먼저 들어가야 "드론 모드 중 차단"을 볼 수 있다.
+따라서 링크가 한 번 붙는 것이 C·B·D 모두의 선행 조건이다.
+
+### 전원 상태 점검 (2026-09-21 18:2x)
+
+드론 배터리로 라즈베리파이를 구동하므로 BEC 전압 여유가 중요하다. 결과는 **전부 정상**이다.
+
+| 항목 | 결과 | 판정 |
+|---|---|---|
+| `vcgencmd get_throttled` | **`0x0`** | ✅ 현재/이력 모두 저전압·스로틀링 **없음** |
+| ├ bit0/16 저전압 (현재/이력) | 없음 / 없음 | ✅ |
+| ├ bit1/17 주파수 제한 | 없음 / 없음 | ✅ |
+| ├ bit2/18 스로틀링 | 없음 / 없음 | ✅ |
+| └ bit3/19 온도 제한 | 없음 / 없음 | ✅ |
+| `vcgencmd pmic_read_adc EXT5V_V` | **`5.331V`** | ✅ 5V 입력 양호 (저전압 임계 4.63V 대비 충분) |
+| `dmesg` under-voltage 경고 | **0건** | ✅ |
+| journal 전체 부팅 이력 under-voltage | **0건** | ✅ |
+| 3V3_SYS / 1V8_SYS | 3.329V / 1.806V | ✅ 정상 |
+| SoC 온도 / 코어 전압 | 43.9°C / 0.880V | ✅ 정상 |
+
+전류: VDD_CORE 0.572A, 3V3_SYS 0.056A, 1V8_SYS 0.119A — 유휴 상태 수준.
+
+**주의**: 이 측정은 **모터가 정지한 상태**의 값이다. 비행 중에는 ESC 부하로 배터리 전압이
+떨어져 BEC 출력도 같이 흔들릴 수 있다. 실제 비행 전에 모터를 돌린 상태에서
+`vcgencmd get_throttled` 를 다시 확인할 것을 권한다 (0x0 이 아니면 BEC 용량 부족).
+
+### 기대 결과
+
+| 경우 | mode | drone.target | 그 밖에 |
+|---|---|---|---|
+| A | `none` | inactive | 포트 전부 닫힘, 에러 반복 없음, 재시작 0회 |
+| C | `drone` → `none` | active → inactive | 점퍼 뽑고 15초 내 복귀, linkmon 로그에 끊김 기록, 포트 전부 닫힘 |
+| B | `none` → `drone` | inactive → active | 점퍼 꽂고 10초 내 감지, 5760/14541/14542 열림, ttyAMA0 점유자 = mavlink-routerd |
+| D | `drone` | active | 배터리 연결 부팅만으로 드론 모드, QGC 가 `100.85.243.54:5760` 으로 접속 |
+
+### ⚠ 선행 조건 — FC 배선이 아직 한 번도 검증된 적 없다
+
+3단계에서 GPIO15 풀다운 시험 결과 10번 핀이 떠 있었다(FC TX 신호 없음).
+**B 단계가 사실상 첫 실물 링크 시험**이다. B 에서 감지가 안 되면 재부팅을 더 쓰지 말고
+먼저 배선을 진단한다:
+
+```sh
+cd ~/drone
+# 1) 원시 바이트가 들어오는지
+./venv/bin/python -c "
+import serial,time
+s=serial.Serial('/dev/ttyAMA0',921600,timeout=0.2); s.reset_input_buffer()
+d=b''; e=time.time()+3
+while time.time()<e: d+=s.read(4096)
+s.close(); print(len(d),'바이트  0xFD=',d.count(b'\xfd'))"
+# 2) 핀이 떠 있는지 (풀다운에서 lo 면 아무것도 안 붙어 있다)
+pinctrl set 15 ip pd; sleep 0.3; pinctrl get 15; pinctrl set 15 a4 pu
+# 3) 상세 진단
+sudo systemctl stop drone-detect      # 포트를 놓게 한다
+./venv/bin/python scripts/check_link.py
+sudo systemctl start drone-detect
+```
+
+### 마지막에 할 것
+
+기준 스냅샷(`~/drone/baseline/`) 대비 **드론 관련 변경 외에 달라진 게 없는지** 확인.
+예상되는 차이는 다음 셋뿐이다:
+- 부트 설정 2개 (1단계에서 의도적으로 변경)
+- enabled 유닛 3개 증가 (`drone-detect`, `drone-mavlink-router`, `drone-linkmon`)
+- 드론 모드일 때 포트 5760/14541/14542
+
+### A 단계 결과 (표 2행: FC 없이 부팅) — **통과**
+
+2026-09-21 18:03 재부팅 (부팅 ID `25a99983…`).
+
+| 확인 항목 | 기대 | 실측 | 판정 |
+|---|---|---|---|
+| `state/mode` | `none` | `none` | ✅ |
+| `drone-detect` | active, 대기 | active, **재시작 0회** | ✅ |
+| `drone.target` / router / linkmon | 전부 inactive | 전부 inactive | ✅ |
+| 포트 5760·14540·14541·14542 | 전부 닫힘 | 전부 닫힘 | ✅ |
+| 에러 반복 없음 | — | 이번 부팅 로그 **9줄**, "FC 없음" **1회**, CPU 0.45초 | ✅ |
+| 부팅 자동 시작 | `drone-detect` 만 | `drone-detect` 만 (`multi-user.target.wants`) | ✅ |
+
+부팅 후 1초 안에 `drone-detect` 가 떴고(`17:59:32`), 조용히 10초 간격 재시도로 들어갔다.
+
+### B·C·D 단계 — **진행 불가 (FC 가 전기적으로 연결돼 있지 않다)**
+
+사용자가 "드론과 연결된 상태"라고 알려 줘 B 를 시도했으나 감지되지 않았다.
+5분 넘게 `mode = none` 이었고, 원인을 좁힌 결과 **라즈베리파이 쪽 문제가 아니다.**
+
+| 진단 | 결과 | 의미 |
+|---|---|---|
+| `drone-detect` 동작 | 부팅 후 정상 기동, 10초마다 재시도 중 | 감지기는 정상 |
+| GPIO14/15 기능 | `TXD0` / `RXD0` | UART 정상 |
+| `/dev/ttyAMA0` 점유 | 없음 | 포트 충돌 아님 |
+| 원시 바이트 (921600, 3초) | **0바이트** | 신호 자체가 없음 |
+| **10번 핀(GPIO15) 풀다운** | **`lo`** | 외부 구동 없음 = 핀이 떠 있다 |
+| **8번 핀(GPIO14) 풀다운** | **`lo`** | **TX/RX 바뀜도 아니다** (바뀌었다면 `hi`) |
+| USB 시리얼 (`ttyACM*`/`ttyUSB*`) | 없음 | USB 연결도 아님 |
+| `lsusb` | 루트 허브 4개뿐 | 연결된 USB 장치 0개 |
+
+두 핀 모두 떠 있고 USB 에도 아무것도 없다 → **FC 가 이 라즈베리파이에 닿아 있지 않다.**
+(풀다운 시험은 GPIO 를 잠시 입력으로 두고 읽기만 한다. FC 로 나간 신호는 없고 핀은 원상 복구했다.)
+
+사람이 확인할 것:
+1. FC 전원이 실제로 들어와 있는가 (LED 확인)
+2. 점퍼선이 **TELEM1** 커넥터에 꽂혀 있는가 (TELEM2 는 Air Unit 자리다)
+3. 라즈베리파이 쪽이 40핀 헤더 **8·10·6번**에 정확히 꽂혀 있는가
+4. 점퍼선 단선 / 커넥터 헐거움
+5. GND(6번 핀) 가 연결돼 있는가 — 없으면 신호가 제대로 전달되지 않는다
+
+### 기준 스냅샷 대조 (A 단계 시점)
+
+| 항목 | 결과 |
+|---|---|
+| 부트 설정 2개 | **의도적 변경** (1단계) — 예상된 차이 |
+| enabled 유닛 | **+3** (`drone-detect`, `drone-mavlink-router`, `drone-linkmon`) — 드론 관련, 사라진 것 **0** |
+| 사용자 세션 유닛 | 변화 없음 ✔ |
+| NetworkManager 프로파일 | 변화 없음 ✔ |
+| IPv4 주소 | `192.168.50.254/24` 동일 ✔ (차이는 DHCP 임대 잔여시간뿐) |
+| 방화벽 | ufw 미설치 / nftables inactive — 변화 없음 ✔ |
+| 열린 포트 | 드론 포트 0개(FC 미연결이라 정상). 나머지 차이는 avahi·VS Code 가 부팅마다 새로 받는 임시 포트 |
+
+→ **드론 관련 변경 외에 달라진 것이 없다.**
+
+### 2차 진단 (2026-09-21 18:1x, 사용자가 "전원 ON + TELEM1 배선함" 확인 후)
+
+| 시험 | 결과 | 결론 |
+|---|---|---|
+| 8·10번 핀 풀다운 (안정화 1초) | 둘 다 `lo` | 외부 구동 없음 |
+| 원시 바이트 8개 보드레이트 (각 4초) | **합계 0바이트** | 수신 신호 전무 |
+| **라즈베리파이 UART 송신 시험** | 송신 전 `hi` 20/20 → **송신 중 `lo` 54/60 (90%)** → 송신 후 `hi` 20/20 | **라즈베리파이 송신 정상** |
+
+송신 시험은 300 baud 로 `0x00` 을 내보내며 GPIO14 전압을 샘플링한 것이다.
+`0x00` 은 start bit + 8 data bit 가 전부 LOW 라 이론상 90% 가 LOW 여야 하는데 정확히 54/60 이 나왔다.
+(`0x00` 은 MAVLink 시작 바이트 `0xFD`/`0xFE` 가 아니므로 어떤 명령도 되지 않는다.)
+
+→ **UART 주변장치·핀 할당·장치 경로가 모두 정상임이 입증됐다. 1단계 설정은 완전히 성공했다.**
+→ 문제는 FC 쪽 또는 점퍼선이다.
+
+### ⚠ 앞선 판단 정정
+
+1차 진단에서 "FC 가 라즈베리파이에 닿아 있지 않다"고 단정했는데 **너무 강한 표현이었다.**
+핀이 떠 있는 상태는 세 경우가 모두 같은 모습으로 보인다:
+
+1. 배선 미연결 / 단선 / 다른 커넥터
+2. FC 전원 OFF
+3. **배선·전원 정상인데 FC 의 TELEM1 UART 가 꺼져 있음**
+   — `MAV_0_CONFIG` 가 기본값(Disabled)이면 PX4 가 그 포트를 초기화하지 않아 TX 핀이 high-Z 가 된다
+
+사용자 확인 결과 **전원 ON + TELEM1 배선함** 이므로 1·2 는 배제된다.
+**3번(FC 파라미터 미설정)이 가장 유력하다.** 프롬프트에도 FC 파라미터는 사람이 QGC 에서
+설정한다고 돼 있고, 사용자는 설정 여부를 모르는 상태다.
+
+### 아직 시험하지 못한 것 — 라즈베리파이 수신 경로
+
+GPIO15 가 풀업/풀다운에 정상 반응하므로 핀 자체는 살아 있지만,
+**UART 수신 주변장치 경로는 아직 입증되지 않았다.** 루프백(8번↔10번 점퍼 직결)으로
+확인할 수 있으나 FC 배선을 잠시 빼야 한다.
+
+## 다음 단계
+
+1. **FC 파라미터 확인** (가장 유력) — TELEM2 의 Air Unit 으로 QGC 를 무선 연결하면
+   배선을 건드리지 않고 확인할 수 있다. `MAV_0_CONFIG=TELEM1`, `MAV_0_MODE=Onboard`,
+   `SER_TEL1_BAUD=921600`, `UXRCE_DDS_CFG=0`. **변경 후 FC 재부팅 필요.**
+2. 파라미터가 이미 맞다면 → 점퍼선 교체, 그래도 안 되면 루프백 시험으로 라즈베리파이 수신 경로 확인
+3. 링크가 붙으면 → 3단계 `check_link.py` 통과 확인 → B·C·D 단계
+4. **FC 배선·전원 확인** (1차 진단 목록) → B·C·D 단계
+   - FC 가 붙으면 재부팅 없이 B(전원 ON)·C(전원 OFF)를 바로 확인할 수 있고,
+     D(FC 연결 상태로 부팅)만 재부팅 1회가 필요하다
+2. 3단계 통과 확인 (`check_link.py` 로 FC 파라미터까지 읽기)
+3. 8단계 `SETUP_REPORT.md` 작성

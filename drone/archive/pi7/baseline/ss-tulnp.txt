@@ -1,0 +1,22 @@
+Netid State  Recv-Q Send-Q               Local Address:Port  Peer Address:PortProcess                                    
+udp   UNCONN 0      0                        127.0.0.1:323        0.0.0.0:*                                              
+udp   UNCONN 0      0                          0.0.0.0:53787      0.0.0.0:*                                              
+udp   UNCONN 0      0                          0.0.0.0:41641      0.0.0.0:*                                              
+udp   UNCONN 0      0                          0.0.0.0:5353       0.0.0.0:*                                              
+udp   UNCONN 0      0                          0.0.0.0:15200      0.0.0.0:*    users:(("python3",pid=1166,fd=3))         
+udp   UNCONN 0      0                            [::1]:323              *:*                                              
+udp   UNCONN 0      0                                *:41641            *:*                                              
+udp   UNCONN 0      0                                *:5353             *:*                                              
+udp   UNCONN 0      0                                *:52523            *:*                                              
+tcp   LISTEN 0      128                      127.0.0.1:45715      0.0.0.0:*    users:(("code-7debcd0e2a",pid=1523,fd=11))
+tcp   LISTEN 0      100                        0.0.0.0:1883       0.0.0.0:*                                              
+tcp   LISTEN 0      511                      127.0.0.1:10012      0.0.0.0:*    users:(("MainThread",pid=1599,fd=23))     
+tcp   LISTEN 0      128                        0.0.0.0:22         0.0.0.0:*                                              
+tcp   LISTEN 0      5                          0.0.0.0:8443       0.0.0.0:*    users:(("python3",pid=1161,fd=4))         
+tcp   LISTEN 0      511                      127.0.0.1:34485      0.0.0.0:*    users:(("MainThread",pid=1647,fd=31))     
+tcp   LISTEN 0      4096                       0.0.0.0:9001       0.0.0.0:*                                              
+tcp   LISTEN 0      128                      127.0.0.1:42021      0.0.0.0:*    users:(("code-7debcd0e2a",pid=1450,fd=9)) 
+tcp   LISTEN 0      4096                  100.72.109.9:43044      0.0.0.0:*                                              
+tcp   LISTEN 0      5                          0.0.0.0:8090       0.0.0.0:*    users:(("python3",pid=1161,fd=3))         
+tcp   LISTEN 0      128                           [::]:22            [::]:*                                              
+tcp   LISTEN 0      4096   [fd7a:115c:a1e0::9a30:6d0a]:49270         [::]:*                                              

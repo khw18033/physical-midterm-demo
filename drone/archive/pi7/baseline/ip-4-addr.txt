@@ -1,0 +1,11 @@
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+3: wlan0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000
+    inet 192.168.50.172/24 brd 192.168.50.255 scope global noprefixroute wlan0
+       valid_lft forever preferred_lft forever
+4: tailscale0: <POINTOPOINT,MULTICAST,NOARP,UP,LOWER_UP> mtu 1280 qdisc fq_codel state UNKNOWN group default qlen 500
+    inet 100.72.109.9/32 scope global tailscale0
+       valid_lft forever preferred_lft forever
+default via 192.168.50.1 dev wlan0 proto static metric 600 
+192.168.50.0/24 dev wlan0 proto kernel scope link src 192.168.50.172 metric 600 

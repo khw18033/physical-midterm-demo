@@ -1,0 +1,48 @@
+# 설치 도구·패키지 버전 기록 — 2026-09-21T17:17:50+09:00
+
+## 시스템 (apt)
+### 이번에 설치한 것
+  git              1:2.47.3-0+deb13u1
+  meson            1.7.0-1
+  ninja-build      1.12.1-1+b1
+  python3-pip      25.1.1+dfsg-1+rpt1
+  systemd-dev      257.13-1~deb13u1
+  (systemd-dev 는 프롬프트 목록에 없으나 mavlink-router 빌드에 필요해 추가)
+### 이미 있던 것
+  python3-venv     3.13.5-1
+  pkg-config       1.8.1-4
+  gcc              4:14.2.0-1
+  g++              4:14.2.0-1
+
+### 실행 파일 버전
+  git          git version 2.47.3
+  meson        1.7.0
+  ninja        1.12.1
+  pkg-config   1.8.1
+  gcc          gcc (Debian 14.2.0-19) 14.2.0
+  g++          g++ (Debian 14.2.0-19) 14.2.0
+  python3      Python 3.13.5
+
+## mavlink-router (소스 빌드)
+  소스      /home/physical/drone/src/mavlink-router
+  버전      mavlink-router version v4-16-g2362c62
+  커밋      2362c620f483cef1edd574fb962a373a288e4b9e
+  서브모듈   052b8579f8aeb941f34cc9896af22cf1f38939b9 modules/mavlink_c_library_v2 (052b8579)
+  바이너리  /usr/bin/mavlink-routerd
+  유닛      /usr/lib/systemd/system/mavlink-router.service  → disabled/inactive (의도적, 4단계에서 drone- 유닛 사용)
+
+## ~/drone/venv (pip)
+Python 3.13.5
+fastcrc==0.5.0
+grpcio==1.84.0
+lxml==6.1.3
+MAVProxy==1.8.74
+mavsdk==3.17.4
+numpy==2.5.3
+paho-mqtt==2.1.0
+pip==26.2.1
+protobuf==7.36.2
+pymavlink==2.4.49
+pynmeagps==1.1.7
+pyserial==3.5
+typing_extensions==4.16.0

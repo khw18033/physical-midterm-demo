@@ -1,0 +1,48 @@
+# 드론 가시화 브리지 노드 (MQTT 규약 노드) — 부팅 자동 시작
+#
+# 설치:
+#   sudo cp ~/drone/systemd/drone-node.service /etc/systemd/system/
+#   sudo cp ~/drone/config/hw-node.env  /etc/hw-node.env
+#   sudo cp ~/drone/config/hw-drone.env /etc/hw-drone.env
+#   sudo systemctl daemon-reload && sudo systemctl enable --now drone-node
+#
+# ⚠ drone.target 소속이 **아니다.** 라우터는 FC 가 붙었을 때만 뜨지만, 이 노드는
+#   FC 가 없어도 떠 있어야 한다 — 웹이 "브로커는 붙었고 드론 노드도 답하는데 FC 링크만
+#   없다"를 구분할 수 있어야 하기 때문이다. FC 링크 유무는 14543 수신 공백과
+#   ~/drone/state/mode 로 노드가 스스로 판정한다.
+
+[Unit]
+Description=X500 v2 드론 가시화 브리지 노드 (읽기 전용)
+Documentation=file:/home/physical/drone/CONTRACT_x500.md
+After=network-online.target chrony.service mosquitto.service
+Wants=network-online.target
+# 브로커가 늦게 떠도 노드는 재접속으로 붙는다(connect_async). 그래서 Requires 가 아니다.
+
+[Service]
+Type=simple
+User=physical
+Group=physical
+WorkingDirectory=/home/physical/hw/pi
+ExecStart=/home/physical/drone/venv/bin/python3 -u -m drone.drone_node
+
+EnvironmentFile=-/etc/hw-node.env
+EnvironmentFile=-/etc/hw-drone.env
+Environment=PYTHONUNBUFFERED=1
+Environment=PYTHONDONTWRITEBYTECODE=1
+
+# 두절 대비 버퍼. pi7 의 센서/로봇 노드와 같은 규칙으로 파일을 분리한다.
+StateDirectory=hw-node
+Environment=HW_SPOOL_PATH=/var/lib/hw-node/drone-spool.jsonl
+
+# 이 노드는 FC 로 아무것도 보내지 않는다. 설정이 아니라 **구조로** 보장한다:
+# DevicePolicy=closed 면 /dev/ttyAMA0 을 열 수조차 없다(라우터만 시리얼을 잡는다).
+NoNewPrivileges=yes
+ProtectSystem=strict
+PrivateTmp=yes
+DevicePolicy=closed
+
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target

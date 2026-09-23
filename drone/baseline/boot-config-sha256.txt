@@ -1,0 +1,2 @@
+90a446821551a9df109ec1a77a79f6518fe974517d982d371c5e9efd6bbc98c3  /boot/firmware/config.txt
+dc6694ae6f1e8b7ab3edd5557ad13414362b71f8292c99188b74698442892a75  /boot/firmware/cmdline.txt

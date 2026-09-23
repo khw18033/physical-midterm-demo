@@ -1,0 +1,242 @@
+{
+  "label": "1-드론만",
+  "started": "2026-09-22 10:31:27",
+  "elapsed_s": 60.02,
+  "ncpu": 4,
+  "groups": {
+    "drone": {
+      "core_pct": 6.93,
+      "sys_pct": 1.73
+    },
+    "noise": {
+      "core_pct": 4.6,
+      "sys_pct": 1.15
+    },
+    "other": {
+      "core_pct": 0.77,
+      "sys_pct": 0.19
+    },
+    "measure": {
+      "core_pct": 0.02,
+      "sys_pct": 0.01
+    }
+  },
+  "system": {
+    "busy_core_pct": 13.63,
+    "busy_sys_pct": 3.41,
+    "iowait_core_pct": 0.6,
+    "irq_softirq_core_pct": 0.71
+  },
+  "effective_core_pct": 9.01,
+  "effective_sys_pct": 2.25,
+  "temp": {
+    "start": "temp=57.1'C",
+    "end": "temp=57.6'C"
+  },
+  "throttled": {
+    "start": "throttled=0x0",
+    "end": "throttled=0x0"
+  },
+  "top_processes": [
+    {
+      "pid": 2199,
+      "group": "noise",
+      "comm": "claude",
+      "jiffies": 153,
+      "core_pct": 2.55,
+      "cmd": "/home/physical/.vscode-server/extensions/anthropic.claude-code-2.1.278-linux-arm64/resources/native-binary/cla"
+    },
+    {
+      "pid": 2648,
+      "group": "drone",
+      "comm": "python3",
+      "jiffies": 122,
+      "core_pct": 2.03,
+      "cmd": "/home/physical/drone/venv/bin/python3 -u -m drone.drone_node"
+    },
+    {
+      "pid": 2663,
+      "group": "drone",
+      "comm": "python",
+      "jiffies": 110,
+      "core_pct": 1.83,
+      "cmd": "/home/physical/drone/venv/bin/python /home/physical/drone/scripts/linkmon.py"
+    },
+    {
+      "pid": 2636,
+      "group": "drone",
+      "comm": "python",
+      "jiffies": 102,
+      "core_pct": 1.7,
+      "cmd": "/home/physical/drone/venv/bin/python /home/physical/drone/scripts/fc_detect.py"
+    },
+    {
+      "pid": 1886,
+      "group": "noise",
+      "comm": "claude",
+      "jiffies": 85,
+      "core_pct": 1.42,
+      "cmd": "/home/physical/.vscode-server/extensions/anthropic.claude-code-2.1.278-linux-arm64/resources/native-binary/cla"
+    },
+    {
+      "pid": 2662,
+      "group": "drone",
+      "comm": "mavlink-routerd",
+      "jiffies": 80,
+      "core_pct": 1.33,
+      "cmd": "/usr/bin/mavlink-routerd -c /home/physical/drone/config/mavlink-router.conf"
+    },
+    {
+      "pid": 2677,
+      "group": "other",
+      "comm": "kworker/u16:3-events_unbound",
+      "jiffies": 17,
+      "core_pct": 0.28,
+      "cmd": "[kworker/u16:3-events_unbound]"
+    },
+    {
+      "pid": 1586,
+      "group": "noise",
+      "comm": "MainThread",
+      "jiffies": 14,
+      "core_pct": 0.23,
+      "cmd": "/home/physical/.vscode-server/cli/servers/Stable-7debcd0e2acdea1c52de81bf9ee1620444407dda/server/node --dns-re"
+    },
+    {
+      "pid": 78,
+      "group": "other",
+      "comm": "kworker/u17:0-brcmf_wq/mmc1:0001:1",
+      "jiffies": 10,
+      "core_pct": 0.17,
+      "cmd": "[kworker/u17:0-brcmf_wq/mmc1:0001:1]"
+    },
+    {
+      "pid": 1451,
+      "group": "noise",
+      "comm": "code-7debcd0e2a",
+      "jiffies": 6,
+      "core_pct": 0.1,
+      "cmd": "/home/physical/.vscode-server/code-7debcd0e2acdea1c52de81bf9ee1620444407dda command-shell --cli-data-dir /home"
+    },
+    {
+      "pid": 1532,
+      "group": "noise",
+      "comm": "MainThread",
+      "jiffies": 6,
+      "core_pct": 0.1,
+      "cmd": "/home/physical/.vscode-server/cli/servers/Stable-7debcd0e2acdea1c52de81bf9ee1620444407dda/server/node /home/ph"
+    },
+    {
+      "pid": 1175,
+      "group": "other",
+      "comm": "tailscaled",
+      "jiffies": 4,
+      "core_pct": 0.07,
+      "cmd": "/usr/sbin/tailscaled --state=/var/lib/tailscale/tailscaled.state --socket=/run/tailscale/tailscaled.sock --por"
+    },
+    {
+      "pid": 1564,
+      "group": "noise",
+      "comm": "MainThread",
+      "jiffies": 4,
+      "core_pct": 0.07,
+      "cmd": "/home/physical/.vscode-server/cli/servers/Stable-7debcd0e2acdea1c52de81bf9ee1620444407dda/server/node /home/ph"
+    },
+    {
+      "pid": 1431,
+      "group": "other",
+      "comm": "sshd-session",
+      "jiffies": 3,
+      "core_pct": 0.05,
+      "cmd": "sshd-session: physical@notty"
+    },
+    {
+      "pid": 1602,
+      "group": "noise",
+      "comm": "MainThread",
+      "jiffies": 3,
+      "core_pct": 0.05,
+      "cmd": "/home/physical/.vscode-server/cli/servers/Stable-7debcd0e2acdea1c52de81bf9ee1620444407dda/server/node /home/ph"
+    },
+    {
+      "pid": 2158,
+      "group": "other",
+      "comm": "kworker/0:0-events",
+      "jiffies": 3,
+      "core_pct": 0.05,
+      "cmd": "[kworker/0:0-events]"
+    },
+    {
+      "pid": 1636,
+      "group": "noise",
+      "comm": "MainThread",
+      "jiffies": 2,
+      "core_pct": 0.03,
+      "cmd": "/home/physical/.vscode-server/cli/servers/Stable-7debcd0e2acdea1c52de81bf9ee1620444407dda/server/node /home/ph"
+    },
+    {
+      "pid": 2644,
+      "group": "drone",
+      "comm": "mosquitto",
+      "jiffies": 2,
+      "core_pct": 0.03,
+      "cmd": "/usr/sbin/mosquitto -c /etc/mosquitto/mosquitto.conf"
+    },
+    {
+      "pid": 23,
+      "group": "other",
+      "comm": "kworker/1:0-events",
+      "jiffies": 1,
+      "core_pct": 0.02,
+      "cmd": "[kworker/1:0-events]"
+    },
+    {
+      "pid": 41,
+      "group": "other",
+      "comm": "kworker/3:1-mm_percpu_wq",
+      "jiffies": 1,
+      "core_pct": 0.02,
+      "cmd": "[kworker/3:1-mm_percpu_wq]"
+    },
+    {
+      "pid": 67,
+      "group": "other",
+      "comm": "kworker/0:1H-mmc_complete",
+      "jiffies": 1,
+      "core_pct": 0.02,
+      "cmd": "[kworker/0:1H-mmc_complete]"
+    },
+    {
+      "pid": 186,
+      "group": "other",
+      "comm": "jbd2/mmcblk0p2-8",
+      "jiffies": 1,
+      "core_pct": 0.02,
+      "cmd": "[jbd2/mmcblk0p2-8]"
+    },
+    {
+      "pid": 604,
+      "group": "other",
+      "comm": "brcmf_wdog/mmc1:0001:1",
+      "jiffies": 1,
+      "core_pct": 0.02,
+      "cmd": "[brcmf_wdog/mmc1:0001:1]"
+    },
+    {
+      "pid": 698,
+      "group": "other",
+      "comm": "dbus-daemon",
+      "jiffies": 1,
+      "core_pct": 0.02,
+      "cmd": "/usr/bin/dbus-daemon --system --address=systemd: --nofork --nopidfile --systemd-activation --syslog-only"
+    },
+    {
+      "pid": 751,
+      "group": "other",
+      "comm": "NetworkManager",
+      "jiffies": 1,
+      "core_pct": 0.02,
+      "cmd": "/usr/sbin/NetworkManager --no-daemon"
+    }
+  ]
+}

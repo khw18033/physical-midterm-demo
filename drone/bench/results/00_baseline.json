@@ -1,0 +1,166 @@
+{
+  "label": "0-기준선(드론정지·카메라없음)",
+  "started": "2026-09-22 10:28:54",
+  "elapsed_s": 60.02,
+  "ncpu": 4,
+  "groups": {
+    "noise": {
+      "core_pct": 2.73,
+      "sys_pct": 0.68
+    },
+    "other": {
+      "core_pct": 0.37,
+      "sys_pct": 0.09
+    },
+    "measure": {
+      "core_pct": 0.02,
+      "sys_pct": 0.01
+    }
+  },
+  "system": {
+    "busy_core_pct": 3.1,
+    "busy_sys_pct": 0.78,
+    "iowait_core_pct": 0.23,
+    "irq_softirq_core_pct": 0.03
+  },
+  "effective_core_pct": 0.35,
+  "effective_sys_pct": 0.09,
+  "temp": {
+    "start": "temp=56.5'C",
+    "end": "temp=54.3'C"
+  },
+  "throttled": {
+    "start": "throttled=0x0",
+    "end": "throttled=0x0"
+  },
+  "top_processes": [
+    {
+      "pid": 1886,
+      "group": "noise",
+      "comm": "claude",
+      "jiffies": 96,
+      "core_pct": 1.6,
+      "cmd": "/home/physical/.vscode-server/extensions/anthropic.claude-code-2.1.278-linux-arm64/resources/native-binary/cla"
+    },
+    {
+      "pid": 2199,
+      "group": "noise",
+      "comm": "claude",
+      "jiffies": 46,
+      "core_pct": 0.77,
+      "cmd": "/home/physical/.vscode-server/extensions/anthropic.claude-code-2.1.278-linux-arm64/resources/native-binary/cla"
+    },
+    {
+      "pid": 1175,
+      "group": "other",
+      "comm": "tailscaled",
+      "jiffies": 9,
+      "core_pct": 0.15,
+      "cmd": "/usr/sbin/tailscaled --state=/var/lib/tailscale/tailscaled.state --socket=/run/tailscale/tailscaled.sock --por"
+    },
+    {
+      "pid": 1586,
+      "group": "noise",
+      "comm": "MainThread",
+      "jiffies": 9,
+      "core_pct": 0.15,
+      "cmd": "/home/physical/.vscode-server/cli/servers/Stable-7debcd0e2acdea1c52de81bf9ee1620444407dda/server/node --dns-re"
+    },
+    {
+      "pid": 78,
+      "group": "other",
+      "comm": "kworker/u17:0-brcmf_wq/mmc1:0001:1",
+      "jiffies": 6,
+      "core_pct": 0.1,
+      "cmd": "[kworker/u17:0-brcmf_wq/mmc1:0001:1]"
+    },
+    {
+      "pid": 1532,
+      "group": "noise",
+      "comm": "MainThread",
+      "jiffies": 5,
+      "core_pct": 0.08,
+      "cmd": "/home/physical/.vscode-server/cli/servers/Stable-7debcd0e2acdea1c52de81bf9ee1620444407dda/server/node /home/ph"
+    },
+    {
+      "pid": 1451,
+      "group": "noise",
+      "comm": "code-7debcd0e2a",
+      "jiffies": 3,
+      "core_pct": 0.05,
+      "cmd": "/home/physical/.vscode-server/code-7debcd0e2acdea1c52de81bf9ee1620444407dda command-shell --cli-data-dir /home"
+    },
+    {
+      "pid": 1602,
+      "group": "noise",
+      "comm": "MainThread",
+      "jiffies": 3,
+      "core_pct": 0.05,
+      "cmd": "/home/physical/.vscode-server/cli/servers/Stable-7debcd0e2acdea1c52de81bf9ee1620444407dda/server/node /home/ph"
+    },
+    {
+      "pid": 1431,
+      "group": "other",
+      "comm": "sshd-session",
+      "jiffies": 2,
+      "core_pct": 0.03,
+      "cmd": "sshd-session: physical@notty"
+    },
+    {
+      "pid": 2158,
+      "group": "other",
+      "comm": "kworker/0:0-events",
+      "jiffies": 2,
+      "core_pct": 0.03,
+      "cmd": "[kworker/0:0-events]"
+    },
+    {
+      "pid": 11,
+      "group": "other",
+      "comm": "kworker/0:1-events",
+      "jiffies": 1,
+      "core_pct": 0.02,
+      "cmd": "[kworker/0:1-events]"
+    },
+    {
+      "pid": 186,
+      "group": "other",
+      "comm": "jbd2/mmcblk0p2-8",
+      "jiffies": 1,
+      "core_pct": 0.02,
+      "cmd": "[jbd2/mmcblk0p2-8]"
+    },
+    {
+      "pid": 604,
+      "group": "other",
+      "comm": "brcmf_wdog/mmc1:0001:1",
+      "jiffies": 1,
+      "core_pct": 0.02,
+      "cmd": "[brcmf_wdog/mmc1:0001:1]"
+    },
+    {
+      "pid": 1564,
+      "group": "noise",
+      "comm": "MainThread",
+      "jiffies": 1,
+      "core_pct": 0.02,
+      "cmd": "/home/physical/.vscode-server/cli/servers/Stable-7debcd0e2acdea1c52de81bf9ee1620444407dda/server/node /home/ph"
+    },
+    {
+      "pid": 1636,
+      "group": "noise",
+      "comm": "MainThread",
+      "jiffies": 1,
+      "core_pct": 0.02,
+      "cmd": "/home/physical/.vscode-server/cli/servers/Stable-7debcd0e2acdea1c52de81bf9ee1620444407dda/server/node /home/ph"
+    },
+    {
+      "pid": 2454,
+      "group": "measure",
+      "comm": "python3",
+      "jiffies": 1,
+      "core_pct": 0.02,
+      "cmd": "python3 cpuwatch.py --seconds 60 --warmup 10 --label 0-기준선(드론정지·카메라없음) --out results/00_baseline.json"
+    }
+  ]
+}

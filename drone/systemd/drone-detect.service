@@ -1,0 +1,32 @@
+[Unit]
+# 재시작 횟수 제한을 끈다. 기본값(10초에 5회)에 걸리면 유닛이 failed 로 굳어
+# **더 이상 재시작하지 않는다** — hang 이 반복될 때 그게 제일 나쁜 결과다.
+# 무한히 다시 시도하는 편이 낫다. 드론은 사람이 못 붙는 자리에 있다.
+# ⚠ 이 키는 [Unit] 소속이다. [Service] 에 두면 systemd 가 경고만 내고 무시한다.
+StartLimitIntervalSec=0
+Description=드론 FC 자동 감지 (찾으면 drone.target 시작)
+Documentation=file:/home/physical/drone/scripts/fc_detect.py
+After=local-fs.target
+
+[Service]
+Type=simple
+# drone.target 을 start/stop 해야 하므로 root 로 돈다.
+User=root
+EnvironmentFile=/etc/drone-node.env
+# root 로 도는 프로세스가 scripts/ 에 root 소유 __pycache__ 를 만들지 않게 한다.
+Environment=PYTHONDONTWRITEBYTECODE=1
+ExecStart=/home/physical/drone/venv/bin/python /home/physical/drone/scripts/fc_detect.py
+Restart=always
+RestartSec=5
+
+# ── hang 감시 (2026-09-22 추가) ────────────────────────────────────
+# Restart=always 는 프로세스가 *종료* 할 때만 동작한다. 데드락·무한대기로 살아는
+# 있지만 아무 일도 못 하는 상태는 잡지 못했고, 그러면 사람이 SSH 로 들어가야 했다.
+# WatchdogSec= 를 주면 프로세스가 60초 안에 WATCHDOG=1 을 계속 보내야 하고,
+# 끊기면 systemd 가 죽여서 Restart= 대로 다시 띄운다. 코드는 루프마다 보고한다.
+WatchdogSec=60
+# 감지기는 heartbeat 와 조회만 보낸다. 제어 명령을 보내지 않는다.
+NoNewPrivileges=yes
+
+[Install]
+WantedBy=multi-user.target

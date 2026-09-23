@@ -1,0 +1,7 @@
+model: Raspberry Pi 5 Model B Rev 1.1
+revision: d04171
+hostname: pi3
+Linux pi3 6.18.50+rpt-rpi-2712 #1 SMP PREEMPT Debian 1:6.18.50-1+rpt1 (2026-09-11) aarch64 GNU/Linux
+os: Debian GNU/Linux 13 (trixie) 13.7
+python3: Python 3.13.5
+user: uid=1000(physical) gid=1000(physical) groups=1000(physical),4(adm),20(dialout),24(cdrom),27(sudo),29(audio),44(video),46(plugdev),60(games),100(users),102(netdev),986(gpio),988(i2c),989(spi),992(render),996(input)

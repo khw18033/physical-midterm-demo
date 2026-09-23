@@ -1,0 +1,189 @@
+########## robot-node ##########
+● robot-node.service - 피지컬팀 mk2 로봇 온보드 노드
+     Loaded: loaded (/etc/systemd/system/robot-node.service; enabled; preset: enabled)
+     Active: active (running) since Mon 2026-09-07 13:00:47 KST; 2 weeks 0 days ago
+ Invocation: c42036accd3c4a769910ec30180d94b4
+   Main PID: 1163 (python3)
+      Tasks: 3 (limit: 9626)
+     Memory: 21.5M (peak: 24.4M)
+        CPU: 3.848s
+     CGroup: /system.slice/robot-node.service
+             └─1163 /home/physical/venv/bin/python3 -u -m robot.robot_node
+
+Sep 21 15:15:34 pi7 python3[1163]: [내부링크 오류 33740회] RuntimeError: go1_state_unavailable
+Sep 21 15:15:34 pi7 python3[1163]: [내부링크 오류 33741회] RuntimeError: go1_state_unavailable
+Sep 21 15:15:34 pi7 python3[1163]: [내부링크 오류 33742회] RuntimeError: go1_state_unavailable
+Sep 21 15:15:35 pi7 python3[1163]: [내부링크 오류 33743회] RuntimeError: go1_state_unavailable
+Sep 21 15:15:35 pi7 python3[1163]: [내부링크 오류 33744회] RuntimeError: go1_state_unavailable
+Sep 21 15:15:35 pi7 python3[1163]: [내부링크 오류 33745회] RuntimeError: go1_state_unavailable
+Sep 21 15:15:35 pi7 python3[1163]: [내부링크 오류 33746회] RuntimeError: go1_state_unavailable
+Sep 21 15:15:35 pi7 python3[1163]: [내부링크 오류 33747회] RuntimeError: go1_state_unavailable
+Sep 21 15:15:35 pi7 python3[1163]: [내부링크 오류 33748회] RuntimeError: go1_state_unavailable
+Sep 21 15:15:35 pi7 python3[1163]: [내부링크 오류 33749회] RuntimeError: go1_state_unavailable
+
+########## robot-relay ##########
+● robot-relay.service - Go1 robot state relay (identity stamping -> Unity/server)
+     Loaded: loaded (/etc/systemd/system/robot-relay.service; enabled; preset: enabled)
+     Active: active (running) since Mon 2026-09-07 13:00:47 KST; 2 weeks 0 days ago
+ Invocation: 2ea2abfeeffa4f528a63ab946fa2607b
+   Main PID: 1166 (python3)
+      Tasks: 1 (limit: 9626)
+     Memory: 6M (peak: 8M)
+        CPU: 80ms
+     CGroup: /system.slice/robot-relay.service
+             └─1166 /home/physical/venv/bin/python3 -u /home/physical/hw/pi/robot/robot_state_relay.py --node_id pi7 --unity_ip 192.168.50.244 --unity_port 15201 --ingress_port 15200 --default_type go1 --default_robot_id go1-1
+
+Sep 21 15:14:45 pi7 python3[1166]: [relay] node=pi7 in=0 out=0 bad=0 robots=0 []
+Sep 21 15:14:50 pi7 python3[1166]: [relay] node=pi7 in=0 out=0 bad=0 robots=0 []
+Sep 21 15:14:55 pi7 python3[1166]: [relay] node=pi7 in=0 out=0 bad=0 robots=0 []
+Sep 21 15:15:00 pi7 python3[1166]: [relay] node=pi7 in=0 out=0 bad=0 robots=0 []
+Sep 21 15:15:05 pi7 python3[1166]: [relay] node=pi7 in=0 out=0 bad=0 robots=0 []
+Sep 21 15:15:10 pi7 python3[1166]: [relay] node=pi7 in=0 out=0 bad=0 robots=0 []
+Sep 21 15:15:15 pi7 python3[1166]: [relay] node=pi7 in=0 out=0 bad=0 robots=0 []
+Sep 21 15:15:20 pi7 python3[1166]: [relay] node=pi7 in=0 out=0 bad=0 robots=0 []
+Sep 21 15:15:25 pi7 python3[1166]: [relay] node=pi7 in=0 out=0 bad=0 robots=0 []
+Sep 21 15:15:30 pi7 python3[1166]: [relay] node=pi7 in=0 out=0 bad=0 robots=0 []
+
+########## sensor-node ##########
+● sensor-node.service - 피지컬팀 mk2 말단 센서 노드 (수위센서)
+     Loaded: loaded (/etc/systemd/system/sensor-node.service; enabled; preset: enabled)
+     Active: active (running) since Mon 2026-09-07 13:00:47 KST; 2 weeks 0 days ago
+ Invocation: 6f960e46e60a4653b9e79f7a5e6cacb9
+   Main PID: 1168 (python3)
+      Tasks: 2 (limit: 9626)
+     Memory: 19.6M (peak: 21.6M)
+        CPU: 355ms
+     CGroup: /system.slice/sensor-node.service
+             └─1168 /home/physical/venv/bin/python3 -u -m sensor.sensor_node
+
+Sep 21 15:06:34 pi7 python3[1168]: state 2.528m (periodic, normal)
+Sep 21 15:07:34 pi7 python3[1168]: state 2.54m (periodic, normal)
+Sep 21 15:08:34 pi7 python3[1168]: state 2.44m (periodic, normal)
+Sep 21 15:09:34 pi7 python3[1168]: state 2.462m (periodic, normal)
+Sep 21 15:10:34 pi7 python3[1168]: state 2.493m (periodic, normal)
+Sep 21 15:11:34 pi7 python3[1168]: state 2.535m (periodic, normal)
+Sep 21 15:12:34 pi7 python3[1168]: state 2.491m (periodic, normal)
+Sep 21 15:13:34 pi7 python3[1168]: state 2.493m (periodic, normal)
+Sep 21 15:14:34 pi7 python3[1168]: state 2.464m (periodic, normal)
+Sep 21 15:15:34 pi7 python3[1168]: state 2.469m (periodic, normal)
+
+########## detect-bridge ##########
+● detect-bridge.service - 피지컬팀 mk2 스캔 촬영 -> 객체탐지 송신
+     Loaded: loaded (/etc/systemd/system/detect-bridge.service; enabled; preset: enabled)
+     Active: active (running) since Mon 2026-09-07 13:00:47 KST; 2 weeks 0 days ago
+ Invocation: 35fafaea7b6345bab8db722eb26ecda2
+   Main PID: 1182 (python3)
+      Tasks: 8 (limit: 9626)
+     Memory: 93.4M (peak: 98.2M)
+        CPU: 5.281s
+     CGroup: /system.slice/detect-bridge.service
+             ├─1182 /home/physical/venv/bin/python3 -u -m robot.detect_bridge
+             └─2403 ffmpeg -hide_banner -loglevel error -f h264 -use_wallclock_as_timestamps 1 -i pipe:0 -vf fps=5.0 -q:v 2 -f image2 /tmp/hw-detect-ring/r_%06d.jpg
+
+Sep 21 15:14:47 pi7 python3[2255]: Error opening output file /tmp/hw-detect-ring/r_%06d.jpg.
+Sep 21 15:14:47 pi7 python3[2255]: Error opening output files: Invalid argument
+Sep 21 15:15:05 pi7 python3[1182]: [15:15:05] [링] 첫 프레임 없음(TimeoutError: timed out) — 10초 뒤 재시도
+Sep 21 15:15:05 pi7 python3[2286]: [out#0/image2 @ 0x555662fc0000] Output file does not contain any stream
+Sep 21 15:15:05 pi7 python3[2286]: Error opening output file /tmp/hw-detect-ring/r_%06d.jpg.
+Sep 21 15:15:05 pi7 python3[2286]: Error opening output files: Invalid argument
+Sep 21 15:15:23 pi7 python3[1182]: [15:15:23] [링] 첫 프레임 없음(TimeoutError: timed out) — 10초 뒤 재시도
+Sep 21 15:15:23 pi7 python3[2357]: [out#0/image2 @ 0x555659b84000] Output file does not contain any stream
+Sep 21 15:15:23 pi7 python3[2357]: Error opening output file /tmp/hw-detect-ring/r_%06d.jpg.
+Sep 21 15:15:23 pi7 python3[2357]: Error opening output files: Invalid argument
+
+########## go1-camview ##########
+● go1-camview.service - Go1 camera viewer (HW-R-07)
+     Loaded: loaded (/etc/systemd/system/go1-camview.service; enabled; preset: enabled)
+     Active: active (running) since Mon 2026-09-07 13:00:47 KST; 2 weeks 0 days ago
+ Invocation: 10d8637848ab47ce81872485f3bc2044
+   Main PID: 1161 (python3)
+      Tasks: 3 (limit: 9626)
+     Memory: 11.3M (peak: 13.2M)
+        CPU: 151ms
+     CGroup: /system.slice/go1-camview.service
+             └─1161 /usr/bin/python3 -m bench.go1_cam_view 8090 8443
+
+Sep 07 13:00:47 pi7 systemd[1]: Started go1-camview.service - Go1 camera viewer (HW-R-07).
+
+########## go1-sdk ##########
+○ go1-sdk.service - Go1 SDK PC bridge (Unity/autonomy/teleop/mission)
+     Loaded: loaded (/etc/systemd/system/go1-sdk.service; disabled; preset: enabled)
+     Active: inactive (dead)
+
+########## go1-watchdog.service ##########
+○ go1-watchdog.service - Go1 camera freeze watchdog (HW-R-07)
+     Loaded: loaded (/etc/systemd/system/go1-watchdog.service; static)
+     Active: inactive (dead) since Mon 2026-09-21 15:12:17 KST; 3min 17s ago
+ Invocation: 42ca9dbf11f34455a3c48ab0b8951f51
+TriggeredBy: ● go1-watchdog.timer
+    Process: 1387 ExecStart=/usr/bin/python3 -m bench.go1_watchdog --once (code=exited, status=0/SUCCESS)
+   Main PID: 1387 (code=exited, status=0/SUCCESS)
+   Mem peak: 9.5M
+        CPU: 92ms
+
+Sep 21 15:11:37 pi7 systemd[1]: Starting go1-watchdog.service - Go1 camera freeze watchdog (HW-R-07)...
+Sep 21 15:11:45 pi7 python3[1387]: [15:11:45] 카메라 1(정면): 수집 불가 — 정지와 구분되는 별개 장애, 재부팅 안 함
+Sep 21 15:11:53 pi7 python3[1387]: [15:11:53] 카메라 2(턱(하방)): 수집 불가 — 정지와 구분되는 별개 장애, 재부팅 안 함
+Sep 21 15:12:01 pi7 python3[1387]: [15:12:01] 카메라 3(좌측): 수집 불가 — 정지와 구분되는 별개 장애, 재부팅 안 함
+Sep 21 15:12:09 pi7 python3[1387]: [15:12:09] 카메라 4(우측): 수집 불가 — 정지와 구분되는 별개 장애, 재부팅 안 함
+Sep 21 15:12:17 pi7 python3[1387]: [15:12:17] 카메라 5(복부(하방)): 수집 불가 — 정지와 구분되는 별개 장애, 재부팅 안 함
+Sep 21 15:12:17 pi7 systemd[1]: go1-watchdog.service: Deactivated successfully.
+Sep 21 15:12:17 pi7 systemd[1]: Finished go1-watchdog.service - Go1 camera freeze watchdog (HW-R-07).
+
+########## go1-watchdog.timer ##########
+● go1-watchdog.timer - Run Go1 camera watchdog every 5 min
+     Loaded: loaded (/etc/systemd/system/go1-watchdog.timer; enabled; preset: enabled)
+     Active: active (waiting) since Mon 2026-09-07 13:00:38 KST; 2 weeks 0 days ago
+ Invocation: 9af997fe13134d10af0f77cbd830760e
+    Trigger: Mon 2026-09-21 15:16:37 KST; 1min 2s left
+   Triggers: ● go1-watchdog.service
+
+Sep 07 13:00:38 pi7 systemd[1]: Started go1-watchdog.timer - Run Go1 camera watchdog every 5 min.
+
+########## mosquitto ##########
+● mosquitto.service - Mosquitto MQTT Broker
+     Loaded: loaded (/usr/lib/systemd/system/mosquitto.service; enabled; preset: enabled)
+     Active: active (running) since Mon 2026-09-07 13:00:47 KST; 2 weeks 0 days ago
+ Invocation: 5ca7bb19bbac44dda16cebbf78a96a2b
+       Docs: man:mosquitto.conf(5)
+             man:mosquitto(8)
+    Process: 1162 ExecStartPre=/bin/mkdir -m 740 -p /var/log/mosquitto (code=exited, status=0/SUCCESS)
+    Process: 1170 ExecStartPre=/bin/chown mosquitto:mosquitto /var/log/mosquitto (code=exited, status=0/SUCCESS)
+    Process: 1174 ExecStartPre=/bin/mkdir -m 740 -p /run/mosquitto (code=exited, status=0/SUCCESS)
+    Process: 1175 ExecStartPre=/bin/chown mosquitto:mosquitto /run/mosquitto (code=exited, status=0/SUCCESS)
+   Main PID: 1178 (mosquitto)
+      Tasks: 1 (limit: 9626)
+     Memory: 6.1M (peak: 8.1M)
+        CPU: 208ms
+     CGroup: /system.slice/mosquitto.service
+             └─1178 /usr/sbin/mosquitto -c /etc/mosquitto/mosquitto.conf
+
+Sep 07 13:00:47 pi7 systemd[1]: Starting mosquitto.service - Mosquitto MQTT Broker...
+Sep 07 13:00:47 pi7 mosquitto[1178]: 1788753647: Loading config file /etc/mosquitto/conf.d/hw.conf
+Sep 07 13:00:47 pi7 systemd[1]: Started mosquitto.service - Mosquitto MQTT Broker.
+
+########## tailscaled ##########
+● tailscaled.service - Tailscale node agent
+     Loaded: loaded (/usr/lib/systemd/system/tailscaled.service; enabled; preset: enabled)
+     Active: active (running) since Mon 2026-09-07 13:00:41 KST; 2 weeks 0 days ago
+ Invocation: da3fc578350d4949bcd73af5b8d3c2f3
+       Docs: https://tailscale.com/docs/
+   Main PID: 1078 (tailscaled)
+     Status: "Connected; khw671@gmail.com; 100.72.109.9 fd7a:115c:a1e0::9a30:6d0a"
+      Tasks: 11 (limit: 9626)
+     Memory: 99.1M (peak: 99.3M)
+        CPU: 1.525s
+     CGroup: /system.slice/tailscaled.service
+             └─1078 /usr/sbin/tailscaled --state=/var/lib/tailscale/tailscaled.state --socket=/run/tailscale/tailscaled.sock --port=41641
+
+Sep 21 15:04:16 pi7 tailscaled[1078]: logtail: upload succeeded after 1 failures and 49s
+Sep 21 15:04:53 pi7 tailscaled[1078]: magicsock: disco: node [rm8g9] d:a5d71642c9137bca now using 203.230.104.168:41645 mtu=1360 tx=64d88c304a36
+Sep 21 15:04:53 pi7 tailscaled[1078]: magicsock: new contact: peer=[rm8g9] usec=86791190 cached=false via=direct
+Sep 21 15:05:53 pi7 tailscaled[1078]: magicsock: disco: node [rm8g9] d:a5d71642c9137bca now using 192.168.50.62:41641 mtu=1360 tx=cb3456080cad
+Sep 21 15:08:51 pi7 tailscaled[1078]: netcheck: DetectCaptivePortal(found=false)
+Sep 21 15:08:54 pi7 tailscaled[1078]: magicsock: disco: node [rm8g9] d:a5d71642c9137bca now using 203.230.104.168:41645 mtu=1360 tx=894e8b99953c
+Sep 21 15:08:54 pi7 tailscaled[1078]: magicsock: disco: node [rm8g9] d:a5d71642c9137bca now using 192.168.50.1:1130 mtu=1360 tx=1cec674dde79
+Sep 21 15:09:16 pi7 tailscaled[1078]: magicsock: endpoints changed: 203.230.104.168:41644 (portmap), 203.230.104.168:1130 (stun), 192.168.50.172:41641 (local)
+Sep 21 15:09:54 pi7 tailscaled[1078]: magicsock: disco: node [rm8g9] d:a5d71642c9137bca now using 192.168.50.62:41641 mtu=1360 tx=b094f6777f7b
+Sep 21 15:14:08 pi7 tailscaled[1078]: netcheck: DetectCaptivePortal(found=false)
+

@@ -1,0 +1,32 @@
+# 이 저장소의 루트는 홈 디렉터리다. 홈에는 세션 기록(.claude.json, .bash_history),
+# 에디터 서버(.vscode-server), 그리고 다른 리모트를 가진 hw/ 저장소가 섞여 있으므로
+# 기본을 "전부 무시"로 두고 필요한 것만 되살린다. 블랙리스트로 짰다가 하나 빠뜨리면
+# 곧장 유출이라, 여기서는 화이트리스트가 유일하게 안전한 방식이다.
+/*
+!/.gitignore
+!/.gitattributes
+!/drone/
+!/drone_rpi/
+
+# --- 아래부터는 되살린 두 디렉터리 안에서 다시 걸러내는 것들 ---
+
+# 가상환경. drone/venv 379M + drone_rpi/venv 166M.
+# drone/config/requirements.lock.txt 와 drone_rpi/requirements.txt 로 복원한다.
+venv/
+__pycache__/
+*.pyc
+
+# mavlink-router 업스트림 소스(50M). 자체 .git 을 가진 중첩 저장소라
+# 그대로 add 하면 커밋 해시만 박힌 빈 폴더(gitlink)로 들어가 외부에서는 내용이 없다.
+# 빌드 절차는 문서로 남기고 소스는 추적하지 않는다.
+/drone/src/
+
+# /etc/drone-node.env 를 가리키는 심볼릭 링크. 실제 값은 /etc 에 있어 따라오지 않고,
+# 커밋하면 다른 장비에서 깨진 링크만 남는다.
+/drone/config/drone.env
+
+# 런타임 산출물 — 기기마다 다시 쌓이는 것들
+/drone/logs/
+/drone/state/
+/drone_rpi/spool/
+/drone_rpi/agent_log.jsonl

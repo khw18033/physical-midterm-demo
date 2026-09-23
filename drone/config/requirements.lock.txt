@@ -1,0 +1,22 @@
+fastcrc==0.5.0
+grpcio==1.84.0
+lxml==6.1.3
+MAVProxy==1.8.74
+mavsdk==3.17.4
+numpy==2.5.3
+paho-mqtt==2.1.0
+protobuf==7.36.2
+pymavlink==2.4.49
+pynmeagps==1.1.7
+pyserial==3.5
+typing_extensions==4.16.0
+
+# ── ⚠ mavsdk 를 절대 업그레이드하지 말 것 ──────────────────────────────
+# 2026-09-22 드라이런에서 확인한 경고:
+#   "The 'mavsdk' package has been renamed to 'mavsdk-grpc'. This is the last
+#    release of the gRPC wrapper under the 'mavsdk' name: that name now refers
+#    to the native MAVSDK binding, which has a different API."
+# 즉 `pip install -U mavsdk` 를 하면 4.x 네이티브 바인딩이 깔리고 API 가 달라져
+# telemetry_watch.py / arm_disarm_test.py / takeoff_land.py 가 전부 깨진다.
+# 복구: ./venv/bin/pip install -r config/requirements.lock.txt
+# 굳이 옮긴다면 'mavsdk-grpc' 로 (코드 동일, import 이름만 mavsdk_grpc).

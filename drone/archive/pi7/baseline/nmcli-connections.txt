@@ -1,0 +1,7 @@
+netplan-wlan0-SysAILAB_5GHz:wlan0:802-11-wireless:activated
+tailscale0:tailscale0:tun:activated
+lo:lo:loopback:activated
+go1-link::802-3-ethernet:
+hotspot-demo::802-11-wireless:
+hotspot-SysaiLAB::802-11-wireless:
+netplan-eth0::802-3-ethernet:

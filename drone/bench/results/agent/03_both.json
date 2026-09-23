@@ -1,0 +1,242 @@
+{
+  "label": "3-둘다(실제운용)",
+  "started": "2026-09-22 12:13:36",
+  "elapsed_s": 60.02,
+  "ncpu": 4,
+  "groups": {
+    "agent": {
+      "core_pct": 31.22,
+      "sys_pct": 7.8
+    },
+    "drone": {
+      "core_pct": 15.93,
+      "sys_pct": 3.98
+    },
+    "other": {
+      "core_pct": 8.1,
+      "sys_pct": 2.02
+    },
+    "noise": {
+      "core_pct": 4.48,
+      "sys_pct": 1.12
+    }
+  },
+  "system": {
+    "busy_core_pct": 59.47,
+    "busy_sys_pct": 14.87,
+    "iowait_core_pct": 11.81,
+    "irq_softirq_core_pct": 1.21
+  },
+  "effective_core_pct": 54.99,
+  "effective_sys_pct": 13.75,
+  "temp": {
+    "start": "temp=63.1'C",
+    "end": "temp=64.2'C"
+  },
+  "throttled": {
+    "start": "throttled=0x0",
+    "end": "throttled=0x0"
+  },
+  "top_processes": [
+    {
+      "pid": 11816,
+      "group": "agent",
+      "comm": "python",
+      "jiffies": 1595,
+      "core_pct": 26.57,
+      "cmd": "/home/physical/drone_rpi/venv/bin/python -u agent.py"
+    },
+    {
+      "pid": 1179,
+      "group": "other",
+      "comm": "tailscaled",
+      "jiffies": 318,
+      "core_pct": 5.3,
+      "cmd": "/usr/sbin/tailscaled --state=/var/lib/tailscale/tailscaled.state --socket=/run/tailscale/tailscaled.sock --por"
+    },
+    {
+      "pid": 11826,
+      "group": "agent",
+      "comm": "rpicam-vid",
+      "jiffies": 279,
+      "core_pct": 4.65,
+      "cmd": "rpicam-vid -n --camera 0 -t 0 --codec mjpeg --width 1280 --height 720 --framerate 8 -o -"
+    },
+    {
+      "pid": 11678,
+      "group": "drone",
+      "comm": "python3",
+      "jiffies": 273,
+      "core_pct": 4.55,
+      "cmd": "/home/physical/drone/venv/bin/python3 -u -m drone.drone_node"
+    },
+    {
+      "pid": 11693,
+      "group": "drone",
+      "comm": "python",
+      "jiffies": 248,
+      "core_pct": 4.13,
+      "cmd": "/home/physical/drone/venv/bin/python /home/physical/drone/scripts/linkmon.py"
+    },
+    {
+      "pid": 11666,
+      "group": "drone",
+      "comm": "python",
+      "jiffies": 238,
+      "core_pct": 3.97,
+      "cmd": "/home/physical/drone/venv/bin/python /home/physical/drone/scripts/fc_detect.py"
+    },
+    {
+      "pid": 11692,
+      "group": "drone",
+      "comm": "mavlink-routerd",
+      "jiffies": 194,
+      "core_pct": 3.23,
+      "cmd": "/usr/bin/mavlink-routerd -c /home/physical/drone/config/mavlink-router.conf"
+    },
+    {
+      "pid": 1799,
+      "group": "noise",
+      "comm": "claude",
+      "jiffies": 80,
+      "core_pct": 1.33,
+      "cmd": "/home/physical/.vscode-server/extensions/anthropic.claude-code-2.1.278-linux-arm64/resources/native-binary/cla"
+    },
+    {
+      "pid": 79,
+      "group": "other",
+      "comm": "kworker/u17:0-brcmf_wq/mmc1:0001:1",
+      "jiffies": 73,
+      "core_pct": 1.22,
+      "cmd": "[kworker/u17:0-brcmf_wq/mmc1:0001:1]"
+    },
+    {
+      "pid": 1539,
+      "group": "noise",
+      "comm": "MainThread",
+      "jiffies": 66,
+      "core_pct": 1.1,
+      "cmd": "/home/physical/.vscode-server/cli/servers/Stable-7debcd0e2acdea1c52de81bf9ee1620444407dda/server/node --dns-re"
+    },
+    {
+      "pid": 1523,
+      "group": "noise",
+      "comm": "MainThread",
+      "jiffies": 31,
+      "core_pct": 0.52,
+      "cmd": "/home/physical/.vscode-server/cli/servers/Stable-7debcd0e2acdea1c52de81bf9ee1620444407dda/server/node /home/ph"
+    },
+    {
+      "pid": 1890,
+      "group": "noise",
+      "comm": "claude",
+      "jiffies": 28,
+      "core_pct": 0.47,
+      "cmd": "/home/physical/.vscode-server/extensions/anthropic.claude-code-2.1.278-linux-arm64/resources/native-binary/cla"
+    },
+    {
+      "pid": 1857,
+      "group": "noise",
+      "comm": "claude",
+      "jiffies": 24,
+      "core_pct": 0.4,
+      "cmd": "/home/physical/.vscode-server/extensions/anthropic.claude-code-2.1.278-linux-arm64/resources/native-binary/cla"
+    },
+    {
+      "pid": 1408,
+      "group": "noise",
+      "comm": "code-7debcd0e2a",
+      "jiffies": 18,
+      "core_pct": 0.3,
+      "cmd": "/home/physical/.vscode-server/code-7debcd0e2acdea1c52de81bf9ee1620444407dda command-shell --cli-data-dir /home"
+    },
+    {
+      "pid": 60,
+      "group": "other",
+      "comm": "kworker/u16:2-events_unbound",
+      "jiffies": 16,
+      "core_pct": 0.27,
+      "cmd": "[kworker/u16:2-events_unbound]"
+    },
+    {
+      "pid": 1489,
+      "group": "noise",
+      "comm": "MainThread",
+      "jiffies": 16,
+      "core_pct": 0.27,
+      "cmd": "/home/physical/.vscode-server/cli/servers/Stable-7debcd0e2acdea1c52de81bf9ee1620444407dda/server/node /home/ph"
+    },
+    {
+      "pid": 1388,
+      "group": "other",
+      "comm": "sshd-session",
+      "jiffies": 11,
+      "core_pct": 0.18,
+      "cmd": "sshd-session: physical@notty"
+    },
+    {
+      "pid": 3895,
+      "group": "other",
+      "comm": "kworker/0:0-events",
+      "jiffies": 11,
+      "core_pct": 0.18,
+      "cmd": "[kworker/0:0-events]"
+    },
+    {
+      "pid": 314,
+      "group": "other",
+      "comm": "systemd-journal",
+      "jiffies": 10,
+      "core_pct": 0.17,
+      "cmd": "/usr/lib/systemd/systemd-journald"
+    },
+    {
+      "pid": 12,
+      "group": "other",
+      "comm": "kworker/u16:0-events_unbound",
+      "jiffies": 9,
+      "core_pct": 0.15,
+      "cmd": "[kworker/u16:0-events_unbound]"
+    },
+    {
+      "pid": 186,
+      "group": "other",
+      "comm": "jbd2/mmcblk0p2-8",
+      "jiffies": 9,
+      "core_pct": 0.15,
+      "cmd": "[jbd2/mmcblk0p2-8]"
+    },
+    {
+      "pid": 98,
+      "group": "other",
+      "comm": "kworker/u16:4-events_unbound",
+      "jiffies": 6,
+      "core_pct": 0.1,
+      "cmd": "[kworker/u16:4-events_unbound]"
+    },
+    {
+      "pid": 11805,
+      "group": "other",
+      "comm": "kworker/0:2-events",
+      "jiffies": 6,
+      "core_pct": 0.1,
+      "cmd": "[kworker/0:2-events]"
+    },
+    {
+      "pid": 42,
+      "group": "other",
+      "comm": "kworker/0:1H-mmc_complete",
+      "jiffies": 5,
+      "core_pct": 0.08,
+      "cmd": "[kworker/0:1H-mmc_complete]"
+    },
+    {
+      "pid": 1565,
+      "group": "noise",
+      "comm": "MainThread",
+      "jiffies": 4,
+      "core_pct": 0.07,
+      "cmd": "/home/physical/.vscode-server/cli/servers/Stable-7debcd0e2acdea1c52de81bf9ee1620444407dda/server/node /home/ph"
+    }
+  ]
+}

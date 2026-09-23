@@ -1,0 +1,16 @@
+{
+ "cam0": {
+  "held": 1,
+  "applied_total": 574,
+  "dropped_stale": 1,
+  "obstacles": [
+   {
+    "obs_id": "1",
+    "label": "desk",
+    "conf": 0.087,
+    "age_s": 0.36,
+    "range": null
+   }
+  ]
+ }
+}

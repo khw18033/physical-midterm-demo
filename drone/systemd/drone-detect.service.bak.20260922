@@ -1,0 +1,20 @@
+[Unit]
+Description=드론 FC 자동 감지 (찾으면 drone.target 시작)
+Documentation=file:/home/physical/drone/scripts/fc_detect.py
+After=local-fs.target
+
+[Service]
+Type=simple
+# drone.target 을 start/stop 해야 하므로 root 로 돈다.
+User=root
+EnvironmentFile=/etc/drone-node.env
+# root 로 도는 프로세스가 scripts/ 에 root 소유 __pycache__ 를 만들지 않게 한다.
+Environment=PYTHONDONTWRITEBYTECODE=1
+ExecStart=/home/physical/drone/venv/bin/python /home/physical/drone/scripts/fc_detect.py
+Restart=always
+RestartSec=5
+# 감지기는 heartbeat 와 조회만 보낸다. 제어 명령을 보내지 않는다.
+NoNewPrivileges=yes
+
+[Install]
+WantedBy=multi-user.target

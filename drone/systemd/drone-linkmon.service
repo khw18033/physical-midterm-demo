@@ -1,0 +1,27 @@
+[Unit]
+Description=드론 링크 상태 감시 (읽기 전용)
+Documentation=file:/home/physical/drone/scripts/linkmon.py
+PartOf=drone.target
+Requires=drone-mavlink-router.service
+After=drone-mavlink-router.service
+
+[Service]
+Type=simple
+User=physical
+Group=physical
+EnvironmentFile=/etc/drone-node.env
+# root 로 도는 프로세스가 scripts/ 에 root 소유 __pycache__ 를 만들지 않게 한다.
+Environment=PYTHONDONTWRITEBYTECODE=1
+ExecStart=/home/physical/drone/venv/bin/python /home/physical/drone/scripts/linkmon.py
+Restart=on-failure
+RestartSec=5
+# 읽기 전용 감시. FC 로 나가는 바이트가 0 이다.
+NoNewPrivileges=yes
+ProtectSystem=strict
+ReadWritePaths=/home/physical/drone/logs
+PrivateTmp=yes
+# 시리얼 장치에 접근할 이유가 없다. closed 정책이면 /dev/null·urandom 등만 허용된다.
+DevicePolicy=closed
+
+[Install]
+WantedBy=drone.target

@@ -1,0 +1,242 @@
+{
+  "label": "1-드론만",
+  "started": "2026-09-22 12:12:18",
+  "elapsed_s": 60.02,
+  "ncpu": 4,
+  "groups": {
+    "drone": {
+      "core_pct": 13.18,
+      "sys_pct": 3.29
+    },
+    "other": {
+      "core_pct": 7.11,
+      "sys_pct": 1.78
+    },
+    "noise": {
+      "core_pct": 3.18,
+      "sys_pct": 0.8
+    },
+    "measure": {
+      "core_pct": 0.03,
+      "sys_pct": 0.01
+    }
+  },
+  "system": {
+    "busy_core_pct": 23.53,
+    "busy_sys_pct": 5.88,
+    "iowait_core_pct": 0.7,
+    "irq_softirq_core_pct": 0.97
+  },
+  "effective_core_pct": 20.32,
+  "effective_sys_pct": 5.08,
+  "temp": {
+    "start": "temp=60.9'C",
+    "end": "temp=60.4'C"
+  },
+  "throttled": {
+    "start": "throttled=0x0",
+    "end": "throttled=0x0"
+  },
+  "top_processes": [
+    {
+      "pid": 1179,
+      "group": "other",
+      "comm": "tailscaled",
+      "jiffies": 313,
+      "core_pct": 5.21,
+      "cmd": "/usr/sbin/tailscaled --state=/var/lib/tailscale/tailscaled.state --socket=/run/tailscale/tailscaled.sock --por"
+    },
+    {
+      "pid": 11678,
+      "group": "drone",
+      "comm": "python3",
+      "jiffies": 224,
+      "core_pct": 3.73,
+      "cmd": "/home/physical/drone/venv/bin/python3 -u -m drone.drone_node"
+    },
+    {
+      "pid": 11693,
+      "group": "drone",
+      "comm": "python",
+      "jiffies": 208,
+      "core_pct": 3.47,
+      "cmd": "/home/physical/drone/venv/bin/python /home/physical/drone/scripts/linkmon.py"
+    },
+    {
+      "pid": 11666,
+      "group": "drone",
+      "comm": "python",
+      "jiffies": 196,
+      "core_pct": 3.27,
+      "cmd": "/home/physical/drone/venv/bin/python /home/physical/drone/scripts/fc_detect.py"
+    },
+    {
+      "pid": 11692,
+      "group": "drone",
+      "comm": "mavlink-routerd",
+      "jiffies": 162,
+      "core_pct": 2.7,
+      "cmd": "/usr/bin/mavlink-routerd -c /home/physical/drone/config/mavlink-router.conf"
+    },
+    {
+      "pid": 1799,
+      "group": "noise",
+      "comm": "claude",
+      "jiffies": 84,
+      "core_pct": 1.4,
+      "cmd": "/home/physical/.vscode-server/extensions/anthropic.claude-code-2.1.278-linux-arm64/resources/native-binary/cla"
+    },
+    {
+      "pid": 79,
+      "group": "other",
+      "comm": "kworker/u17:0-brcmf_wq/mmc1:0001:1",
+      "jiffies": 65,
+      "core_pct": 1.08,
+      "cmd": "[kworker/u17:0-brcmf_wq/mmc1:0001:1]"
+    },
+    {
+      "pid": 1890,
+      "group": "noise",
+      "comm": "claude",
+      "jiffies": 42,
+      "core_pct": 0.7,
+      "cmd": "/home/physical/.vscode-server/extensions/anthropic.claude-code-2.1.278-linux-arm64/resources/native-binary/cla"
+    },
+    {
+      "pid": 1857,
+      "group": "noise",
+      "comm": "claude",
+      "jiffies": 32,
+      "core_pct": 0.53,
+      "cmd": "/home/physical/.vscode-server/extensions/anthropic.claude-code-2.1.278-linux-arm64/resources/native-binary/cla"
+    },
+    {
+      "pid": 60,
+      "group": "other",
+      "comm": "kworker/u16:2-events_unbound",
+      "jiffies": 16,
+      "core_pct": 0.27,
+      "cmd": "[kworker/u16:2-events_unbound]"
+    },
+    {
+      "pid": 1539,
+      "group": "noise",
+      "comm": "MainThread",
+      "jiffies": 15,
+      "core_pct": 0.25,
+      "cmd": "/home/physical/.vscode-server/cli/servers/Stable-7debcd0e2acdea1c52de81bf9ee1620444407dda/server/node --dns-re"
+    },
+    {
+      "pid": 12,
+      "group": "other",
+      "comm": "kworker/u16:0-events_unbound",
+      "jiffies": 9,
+      "core_pct": 0.15,
+      "cmd": "[kworker/u16:0-events_unbound]"
+    },
+    {
+      "pid": 3895,
+      "group": "other",
+      "comm": "kworker/0:0-events",
+      "jiffies": 9,
+      "core_pct": 0.15,
+      "cmd": "[kworker/0:0-events]"
+    },
+    {
+      "pid": 11,
+      "group": "other",
+      "comm": "kworker/0:1-events",
+      "jiffies": 5,
+      "core_pct": 0.08,
+      "cmd": "[kworker/0:1-events]"
+    },
+    {
+      "pid": 1408,
+      "group": "noise",
+      "comm": "code-7debcd0e2a",
+      "jiffies": 5,
+      "core_pct": 0.08,
+      "cmd": "/home/physical/.vscode-server/code-7debcd0e2acdea1c52de81bf9ee1620444407dda command-shell --cli-data-dir /home"
+    },
+    {
+      "pid": 1489,
+      "group": "noise",
+      "comm": "MainThread",
+      "jiffies": 5,
+      "core_pct": 0.08,
+      "cmd": "/home/physical/.vscode-server/cli/servers/Stable-7debcd0e2acdea1c52de81bf9ee1620444407dda/server/node /home/ph"
+    },
+    {
+      "pid": 1565,
+      "group": "noise",
+      "comm": "MainThread",
+      "jiffies": 4,
+      "core_pct": 0.07,
+      "cmd": "/home/physical/.vscode-server/cli/servers/Stable-7debcd0e2acdea1c52de81bf9ee1620444407dda/server/node /home/ph"
+    },
+    {
+      "pid": 1191,
+      "group": "other",
+      "comm": "sshd",
+      "jiffies": 2,
+      "core_pct": 0.03,
+      "cmd": "sshd: /usr/sbin/sshd -D [listener] 0 of 10-100 startups"
+    },
+    {
+      "pid": 1388,
+      "group": "other",
+      "comm": "sshd-session",
+      "jiffies": 2,
+      "core_pct": 0.03,
+      "cmd": "sshd-session: physical@notty"
+    },
+    {
+      "pid": 1523,
+      "group": "noise",
+      "comm": "MainThread",
+      "jiffies": 2,
+      "core_pct": 0.03,
+      "cmd": "/home/physical/.vscode-server/cli/servers/Stable-7debcd0e2acdea1c52de81bf9ee1620444407dda/server/node /home/ph"
+    },
+    {
+      "pid": 11705,
+      "group": "measure",
+      "comm": "python3",
+      "jiffies": 2,
+      "core_pct": 0.03,
+      "cmd": "python3 cpuwatch.py --seconds 60 --warmup 10 --label 1-드론만 --out results/agent/01_drone_only.json"
+    },
+    {
+      "pid": 1,
+      "group": "other",
+      "comm": "systemd",
+      "jiffies": 1,
+      "core_pct": 0.02,
+      "cmd": "/sbin/init"
+    },
+    {
+      "pid": 693,
+      "group": "other",
+      "comm": "avahi-daemon",
+      "jiffies": 1,
+      "core_pct": 0.02,
+      "cmd": "avahi-daemon: running [pi3.local]"
+    },
+    {
+      "pid": 696,
+      "group": "other",
+      "comm": "dbus-daemon",
+      "jiffies": 1,
+      "core_pct": 0.02,
+      "cmd": "/usr/bin/dbus-daemon --system --address=systemd: --nofork --nopidfile --systemd-activation --syslog-only"
+    },
+    {
+      "pid": 703,
+      "group": "other",
+      "comm": "systemd-logind",
+      "jiffies": 1,
+      "core_pct": 0.02,
+      "cmd": "/usr/lib/systemd/systemd-logind"
+    }
+  ]
+}

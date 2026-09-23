@@ -1,0 +1,8 @@
+# 배포 대상이 라즈베리파이(리눅스)이므로 저장소의 텍스트는 전부 LF로 고정한다.
+# systemd unit 과 EnvironmentFile 은 CRLF 가 섞이면 값 끝에 \r 이 붙어
+# 브로커 주소 같은 설정이 조용히 어긋난다.
+* text=auto eol=lf
+*.onnx binary
+*.xlsx binary
+*.png binary
+*.pdf binary

@@ -1,0 +1,38 @@
+# 말단 에이전트 systemd 유닛 — **전원을 넣으면 스스로 뜬다.**
+#
+# 왜 필요한가: 드론에 붙은 Pi에 매번 SSH로 들어가 손으로 띄울 수는 없다.
+# 설치는 install_service.sh가 한다.
+#
+# 자동 재시작을 거는 이유: 카메라가 잠깐 빠지거나 rpicam-vid가 죽으면
+# 에이전트도 함께 끝나는데, 그때 사람이 없으면 비행 내내 눈이 감긴 채로 간다.
+[Unit]
+Description=Drone terminal agent (capture + KLT alignment + frame server)
+# 네트워크가 없어도 캡처와 정렬은 돌아야 한다 — 엣지가 못 붙을 뿐이다.
+# 그래서 network-online.target을 **요구하지 않고** 뒤에만 둔다.
+After=network.target
+Wants=network.target
+# 카메라가 계속 안 잡히면 5초마다 재시작한다 — 그건 고쳐야 할 상태이지
+# 숨길 상태가 아니다. 2분에 10번을 넘기면 멈추고 실패로 남긴다.
+StartLimitIntervalSec=120
+StartLimitBurst=10
+
+[Service]
+Type=simple
+User=physical
+WorkingDirectory=/home/physical/drone_rpi
+ExecStart=/home/physical/drone_rpi/venv/bin/python -u agent.py
+# -u는 필수다. 버퍼링되면 journalctl에 로그가 몇 분씩 늦게 뜨고,
+# 무슨 일이 있었는지 실시간으로 볼 수 없다.
+Restart=always
+RestartSec=5
+# 재시작 폭주 제한은 [Unit] 쪽에 있다 — systemd v229부터 그 두 옵션의 소속이
+# [Service]가 아니라 [Unit]이고, 여기 두면 조용히 무시된다.
+StandardOutput=journal
+StandardError=journal
+
+# SIGTERM으로 내려야 rpicam-vid 자식이 정리되고 포트가 풀린다(agent.py finally).
+KillSignal=SIGTERM
+TimeoutStopSec=20
+
+[Install]
+WantedBy=multi-user.target

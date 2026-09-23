@@ -1,0 +1,460 @@
+#!/usr/bin/env python3
+# ============================================================================
+# fc_detect.py — FC 자동 감지 / 드론 모드 전환 (drone-detect.service 본체)
+#
+# 용도    : 부팅 후 계속 돌면서
+#             * FC 가 없으면  → 조용히 대기하며 DETECT_INTERVAL 간격으로 재시도
+#             * FC 를 찾으면  → 시리얼 포트를 놓고 drone.target 을 시작
+#             * 링크가 끊기면 → drone.target 을 내리고 감지 상태로 복귀
+#           상태를 ~/drone/state/mode 에 drone / none 으로 남긴다.
+#
+# 실행 조건 : systemd 가 root 로 실행한다 (drone.target 을 start/stop 해야 함).
+#             설정은 /etc/drone-node.env 에서 읽는다.
+#
+# 위험도  : 낮음 — 읽기 전용.
+#           * 보내는 것: heartbeat 뿐
+#           * 보내지 않는 것: arm / disarm / takeoff / land / 모드 변경 /
+#                             모터 테스트 / offboard / 파라미터 쓰기
+#           FC 상태를 바꾸는 명령은 어떤 경우에도 보내지 않는다.
+# ============================================================================
+
+import os
+import signal
+import subprocess
+import sys
+import time
+
+from pymavlink import mavutil
+
+from dronelink import is_vehicle_heartbeat
+from sdwatchdog import Watchdog
+
+ENV_FILE = "/etc/drone-node.env"
+TARGET = "drone.target"
+
+_running = True
+# systemd 워치독. 유닛에 WatchdogSec= 가 없으면 비활성(아무 일도 안 한다).
+# main() 에서 만든다 — import 시점에는 환경변수가 없을 수도 있다.
+_wd = None
+
+
+def wd_ping():
+    """오래 도는 루프 안에서 부른다. 실제 전송은 마감의 절반 주기마다 한 번이다."""
+    if _wd is not None:
+        _wd.ping()
+
+
+def log(msg):
+    print(msg, flush=True)
+
+
+def load_env(path):
+    env = {}
+    try:
+        with open(path) as f:
+            for line in f:
+                line = line.strip()
+                if not line or line.startswith("#") or "=" not in line:
+                    continue
+                k, v = line.split("=", 1)
+                env[k.strip()] = v.strip().strip('"').strip("'")
+    except OSError as e:
+        log(f"[경고] {path} 를 읽지 못했다: {e}")
+    return env
+
+
+CFG = load_env(ENV_FILE)
+
+
+def cfg(key, default, cast=str):
+    try:
+        return cast(os.environ.get(key, CFG.get(key, default)))
+    except (TypeError, ValueError):
+        return cast(default)
+
+
+FC_DEVICE = cfg("FC_DEVICE", "/dev/ttyAMA0")
+FC_BAUD = cfg("FC_BAUD", 921600, int)
+FC_BAUD_FALLBACK = cfg("FC_BAUD_FALLBACK", 57600, int)
+DETECT_TIMEOUT = cfg("DETECT_TIMEOUT", 6, float)
+DETECT_INTERVAL = cfg("DETECT_INTERVAL", 10, float)
+PORT_RELEASE_DELAY = cfg("PORT_RELEASE_DELAY", 1.5, float)
+LINK_TIMEOUT = cfg("LINK_TIMEOUT", 15, float)
+# 시리얼 포트가 계속 점유돼 감지가 막힐 때, 몇 회 연속 건너뛴 뒤 강제로 풀 것인가.
+# 0 이면 강제 해제를 하지 않는다(기존 동작).
+STUCK_ESCALATE_AFTER = cfg("STUCK_ESCALATE_AFTER", 3, int)
+# 재시작 직후 살아 있는 링크를 이어받을지 판단할 때 heartbeat 를 기다리는 시간(초).
+ADOPT_TIMEOUT = cfg("ADOPT_TIMEOUT", 5, float)
+DETECT_UDP_PORT = cfg("DETECT_UDP_PORT", 14542, int)
+DRONE_HOME = cfg("DRONE_HOME", "/home/physical/drone")
+DRONE_USER = cfg("DRONE_USER", "physical")
+
+STATE_DIR = os.path.join(DRONE_HOME, "state")
+STATE_FILE = os.path.join(STATE_DIR, "mode")
+# 이 파일이 있으면 포트 강제 해제를 하지 않는다. 사람이 수동으로 시리얼을 쓸 때
+# (mavproxy, attitude_watch.py 등) 감지기가 그 프로세스를 죽이지 않게 하는 안전장치다.
+#   켜기: touch ~/drone/state/maintenance
+#   끄기: rm  ~/drone/state/maintenance
+MAINT_FILE = os.path.join(STATE_DIR, "maintenance")
+
+
+def on_signal(signum, _frame):
+    global _running
+    _running = False
+    log(f"[종료] 시그널 {signum} 수신 — 정리하고 종료한다")
+
+
+def write_mode(mode):
+    """~/drone/state/mode 에 원자적으로 기록하고 사용자 소유로 돌려준다."""
+    try:
+        os.makedirs(STATE_DIR, exist_ok=True)
+        tmp = STATE_FILE + ".tmp"
+        with open(tmp, "w") as f:
+            f.write(mode + "\n")
+        os.replace(tmp, STATE_FILE)
+        try:
+            import pwd
+            pw = pwd.getpwnam(DRONE_USER)
+            os.chown(STATE_FILE, pw.pw_uid, pw.pw_gid)
+            os.chown(STATE_DIR, pw.pw_uid, pw.pw_gid)
+        except (KeyError, PermissionError):
+            pass
+        log(f"[상태] mode = {mode}")
+    except OSError as e:
+        log(f"[경고] 상태 파일 기록 실패: {e}")
+
+
+def holders_of(device):
+    """device 를 열고 있는 (pid, 이름) 목록. 포트 충돌 확인용."""
+    out = []
+    try:
+        for pid in os.listdir("/proc"):
+            if not pid.isdigit():
+                continue
+            fd_dir = f"/proc/{pid}/fd"
+            try:
+                for fd in os.listdir(fd_dir):
+                    try:
+                        if os.readlink(f"{fd_dir}/{fd}") == device:
+                            try:
+                                name = open(f"/proc/{pid}/comm").read().strip()
+                            except OSError:
+                                name = "?"
+                            out.append((pid, name))
+                            break
+                    except OSError:
+                        continue
+            except OSError:
+                continue
+    except OSError:
+        pass
+    return out
+
+
+def systemctl(action, unit):
+    try:
+        r = subprocess.run(["systemctl", action, unit],
+                           capture_output=True, text=True, timeout=30)
+        if r.returncode != 0:
+            log(f"[경고] systemctl {action} {unit} 실패 (rc={r.returncode}): {r.stderr.strip()}")
+            return False
+        log(f"[systemd] {action} {unit} ✔")
+        return True
+    except (subprocess.SubprocessError, OSError) as e:
+        log(f"[경고] systemctl {action} {unit} 예외: {e}")
+        return False
+
+
+_last_skip_reason = None
+_held_streak = 0          # 시리얼 점유로 연속 건너뛴 횟수
+
+
+def skip(reason):
+    """같은 이유로 건너뛸 때는 한 번만 찍는다 (로그 도배 방지)."""
+    global _last_skip_reason
+    if reason != _last_skip_reason:
+        log(f"[감지] {reason}")
+        _last_skip_reason = reason
+    return False
+
+
+def probe_serial():
+    """시리얼로 heartbeat 를 찾는다. 찾으면 True. 포트는 반드시 닫고 나온다."""
+    global _last_skip_reason, _held_streak
+    if not os.path.exists(FC_DEVICE):
+        return skip(f"{FC_DEVICE} 가 없다")
+
+    held = holders_of(FC_DEVICE)
+    if held:
+        _held_streak += 1
+        r = skip(f"{FC_DEVICE} 를 다른 프로세스가 잡고 있다: {held} — 건너뛴다 "
+                 f"({_held_streak}회 연속)")
+        # 그냥 두면 FC 가 정상인데도 여기서 영원히 맴돈다. 일정 횟수 넘으면 강제로 푼다.
+        if STUCK_ESCALATE_AFTER > 0 and _held_streak >= STUCK_ESCALATE_AFTER:
+            resolve_stuck_port(held)
+            _held_streak = 0
+            _last_skip_reason = None
+        return r
+    _held_streak = 0
+    _last_skip_reason = None
+
+    for baud in dict.fromkeys([FC_BAUD, FC_BAUD_FALLBACK]):
+        m = None
+        try:
+            m = mavutil.mavlink_connection(
+                FC_DEVICE, baud=baud, source_system=1,
+                source_component=mavutil.mavlink.MAV_COMP_ID_ONBOARD_COMPUTER)
+            deadline = time.time() + DETECT_TIMEOUT
+            last_hb = 0.0
+            while time.time() < deadline and _running:
+                wd_ping()
+                if time.time() - last_hb > 1.0:
+                    # heartbeat 만 보낸다. 제어 명령이 아니다.
+                    m.mav.heartbeat_send(
+                        mavutil.mavlink.MAV_TYPE_ONBOARD_CONTROLLER,
+                        mavutil.mavlink.MAV_AUTOPILOT_INVALID, 0, 0,
+                        mavutil.mavlink.MAV_STATE_ACTIVE)
+                    last_hb = time.time()
+                msg = m.recv_match(type="HEARTBEAT", blocking=True, timeout=0.5)
+                if is_vehicle_heartbeat(msg, m.mav.srcSystem, m.mav.srcComponent):
+                    log(f"[감지] FC heartbeat 수신 — {FC_DEVICE} @ {baud}, "
+                        f"sysid={msg.get_srcSystem()} compid={msg.get_srcComponent()}")
+                    return True
+        except Exception as e:
+            log(f"[감지] {FC_DEVICE} @ {baud} 열기/읽기 실패: {e}")
+        finally:
+            if m is not None:
+                try:
+                    m.close()
+                except Exception:
+                    pass
+    return False
+
+
+def release_port():
+    """라우터를 띄우기 전에 시리얼 포트가 확실히 풀렸는지 확인한다."""
+    time.sleep(PORT_RELEASE_DELAY)
+    deadline = time.time() + 5.0
+    while time.time() < deadline:
+        held = holders_of(FC_DEVICE)
+        if not held:
+            log(f"[감지] {FC_DEVICE} 해제 확인 ✔")
+            return True
+        log(f"[감지] {FC_DEVICE} 아직 점유중: {held} — 대기")
+        time.sleep(0.5)
+    log(f"[경고] {FC_DEVICE} 가 풀리지 않았다. 라우터가 포트를 못 열 수 있다")
+    return False
+
+
+def unit_of(pid):
+    """pid 가 속한 systemd 유닛 이름. 못 알아내면 None."""
+    try:
+        with open(f"/proc/{pid}/cgroup") as f:
+            txt = f.read()
+    except OSError:
+        return None
+    for part in txt.replace("/", "\n").split("\n"):
+        if part.endswith(".service") or part.endswith(".socket"):
+            return part
+    return None
+
+
+def resolve_stuck_port(held):
+    """
+    감지가 막힐 만큼 오래 시리얼이 점유돼 있을 때 강제로 푼다.
+
+    이 함수는 mode == "none" 에서만 불린다. 즉 drone.target 이 내려가 있어야 할
+    상태이므로, 이때 /dev/ttyAMA0 을 잡고 있는 프로세스는 있어서는 안 되는 것이다.
+    그냥 두면 FC 가 정상인데도 영원히 mode=none 에 갇힌다(SSH 로만 복구 가능).
+
+    FC 로는 아무것도 보내지 않는다. 포트를 잡은 프로세스만 정리한다.
+    """
+    if os.path.exists(MAINT_FILE):
+        log(f"[강제해제] 보류 — 정비 모드 파일이 있다({MAINT_FILE}). "
+            f"점유: {held}. 수동 작업이 끝나면 파일을 지워라")
+        return
+
+    log("!" * 60)
+    log(f"[강제해제] {FC_DEVICE} 가 {STUCK_ESCALATE_AFTER}회 연속 점유돼 감지가 막혔다: {held}")
+
+    # 1) drone.target 이 떠 있으면 먼저 정상 경로로 내린다.
+    #    (mode=none 인데 target 이 살아 있는 상태 불일치를 여기서 바로잡는다)
+    if subprocess.run(["systemctl", "is-active", "--quiet", TARGET]).returncode == 0:
+        log(f"[강제해제] {TARGET} 이 아직 active 다 — 먼저 정상 종료를 시도한다")
+        systemctl("stop", TARGET)
+        time.sleep(2.0)
+
+    # 2) 남아 있는 점유자를 유닛 단위로, 그 다음 PID 단위로 정리한다.
+    for pid, name in holders_of(FC_DEVICE):
+        if pid in ("1", str(os.getpid())):
+            log(f"[강제해제] pid {pid} 은 건너뛴다 (init 또는 자기 자신)")
+            continue
+        unit = unit_of(pid)
+        if unit and unit.startswith("drone-"):
+            log(f"[강제해제] pid {pid}({name}) → 유닛 {unit} 강제 종료")
+            systemctl("stop", unit)
+            time.sleep(1.0)
+            subprocess.run(["systemctl", "kill", "-s", "KILL", unit],
+                           capture_output=True, text=True)
+        else:
+            log(f"[강제해제] pid {pid}({name}) 유닛={unit or '없음'} → SIGTERM")
+            try:
+                os.kill(int(pid), signal.SIGTERM)
+                time.sleep(2.0)
+                if os.path.exists(f"/proc/{pid}"):
+                    log(f"[강제해제] pid {pid} 이 안 죽었다 → SIGKILL")
+                    os.kill(int(pid), signal.SIGKILL)
+            except (ProcessLookupError, PermissionError, ValueError) as e:
+                log(f"[강제해제] pid {pid} 종료 실패: {e}")
+
+    time.sleep(1.0)
+    still = holders_of(FC_DEVICE)
+    if still:
+        log(f"[강제해제] ✖ 아직 점유중: {still} — 다음 회차에 다시 시도한다 "
+            f"(D 상태로 굳은 프로세스면 재부팅이 필요할 수 있다)")
+    else:
+        log(f"[강제해제] ✔ {FC_DEVICE} 해제 완료 — 다음 회차에 감지를 재개한다")
+    log("!" * 60)
+
+
+def adopt_existing_link():
+    """
+    재시작 직후, 이미 떠 있는 링크를 그대로 이어받을 수 있는지 본다.
+
+    워치독이 이 프로세스를 죽여 다시 띄운 경우 drone.target 과 라우터는 멀쩡히
+    살아 있다. 그때 무조건 mode=none 에서 시작하면 라우터가 시리얼을 잡고 있어
+    감지가 막히고, 강제해제가 건강한 링크를 내렸다 다시 올린다 — 35초쯤 낭비되고
+    웹은 fc_link_lost → fc_link_up 전환을 헛으로 본다.
+
+    그래서 "target 이 active 이고 14542 로 기체 heartbeat 가 실제로 오고 있으면"
+    내리지 않고 감시로 바로 복귀한다. heartbeat 가 안 오면 False — 그때는 원래대로
+    감지 경로를 탄다.
+    """
+    if subprocess.run(["systemctl", "is-active", "--quiet", TARGET]).returncode != 0:
+        return False
+
+    addr = f"udpin:127.0.0.1:{DETECT_UDP_PORT}"
+    m = None
+    try:
+        m = mavutil.mavlink_connection(
+            addr, source_system=1,
+            source_component=mavutil.mavlink.MAV_COMP_ID_ONBOARD_COMPUTER)
+    except Exception as e:
+        log(f"[이어받기] {addr} 열기 실패: {e} — 감지 경로로 간다")
+        return False
+
+    log(f"[이어받기] {TARGET} 이 이미 active 다 — {addr} 에서 heartbeat 를 "
+        f"{ADOPT_TIMEOUT}초 기다려 본다")
+    deadline = time.time() + ADOPT_TIMEOUT
+    try:
+        while time.time() < deadline and _running:
+            wd_ping()
+            msg = m.recv_match(type="HEARTBEAT", blocking=True, timeout=0.5)
+            if is_vehicle_heartbeat(msg, m.mav.srcSystem, m.mav.srcComponent):
+                log(f"[이어받기] ✔ 살아 있는 링크를 이어받는다 "
+                    f"(sysid={msg.get_srcSystem()}) — 링크를 내리지 않는다")
+                return True
+    finally:
+        try:
+            m.close()
+        except Exception:
+            pass
+    log(f"[이어받기] heartbeat 가 없다 — {TARGET} 을 내리고 감지부터 다시 한다")
+    systemctl("stop", TARGET)
+    return False
+
+
+def monitor_link():
+    """드론 모드에서 라우터를 거쳐 heartbeat 를 감시한다. 끊기면 False 를 돌려준다."""
+    addr = f"udpin:127.0.0.1:{DETECT_UDP_PORT}"
+    m = None
+    try:
+        m = mavutil.mavlink_connection(
+            addr, source_system=1,
+            source_component=mavutil.mavlink.MAV_COMP_ID_ONBOARD_COMPUTER)
+    except Exception as e:
+        log(f"[감시] {addr} 열기 실패: {e} — 감지 상태로 되돌린다")
+        return False
+
+    log(f"[감시] {addr} 에서 heartbeat 감시 시작 (끊김 판정 {LINK_TIMEOUT}초)")
+    last_seen = time.time()
+    try:
+        while _running:
+            wd_ping()
+            msg = m.recv_match(type="HEARTBEAT", blocking=True, timeout=1.0)
+            # FC 의 heartbeat 만 생존 신호로 센다. QGC/MAVSDK 것은 세지 않는다.
+            if is_vehicle_heartbeat(msg, m.mav.srcSystem, m.mav.srcComponent):
+                last_seen = time.time()
+            elif time.time() - last_seen > LINK_TIMEOUT:
+                log(f"[감시] heartbeat 가 {LINK_TIMEOUT}초 끊겼다 — 드론 모드를 내린다")
+                return False
+    finally:
+        try:
+            m.close()
+        except Exception:
+            pass
+    return True
+
+
+def main():
+    global _wd
+    signal.signal(signal.SIGTERM, on_signal)
+    signal.signal(signal.SIGINT, on_signal)
+    _wd = Watchdog()
+
+    log("=" * 60)
+    log("drone-detect — FC 자동 감지 (읽기 전용, 제어 명령 없음)")
+    log(f"  장치      {FC_DEVICE} @ {FC_BAUD} (대체 {FC_BAUD_FALLBACK})")
+    log(f"  감지 주기 {DETECT_INTERVAL}초, 1회 대기 {DETECT_TIMEOUT}초")
+    log(f"  끊김 판정 {LINK_TIMEOUT}초, 감시 포트 udp/{DETECT_UDP_PORT}")
+    log(f"  {_wd.describe()}")
+    log(f"  포트 강제해제 {STUCK_ESCALATE_AFTER}회 연속 점유 시"
+        f"{' (정비 모드 파일 있음 — 보류 중)' if os.path.exists(MAINT_FILE) else ''}")
+    log("=" * 60)
+
+    # 재시작 직후 이미 링크가 살아 있으면 내리지 않고 이어받는다.
+    mode = "drone" if adopt_existing_link() else "none"
+    write_mode(mode)
+    announced_waiting = False
+
+    while _running:
+        wd_ping()
+        if mode == "none":
+            if probe_serial():
+                release_port()
+                if systemctl("start", TARGET):
+                    mode = "drone"
+                    write_mode(mode)
+                    announced_waiting = False
+                else:
+                    log("[감지] drone.target 시작 실패 — 다음 회차에 다시 시도한다")
+                    time.sleep(DETECT_INTERVAL)
+            else:
+                if not announced_waiting:
+                    log(f"[감지] FC 없음 — {DETECT_INTERVAL}초 간격으로 계속 확인한다 "
+                        f"(이 메시지는 상태가 바뀔 때만 다시 나온다)")
+                    announced_waiting = True
+                # 종료 신호에 빨리 반응하도록 잘게 나눠 잔다
+                slept = 0.0
+                while _running and slept < DETECT_INTERVAL:
+                    wd_ping()
+                    time.sleep(0.5)
+                    slept += 0.5
+        else:
+            alive = monitor_link()
+            if not alive or not _running:
+                systemctl("stop", TARGET)
+                mode = "none"
+                write_mode(mode)
+                announced_waiting = False
+
+    # 정상 종료: 드론 모드였다면 내리고 상태를 맞춘다
+    if mode == "drone":
+        systemctl("stop", TARGET)
+    write_mode("none")
+    log("[종료] drone-detect 종료")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

@@ -1,0 +1,238 @@
+{
+  "label": "2-말단노드만",
+  "started": "2026-09-22 12:10:56",
+  "elapsed_s": 60.02,
+  "ncpu": 4,
+  "groups": {
+    "agent": {
+      "core_pct": 30.87,
+      "sys_pct": 7.72
+    },
+    "noise": {
+      "core_pct": 4.53,
+      "sys_pct": 1.13
+    },
+    "other": {
+      "core_pct": 4.47,
+      "sys_pct": 1.12
+    }
+  },
+  "system": {
+    "busy_core_pct": 40.77,
+    "busy_sys_pct": 10.19,
+    "iowait_core_pct": 12.03,
+    "irq_softirq_core_pct": 0.23
+  },
+  "effective_core_pct": 36.24,
+  "effective_sys_pct": 9.06,
+  "temp": {
+    "start": "temp=61.5'C",
+    "end": "temp=62.0'C"
+  },
+  "throttled": {
+    "start": "throttled=0x0",
+    "end": "throttled=0x0"
+  },
+  "top_processes": [
+    {
+      "pid": 9956,
+      "group": "agent",
+      "comm": "python",
+      "jiffies": 1575,
+      "core_pct": 26.24,
+      "cmd": "/home/physical/drone_rpi/venv/bin/python -u agent.py"
+    },
+    {
+      "pid": 9966,
+      "group": "agent",
+      "comm": "rpicam-vid",
+      "jiffies": 278,
+      "core_pct": 4.63,
+      "cmd": "rpicam-vid -n --camera 0 -t 0 --codec mjpeg --width 1280 --height 720 --framerate 8 -o -"
+    },
+    {
+      "pid": 1179,
+      "group": "other",
+      "comm": "tailscaled",
+      "jiffies": 165,
+      "core_pct": 2.75,
+      "cmd": "/usr/sbin/tailscaled --state=/var/lib/tailscale/tailscaled.state --socket=/run/tailscale/tailscaled.sock --por"
+    },
+    {
+      "pid": 1799,
+      "group": "noise",
+      "comm": "claude",
+      "jiffies": 94,
+      "core_pct": 1.57,
+      "cmd": "/home/physical/.vscode-server/extensions/anthropic.claude-code-2.1.278-linux-arm64/resources/native-binary/cla"
+    },
+    {
+      "pid": 1539,
+      "group": "noise",
+      "comm": "MainThread",
+      "jiffies": 63,
+      "core_pct": 1.05,
+      "cmd": "/home/physical/.vscode-server/cli/servers/Stable-7debcd0e2acdea1c52de81bf9ee1620444407dda/server/node --dns-re"
+    },
+    {
+      "pid": 79,
+      "group": "other",
+      "comm": "kworker/u17:0-brcmf_wq/mmc1:0001:1",
+      "jiffies": 43,
+      "core_pct": 0.72,
+      "cmd": "[kworker/u17:0-brcmf_wq/mmc1:0001:1]"
+    },
+    {
+      "pid": 1890,
+      "group": "noise",
+      "comm": "claude",
+      "jiffies": 32,
+      "core_pct": 0.53,
+      "cmd": "/home/physical/.vscode-server/extensions/anthropic.claude-code-2.1.278-linux-arm64/resources/native-binary/cla"
+    },
+    {
+      "pid": 1523,
+      "group": "noise",
+      "comm": "MainThread",
+      "jiffies": 27,
+      "core_pct": 0.45,
+      "cmd": "/home/physical/.vscode-server/cli/servers/Stable-7debcd0e2acdea1c52de81bf9ee1620444407dda/server/node /home/ph"
+    },
+    {
+      "pid": 1489,
+      "group": "noise",
+      "comm": "MainThread",
+      "jiffies": 19,
+      "core_pct": 0.32,
+      "cmd": "/home/physical/.vscode-server/cli/servers/Stable-7debcd0e2acdea1c52de81bf9ee1620444407dda/server/node /home/ph"
+    },
+    {
+      "pid": 1408,
+      "group": "noise",
+      "comm": "code-7debcd0e2a",
+      "jiffies": 17,
+      "core_pct": 0.28,
+      "cmd": "/home/physical/.vscode-server/code-7debcd0e2acdea1c52de81bf9ee1620444407dda command-shell --cli-data-dir /home"
+    },
+    {
+      "pid": 1857,
+      "group": "noise",
+      "comm": "claude",
+      "jiffies": 14,
+      "core_pct": 0.23,
+      "cmd": "/home/physical/.vscode-server/extensions/anthropic.claude-code-2.1.278-linux-arm64/resources/native-binary/cla"
+    },
+    {
+      "pid": 1388,
+      "group": "other",
+      "comm": "sshd-session",
+      "jiffies": 12,
+      "core_pct": 0.2,
+      "cmd": "sshd-session: physical@notty"
+    },
+    {
+      "pid": 314,
+      "group": "other",
+      "comm": "systemd-journal",
+      "jiffies": 10,
+      "core_pct": 0.17,
+      "cmd": "/usr/lib/systemd/systemd-journald"
+    },
+    {
+      "pid": 3895,
+      "group": "other",
+      "comm": "kworker/0:0-events",
+      "jiffies": 8,
+      "core_pct": 0.13,
+      "cmd": "[kworker/0:0-events]"
+    },
+    {
+      "pid": 11,
+      "group": "other",
+      "comm": "kworker/0:1-events",
+      "jiffies": 7,
+      "core_pct": 0.12,
+      "cmd": "[kworker/0:1-events]"
+    },
+    {
+      "pid": 186,
+      "group": "other",
+      "comm": "jbd2/mmcblk0p2-8",
+      "jiffies": 7,
+      "core_pct": 0.12,
+      "cmd": "[jbd2/mmcblk0p2-8]"
+    },
+    {
+      "pid": 42,
+      "group": "other",
+      "comm": "kworker/0:1H-mmc_complete",
+      "jiffies": 4,
+      "core_pct": 0.07,
+      "cmd": "[kworker/0:1H-mmc_complete]"
+    },
+    {
+      "pid": 15,
+      "group": "other",
+      "comm": "rcu_preempt",
+      "jiffies": 3,
+      "core_pct": 0.05,
+      "cmd": "[rcu_preempt]"
+    },
+    {
+      "pid": 1565,
+      "group": "noise",
+      "comm": "MainThread",
+      "jiffies": 3,
+      "core_pct": 0.05,
+      "cmd": "/home/physical/.vscode-server/cli/servers/Stable-7debcd0e2acdea1c52de81bf9ee1620444407dda/server/node /home/ph"
+    },
+    {
+      "pid": 1596,
+      "group": "noise",
+      "comm": "MainThread",
+      "jiffies": 2,
+      "core_pct": 0.03,
+      "cmd": "/home/physical/.vscode-server/cli/servers/Stable-7debcd0e2acdea1c52de81bf9ee1620444407dda/server/node /home/ph"
+    },
+    {
+      "pid": 12,
+      "group": "other",
+      "comm": "kworker/u16:0-writeback",
+      "jiffies": 1,
+      "core_pct": 0.02,
+      "cmd": "[kworker/u16:0-writeback]"
+    },
+    {
+      "pid": 31,
+      "group": "other",
+      "comm": "migration/3",
+      "jiffies": 1,
+      "core_pct": 0.02,
+      "cmd": "[migration/3]"
+    },
+    {
+      "pid": 94,
+      "group": "other",
+      "comm": "kworker/1:5-mm_percpu_wq",
+      "jiffies": 1,
+      "core_pct": 0.02,
+      "cmd": "[kworker/1:5-mm_percpu_wq]"
+    },
+    {
+      "pid": 100,
+      "group": "other",
+      "comm": "irq/161-mmc1",
+      "jiffies": 1,
+      "core_pct": 0.02,
+      "cmd": "[irq/161-mmc1]"
+    },
+    {
+      "pid": 628,
+      "group": "other",
+      "comm": "brcmf_wdog/mmc1:0001:1",
+      "jiffies": 1,
+      "core_pct": 0.02,
+      "cmd": "[brcmf_wdog/mmc1:0001:1]"
+    }
+  ]
+}

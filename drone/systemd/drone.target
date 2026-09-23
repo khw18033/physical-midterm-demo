@@ -1,0 +1,5 @@
+[Unit]
+Description=드론 모드 (FC 링크가 살아 있을 때만 켜지는 묶음)
+Documentation=file:/home/physical/drone/PROGRESS.md
+# drone-detect.service 가 FC 를 찾으면 start, 링크가 끊기면 stop 한다.
+# 부팅 시 자동으로 켜지면 안 되므로 [Install] 섹션이 없다 — enable 하지 않는다.

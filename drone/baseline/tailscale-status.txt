@@ -1,0 +1,12 @@
+100.85.243.54   pi3                     khw671@  linux    -                          
+100.83.37.9     desktop-0ib285f         khw671@  linux    -                          
+100.125.71.51   desktop-oaujese         khw671@  windows  -                          
+100.83.113.100  desktop-oft3u6h         khw671@  windows  offline, last seen 1h ago  
+100.78.11.92    laptop-isk6l1rq         khw671@  windows  offline, last seen 1m ago  
+100.83.132.16   pi1                     khw671@  linux    offline, last seen 3h ago  
+100.108.44.25   pi2                     khw671@  linux    offline, last seen 2h ago  
+100.81.196.55   pi4                     khw671@  linux    -                          
+100.76.251.100  pi6                     khw671@  linux    offline, last seen 2h ago  
+100.72.109.9    pi7                     khw671@  linux    -                          
+100.102.8.102   sysai-server2           khw671@  linux    -                          
+100.86.206.127  ubuntu3-15ug50p-gp55kn  khw671@  linux    offline, last seen 7d ago  

@@ -1,0 +1,39 @@
+UNIT FILE                          STATE   PRESET
+apparmor.service                   enabled enabled
+avahi-daemon.service               enabled enabled
+bluetooth.service                  enabled enabled
+cloud-config.service               enabled enabled
+cloud-final.service                enabled enabled
+cloud-init-local.service           enabled enabled
+cloud-init-main.service            enabled enabled
+cloud-init-network.service         enabled enabled
+console-setup.service              enabled enabled
+cron.service                       enabled enabled
+e2scrub_reap.service               enabled enabled
+getty@.service                     enabled enabled
+keyboard-setup.service             enabled enabled
+NetworkManager-dispatcher.service  enabled enabled
+NetworkManager-wait-online.service enabled enabled
+NetworkManager.service             enabled enabled
+regenerate_ssh_host_keys.service   enabled enabled
+rpi-eeprom-update.service          enabled enabled
+ssh.service                        enabled enabled
+sshd-keygen.service                enabled enabled
+sshswitch.service                  enabled enabled
+systemd-pstore.service             enabled enabled
+systemd-timesyncd.service          enabled enabled
+tailscaled.service                 enabled enabled
+udisks2.service                    enabled enabled
+wpa_supplicant.service             enabled enabled
+avahi-daemon.socket                enabled enabled
+cloud-init-hotplugd.socket         enabled enabled
+remote-fs.target                   enabled enabled
+apt-daily-upgrade.timer            enabled enabled
+apt-daily.timer                    enabled enabled
+dpkg-db-backup.timer               enabled enabled
+e2scrub_all.timer                  enabled enabled
+fstrim.timer                       enabled enabled
+logrotate.timer                    enabled enabled
+man-db.timer                       enabled enabled
+
+36 unit files listed.
