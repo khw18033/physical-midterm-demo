@@ -63,6 +63,22 @@ SPEC = [
     ("RTL_RETURN_ALT", None, "RTL 귀환 고도(m)"),
     ("COM_OBL_ACT", ACT, "OFFBOARD 상실 시 (우리는 OFFBOARD 를 안 쓴다)"),
     ("COM_POSCTL_NAVL", None, "위치 추정 상실 시 동작"),
+    # ── 2026-09-24 추가 ────────────────────────────────────────────────
+    # 모드 연동(takeoff_land.py) 설계가 이 값들에 걸려 있다. 몰라서 기본값을 가정하면
+    # 타임아웃과 판정 기준을 지어내는 셈이 된다. 전부 읽기만 한다.
+    ("── 모드 전환·arm 타이밍 ──", None, None),
+    ("COM_DISARM_PRFLT", None,
+     "★ arm 후 이륙하지 않으면 자동 disarm 까지의 시간(초). "
+     "이륙 대기 타임아웃을 이보다 짧게 잡아야 한다"),
+    ("COM_DISARM_LAND", None, "착지 감지 후 자동 disarm 까지의 시간(초)"),
+    ("COM_RC_OVERRIDE", None,
+     "★ 자동 모드에서 스틱 오버라이드 활성 — 비트마스크(원값). "
+     "켜져 있으면 스틱만 건드려도 AUTO 가 풀려 Position 으로 넘어간다"),
+    ("COM_RC_STICK_OV", None,
+     "스틱 오버라이드 민감도(%). 작을수록 살짝만 건드려도 넘어간다"),
+    ("COM_PREARM_MODE", None, "안전 스위치 동작 방식 (arm 절차에 영향)"),
+    ("MPC_TKO_SPEED", None, "이륙 상승 속도(m/s)"),
+    ("MIS_TAKEOFF_ALT", None, "기본 이륙 고도(m) — takeoff_land.py 가 1.5 로 덮어쓴다"),
 ]
 
 
