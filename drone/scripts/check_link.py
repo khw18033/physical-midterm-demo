@@ -30,7 +30,16 @@ from collections import Counter
 
 try:
     from pymavlink import mavutil
-    from dronelink import is_vehicle_heartbeat
+    # 모드 어휘는 2026-09-24 에 dronelink.py 로 옮겼다. 아래 import 는 단순한 이동이
+    # 아니라 **re-export 다** — 저장소 밖의 MQTT 브리지(~/hw/pi/drone/)가
+    # HW_DRONE_SCRIPTS 경로로 `from check_link import decode_px4_custom_mode` 를 하고 있다.
+    # 이 줄을 지우면 drone-node 가 깨진다. noqa 는 "안 쓰는 것처럼 보여도 필요하다" 는 표시다.
+    from dronelink import (                                          # noqa: F401
+        is_vehicle_heartbeat,
+        decode_px4_custom_mode,
+        PX4_MAIN_MODE,
+        PX4_SUB_MODE,
+    )
 except ImportError:
     print("[오류] pymavlink 가 없다. ~/drone/venv/bin/python 으로 실행할 것.", file=sys.stderr)
     sys.exit(1)
@@ -68,14 +77,8 @@ MAV_MODE = {
     6: "Iridium", 7: "Minimal", 8: "External Vision", 9: "Gimbal",
     10: "Onboard Low Bandwidth", 11: "uAvionix",
 }
-PX4_MAIN_MODE = {
-    1: "MANUAL", 2: "ALTCTL", 3: "POSCTL", 4: "AUTO", 5: "ACRO",
-    6: "OFFBOARD", 7: "STABILIZED", 8: "RATTITUDE", 9: "SIMPLE",
-}
-PX4_SUB_MODE = {
-    1: "READY", 2: "TAKEOFF", 3: "LOITER", 4: "MISSION", 5: "RTL",
-    6: "LAND", 7: "RTGS", 8: "FOLLOW_TARGET", 9: "PRECLAND",
-}
+# PX4_MAIN_MODE / PX4_SUB_MODE 는 dronelink.py 로 옮겼다 (위 import 참고).
+# MAV_MODE 는 여기 남는다 — 이건 비행 모드가 아니라 MAV_x_MODE 파라미터 enum 이다.
 
 
 def load_env(path):
@@ -96,15 +99,6 @@ def load_env(path):
 def is_serial(device):
     """udpin:/udpout:/udp:/tcp: 형식이면 네트워크, 아니면 시리얼 장치."""
     return not any(device.startswith(p) for p in ("udp", "tcp"))
-
-
-def decode_px4_custom_mode(custom_mode):
-    main = (custom_mode >> 16) & 0xFF
-    sub = (custom_mode >> 24) & 0xFF
-    name = PX4_MAIN_MODE.get(main, f"main={main}")
-    if main == 4 and sub:
-        name += "." + PX4_SUB_MODE.get(sub, f"sub={sub}")
-    return name
 
 
 def param_to_number(msg, is_px4):

@@ -60,3 +60,91 @@ def is_vehicle_heartbeat(msg, me_sys=None, me_comp=None):
             return False
     return getattr(msg, "autopilot", mavutil.mavlink.MAV_AUTOPILOT_INVALID) \
         != mavutil.mavlink.MAV_AUTOPILOT_INVALID
+
+
+# ===========================================================================
+# 비행 모드 어휘 (2026-09-24 추가)
+#
+# 왜 여기로 옮겼나 — 원래 decode_px4_custom_mode() 는 check_link.py 안에 있었다.
+# 그런데 check_link.py 는 '실행 스크립트'이고, 저장소 밖의 MQTT 브리지
+# (~/hw/pi/drone/, HW_DRONE_SCRIPTS 경로로 import)가 그걸 라이브러리처럼 쓰고 있었다.
+# 실행 파일을 고치면 브리지가 깨지는 구조라, 공용 헬퍼인 이 파일로 올린다.
+# check_link.py 에는 re-export 를 남겨 기존 import 경로를 유지한다.
+#
+# 이 블록은 순수 추가다. 위의 load_env / make_cfg / is_vehicle_heartbeat 는
+# 한 글자도 건드리지 않았다 — drone-detect / drone-linkmon / drone-node 세 서비스가
+# 전부 is_vehicle_heartbeat 하나에만 의존하기 때문이다.
+# ===========================================================================
+
+# PX4 는 HEARTBEAT.custom_mode 에 main/sub 모드를 바이트로 나눠 싣는다.
+PX4_MAIN_MODE = {
+    1: "MANUAL", 2: "ALTCTL", 3: "POSCTL", 4: "AUTO", 5: "ACRO",
+    6: "OFFBOARD", 7: "STABILIZED", 8: "RATTITUDE", 9: "SIMPLE",
+}
+PX4_SUB_MODE = {
+    1: "READY", 2: "TAKEOFF", 3: "LOITER", 4: "MISSION", 5: "RTL",
+    6: "LAND", 7: "RTGS", 8: "FOLLOW_TARGET", 9: "PRECLAND",
+}
+
+
+def decode_px4_custom_mode(custom_mode):
+    """PX4 custom_mode 정수를 'AUTO.LOITER' 같은 이름으로 푼다.
+
+    실측 예: 0x03040000 -> main=4(AUTO), sub=3(LOITER) -> "AUTO.LOITER"
+    모르는 값은 숫자를 그대로 드러낸다 (지어내지 않는다).
+    """
+    main = (custom_mode >> 16) & 0xFF
+    sub = (custom_mode >> 24) & 0xFF
+    name = PX4_MAIN_MODE.get(main, f"main={main}")
+    if main == 4 and sub:
+        name += "." + PX4_SUB_MODE.get(sub, f"sub={sub}")
+    return name
+
+
+# MAVSDK 는 같은 상태를 다른 이름으로 부른다 — AUTO.LOITER 를 'HOLD' 라고 한다.
+# 그래서 pymavlink 경로(브리지·linkmon·CONTRACT)와 MAVSDK 경로(제어 스크립트)가
+# 서로 다른 단어를 쓰고 있었다. 사람이 눈으로 볼 때는 넘어갔지만, 코드가 모드로
+# 분기하기 시작하면 곧장 버그가 된다. CONTRACT_x500.md 가 PX4 표기로 고정했으므로
+# 그쪽에 맞춘다.
+#
+# ✔ 2026-09-24 실물 확인 — mavsdk 3.17.4 의 FlightMode 멤버는 정확히 15개이고
+#   (UNKNOWN READY TAKEOFF HOLD MISSION RETURN_TO_LAUNCH LAND OFFBOARD FOLLOW_ME
+#    MANUAL ALTCTL POSCTL ACRO STABILIZED RATTITUDE) 아래 표가 전부를 덮는다.
+#   표에만 있고 enum 에 없는 이름도 없다. 추측이 아니라 찍어서 확인한 값이다.
+#   str(FlightMode.HOLD) 가 "FlightMode.HOLD" 가 아니라 "HOLD" 를 준다는 것도 같이 확인했다
+#   — normalize_mode() 가 str() 에 의존하므로 이게 깨지면 매핑이 통째로 실패한다.
+#   mavsdk 를 올리면(4.x 는 API 가 다른 별개 패키지다) 이 확인을 다시 해야 한다.
+MAVSDK_TO_PX4 = {
+    "TAKEOFF": "AUTO.TAKEOFF",
+    "HOLD": "AUTO.LOITER",
+    "LAND": "AUTO.LAND",
+    "RETURN_TO_LAUNCH": "AUTO.RTL",
+    "MISSION": "AUTO.MISSION",
+    "READY": "AUTO.READY",
+    "FOLLOW_ME": "AUTO.FOLLOW_TARGET",
+    "POSCTL": "POSCTL",
+    "ALTCTL": "ALTCTL",
+    "MANUAL": "MANUAL",
+    "STABILIZED": "STABILIZED",
+    "OFFBOARD": "OFFBOARD",
+    "ACRO": "ACRO",
+    "RATTITUDE": "RATTITUDE",
+    "UNKNOWN": "UNKNOWN",
+}
+
+
+def normalize_mode(flight_mode):
+    """MAVSDK FlightMode 를 PX4 표기 문자열로 맞춘다.
+
+    MAVSDK 의 'HOLD' 와 pymavlink 의 'AUTO.LOITER' 는 같은 상태다.
+    표에 없는 이름이 오면 **원문을 그대로 돌려준다** — 모르는 값을 지어내지 않는다.
+    그래야 새 MAVSDK 버전이 이름을 바꿔도 조용히 틀린 모드로 분기하지 않고,
+    로그에 낯선 이름이 그대로 드러나 사람이 알아챌 수 있다.
+    """
+    name = str(flight_mode).strip().upper()
+    return MAVSDK_TO_PX4.get(name, name)
+
+
+# 자동 이륙·착륙 중 '정상' 으로 보는 모드. 이 밖으로 나가면 사람 또는 FC 가
+# 기체를 잡은 것이므로, 제어 스크립트는 명령을 더 보내지 않고 물러난다.
+EXPECTED_AUTO_MODES = frozenset({"AUTO.TAKEOFF", "AUTO.LOITER", "AUTO.LAND"})
