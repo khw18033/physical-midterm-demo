@@ -8,8 +8,11 @@
 !/README.md
 !/drone/
 !/drone_rpi/
+# 개발 계획·조사 문서. 진입점은 docs/00_통합개발계획서_x500.md 다.
+# drone/ 안이 아니라 루트에 둔 이유: drone_rpi/ 까지 함께 다루는 문서가 섞여 있다.
+!/docs/
 
-# --- 아래부터는 되살린 두 디렉터리 안에서 다시 걸러내는 것들 ---
+# --- 아래부터는 되살린 디렉터리들 안에서 다시 걸러내는 것들 ---
 
 # 가상환경. drone/venv 379M + drone_rpi/venv 166M.
 # drone/config/requirements.lock.txt 와 drone_rpi/requirements.txt 로 복원한다.
