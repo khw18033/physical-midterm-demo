@@ -10,6 +10,20 @@
 
 ---
 
+> ## ⚑ 2026-09-27 갱신 — 먼저 읽을 것
+>
+> **① pull 순서는 [`00_통합개발계획서_x500.md`](00_통합개발계획서_x500.md) **P0-0** 이 최신이다.**
+> 노트북에서 P0-2(감사 도구)와 P1(부팅 경로)이 연속 커밋으로 올라갔으므로,
+> Pi 에서 한 번에 `pull` 하고 기준선을 뜨면 **변경 후 상태를 기준선으로 기록**하게 된다.
+> → **시스템 기준선을 pull 전에** 뜨고, FC 파라미터 감사는 pull 후에 한다.
+>
+> **② A2(감사 목록 확장)는 이미 끝났다.** 노트북에서 커밋 `261b62f` 로 반영했다.
+> Pi 에서는 **직접 편집하지 않고 pull 로 받는다.** A2 절은 무엇이 왜 추가됐는지를 읽는 용도다.
+>
+> **③ SITL 은 쓰지 않는다.** 프로펠러를 뺀 실기로 검증한다 (계획서 P4-5).
+
+---
+
 ## 0. 한 장 요약
 
 | 단계 | 할 일 | 코드 수정 | FC 쓰기 | 게이트 |
@@ -69,23 +83,35 @@ cd ~/drone && git status --short && git log --oneline -1
 > ⚠ **`logs/` 가 아니라 `baseline/` 이다.** `.gitignore` 가 `/drone/logs/` 를 제외하므로
 > 거기 두면 **커밋되지 않고 이 장비에만 남는다.** 기준선은 기록이지 런타임 산출물이 아니다.
 
+> ⚠ **pull 전에 뜬다** (위 갱신 ①). `failsafe_audit.py` 는 확장판이 필요하므로 **pull 후** 따로 돈다.
+
 ```bash
 cd ~/drone
 mkdir -p baseline/fc_260924
 date -Is                                  | tee baseline/fc_260924/TIMESTAMP
+git log --oneline -1                      | tee baseline/fc_260924/git-head.txt
 systemctl is-active drone-detect drone-mavlink-router drone-linkmon drone-node \
                                           | tee baseline/fc_260924/services.txt
 cat state/mode                            | tee baseline/fc_260924/mode.txt
 vcgencmd get_throttled                    | tee baseline/fc_260924/throttled.txt
+vcgencmd measure_temp                     | tee baseline/fc_260924/temp.txt
 ./venv/bin/python scripts/fc_state.py     | tee baseline/fc_260924/fc_state.txt
-./venv/bin/python scripts/failsafe_audit.py | tee baseline/fc_260924/failsafe.txt
 ./venv/bin/python scripts/check_link.py --device udpin:0.0.0.0:14540 \
                                           | tee baseline/fc_260924/check_link.txt
-git add baseline/fc_260924/ && git commit -m "P0-3: FC 기준선 스냅샷 (2026-09-24)"
 ```
 
-**통과 기준**: 7개 파일이 전부 생기고, `mode.txt` 가 `drone`, `services.txt` 가 전부 `active`,
-**그리고 커밋됐다**.
+그 다음 코드를 받고, **즉시** import 스모크를 돌리고, 확장판 감사를 뜬다.
+
+```bash
+git merge --ff-only origin/drone-pi3 && git log --oneline -1
+cd scripts && ../venv/bin/python -c "import dronelink, fc_detect, linkmon, check_link; print('import ok')"
+cd ~/drone
+./venv/bin/python scripts/failsafe_audit.py | tee baseline/fc_260924/failsafe.txt
+git add baseline/fc_260924/ && git commit -m "P0-3: FC 기준선 스냅샷 (2026-09-27)"
+```
+
+**통과 기준**: `mode.txt` = `drone`, `services.txt` 전부 `active`, `throttled.txt` = `0x0`,
+`import ok` 출력, **그리고 커밋됐다**.
 
 ### A4. ★ 판정 — 기준선을 읽는다
 
