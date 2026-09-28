@@ -364,12 +364,12 @@ cd ~/drone && ./venv/bin/pip install -r config/requirements.lock.txt
 | 자동 감지·복구 | 링크 차단 15초 내 감지, 복구 9초, 재부팅 10초 |
 | MAVSDK 계층 전체 | 2026-09-22 가짜 FC 드라이런 — 연결·텔레메트리·이륙 게이트 전부 통과 |
 | QGC over Tailscale | 2026-09-21 사용자 확인 |
+| PX4가 `action.arm()` 을 수락한다 | 2026-09-22 3단계 통과 (실외·GPS·프로펠러 제거, `arm_disarm_test.py`) |
 
 ### 아직 모르는 것 — 이번 비행에서 처음 확인한다
 
 | 항목 | 어느 단계에서 밝혀지나 |
 |---|---|
-| PX4가 `action.arm()` 을 수락하는가 | 3단계 |
 | PX4가 `action.takeoff()` / `land()` 를 수락하는가 | 5단계 |
 | GPS fix · home position | 2단계 |
 | 배터리 단일 전원으로 FC·라즈베리파이 동시 부팅 | 0단계 |

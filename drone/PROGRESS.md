@@ -1539,3 +1539,33 @@ offboard 스크립트 없음) 스트림이 끊겨도 즉각적인 영향이 없�
 `drone-agent` 가 스풀에 계속 쓰므로 위험이 커진다. 첫 비행 동안 정지 + 비행 직전 `sync` 권장.
 
 체크리스트에 **§4-1 "비행 중 이상 상황"** 을 새로 넣었다.
+
+---
+
+## 2026-09-28 — P0-3 FC 기준선 + 3단계 통과 기록 정리
+
+### 3단계 통과 기록 (2026-09-22 항목을 체크리스트 형식으로 다시 정리)
+
+| 항목 | 값 |
+|---|---|
+| 통과 일시 | 2026-09-22, 17:54~17:55 경 (linkmon 마지막 기록 기준. 정확한 arm 시각은 기록 없음) |
+| **실내 / 실외** | **실외** (GPS 연결 후 야외로 나가 `heading estimate not stable` 해소) |
+| GPS `fix_type` · 위성 수 · `system_status` | **기록 없음 — 확인 필요.** `GLOBAL_POSITION_INT` 49.9~50.0Hz 수신으로 GPS 동작만 확인됨 |
+| arm 까지 걸린 시간 · 모터 4개 상태 | **기록 없음 — 확인 필요** (`arm_disarm_test.py` 통과 = 모터 회전 후 `DISARMED ✔`) |
+| 안전 스위치를 눌렀는지 | **기록 없음 — 확인 필요** (`COM_PREARM_MODE=0`) |
+| 조건 | 프로펠러 제거 |
+
+### P0-3 기준선 — `drone/baseline/fc_260924/` (커밋 7a1f5a9)
+
+**파일 동기화(feb21c7 → 6f94df1) 후, 서비스 재시작 전에 수집했다** (계획서의 "기준선 → pull" 순서와 다름).
+메모리의 서비스는 동기화 전 코드였다. 롤백 기준 해시는 `git-head.txt`(6f94df1)가 아니라 **feb21c7**.
+자세한 내용은 `baseline/fc_260924/NOTE.txt`.
+
+- 서비스 4개 active / `throttled=0x0` / 58.7°C / `check_link` 종료 코드 0
+- 수집 당시 `fc_state`: `MAV_STATE_UNINIT`, GPS `NO_GPS`(fix_type=0, 위성 0), RC 헬스 X
+  → 3단계 통과 당시(실외·GPS)와 **조건이 다르다**
+- 실물 `failsafe_audit.py` 첫 실행:
+  - **`NAV_DLL_ACT = 0`** (Disabled) — 라즈베리파이가 죽어도 기체는 계속 호버. **조종기로 내려야 한다**
+  - **`COM_DISARM_PRFLT = 10.0`** 초 — 이륙 대기 타임아웃은 이보다 짧게
+  - `NAV_RCL_ACT=2`(RTL), `COM_LOW_BAT_ACT=0`(경고만), `GF_ACTION=2`(RTL), `RTL_RETURN_ALT=30`,
+    `COM_RC_OVERRIDE=1`, `COM_RC_STICK_OV=30`
