@@ -1,0 +1,77 @@
+====================================================================
+FC MAVLink 링크 확인 — 읽기 전용 (제어 명령 없음)
+====================================================================
+
+─── 접속 시도: udpin:0.0.0.0:14540 ───
+[1/4] heartbeat 대기 (최대 10.0초)...
+      heartbeat 수신 ✔
+      system id / component id : 1 / 1
+      autopilot                : MAV_AUTOPILOT_PX4
+      기체 타입                : MAV_TYPE_QUADROTOR
+      system status            : MAV_STATE_UNINIT
+      arm 상태                 : DISARMED
+      custom mode              : 0x03040000 = AUTO.LOITER
+
+[2/4] 5.0초간 메시지 종류별 개수와 주기 측정...
+      측정 시간 5.0초, 총 1590건, 21종
+      메시지                             개수       Hz
+      -------------------------------------------
+      ATTITUDE                       500    100.0
+      HIGHRES_IMU                    250     50.0
+      ATTITUDE_QUATERNION            250     50.0
+      LOCAL_POSITION_NED             150     30.0
+      TIMESYNC                        51     10.2
+      ALTITUDE                        51     10.2
+      ATTITUDE_TARGET                 51     10.2
+      POSITION_TARGET_LOCAL_NED       50     10.0
+      SERVO_OUTPUT_RAW                50     10.0
+      VFR_HUD                         50     10.0
+      GPS_RAW_INT                     50     10.0
+      EXTENDED_SYS_STATE              25      5.0
+      SYS_STATUS                      25      5.0
+      ESTIMATOR_STATUS                 6      1.2
+      PING                             5      1.0
+      SCALED_PRESSURE                  5      1.0
+      UNKNOWN_8                        5      1.0
+      MISSION_CURRENT                  5      1.0
+      HEARTBEAT                        5      1.0
+      BATTERY_STATUS                   3      0.6
+      VIBRATION                        3      0.6
+
+[3/4] ATTITUDE roll/pitch/yaw (도 단위) 6줄...
+          시각(s)     roll    pitch      yaw
+      ------------------------------------
+          377.9    -0.68     1.54   -15.30
+          377.9    -0.68     1.54   -15.30
+          377.9    -0.68     1.54   -15.30
+          377.9    -0.68     1.54   -15.30
+          377.9    -0.68     1.54   -15.30
+          377.9    -0.68     1.54   -15.30
+
+[4/4] FC 파라미터 읽기 (읽기 전용 — 쓰지 않는다)...
+      (응답이 없어 재요청 1회차: MAV_0_CONFIG)
+      파라미터            값                           예정값
+      --------------------------------------------------------------
+      MAV_0_CONFIG    101 (TELEM 1)               (현재 값 유지 — Air Unit)
+      MAV_0_MODE      0 (Normal)                  (현재 값 유지 — Air Unit)
+      SER_TEL1_BAUD   57600                       (현재 값 유지 — Air Unit)
+      MAV_1_CONFIG    102 (TELEM 2)               102 (TELEM 2)
+      MAV_1_MODE      2 (Onboard)                 2 (Onboard)
+      SER_TEL2_BAUD   921600                      921600
+      UXRCE_DDS_CFG   0 (Disabled)                0 (Disabled)
+
+      ── 인스턴스 판정 ──
+      배선 기준: 라즈베리파이 = TELEM2, Air Unit = TELEM1
+      ✔ 라즈베리파이 링크 = MAVLink 인스턴스 1 on TELEM2, Onboard 모드
+      ✔ Air Unit 링크 = MAVLink 인스턴스 0 on TELEM1 (모드 0 (Normal), 보드레이트 57600) — 건드리지 않음
+      ✔ UXRCE_DDS_CFG = 0 (Disabled) — 예정대로
+
+      heartbeat 를 보낸 FC system id = 1
+
+====================================================================
+통과 기준: heartbeat 수신 ✔ / ATTITUDE 수신 ✔
+결과: 성공 (종료 코드 0)
+
+※ 기체를 살짝 기울였을 때 위 roll/pitch 값이 따라 바뀌는지는
+  사람이 직접 확인해 주세요. 그래야 자세 추정까지 정상입니다.
+====================================================================

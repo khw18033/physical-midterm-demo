@@ -1,0 +1,11 @@
+파일 동기화 후, 서비스 재시작 전에 수집.
+
+- 수집 시각: 2026-09-28T18:26:40+09:00 (TIMESTAMP 참고)
+- git-head.txt 의 6f94df1 은 "이미 동기화된 디스크 상태"다. 변경 전 해시가 아니다.
+  동기화 직전 HEAD = feb21c7 (git reflog: "merge origin/drone-pi3: Fast-forward" 직전).
+  → 9번 롤백은 git-head.txt 가 아니라 feb21c7 로 한다.
+- 메모리에서 돌고 있던 서비스(drone-detect 등)는 동기화 이전 코드다
+  (drone-detect ActiveEnterTimestamp 2026-09-28 15:52:46 KST, NRestarts=0).
+- 단, fc_state.py / check_link.py 는 서비스가 아니라 이번에 새로 실행한 스크립트이므로
+  check_link.txt 는 동기화 후(새) check_link.py 의 출력이다.
+- 동기화로 바뀐 코드: scripts/check_link.py, scripts/dronelink.py, scripts/failsafe_audit.py
