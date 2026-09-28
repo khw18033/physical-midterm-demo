@@ -1569,3 +1569,18 @@ offboard 스크립트 없음) 스트림이 끊겨도 즉각적인 영향이 없�
   - **`COM_DISARM_PRFLT = 10.0`** 초 — 이륙 대기 타임아웃은 이보다 짧게
   - `NAV_RCL_ACT=2`(RTL), `COM_LOW_BAT_ACT=0`(경고만), `GF_ACTION=2`(RTL), `RTL_RETURN_ALT=30`,
     `COM_RC_OVERRIDE=1`, `COM_RC_STICK_OV=30`
+
+### P1-5 3단계 재확인 — 통과 (2026-09-28)
+
+새 코드(`dronelink.py` 승격, 6f94df1)로 `drone-detect` 재시작(18:36:28, `mode=drone`, 서비스 4개 active) 후
+**실외**에서 `arm_disarm_test.py` 를 **사용자가 직접 실행해 통과**했다 (스크립트가 TTY 가 아니면 실행을 거부하므로).
+
+- 실행 직전 FC: `MAV_STATE_STANDBY`, GPS `3D_FIX` 위성 15개 · 수평정밀도 0.97m, DISARMED, 센서 헬스 RC=X
+- 조건: 프로펠러 제거, 3단계 통과 때와 같은 실외
+- 결과: 사용자 보고 "문제없음" (상세 출력은 남기지 않음)
+
+→ **P0~P1 검증 완료. 회귀 없음.** 롤백 불필요. 다음은 P2(모드 로깅) —
+타임아웃은 `COM_DISARM_PRFLT=10.0` 초보다 짧게, 링크 상실 시 `NAV_DLL_ACT=0` 이므로 조종기로 내리는 것을 전제로 한다.
+
+참고: `mavsdk` 패키지가 `mavsdk-grpc` 로 이름이 바뀐다는 FutureWarning 이 나온다. venv 재설치 시 API 가 다른
+새 `mavsdk` 가 깔리지 않도록 `mavsdk<4` 고정을 검토할 것.
