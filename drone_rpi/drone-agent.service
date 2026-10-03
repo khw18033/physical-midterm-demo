@@ -11,10 +11,6 @@ Description=Drone terminal agent (capture + KLT alignment + frame server)
 # 그래서 network-online.target을 **요구하지 않고** 뒤에만 둔다.
 After=network.target
 Wants=network.target
-# 카메라가 계속 안 잡히면 5초마다 재시작한다 — 그건 고쳐야 할 상태이지
-# 숨길 상태가 아니다. 2분에 10번을 넘기면 멈추고 실패로 남긴다.
-StartLimitIntervalSec=120
-StartLimitBurst=10
 
 [Service]
 Type=simple
@@ -25,8 +21,10 @@ ExecStart=/home/physical/drone_rpi/venv/bin/python -u agent.py
 # 무슨 일이 있었는지 실시간으로 볼 수 없다.
 Restart=always
 RestartSec=5
-# 재시작 폭주 제한은 [Unit] 쪽에 있다 — systemd v229부터 그 두 옵션의 소속이
-# [Service]가 아니라 [Unit]이고, 여기 두면 조용히 무시된다.
+# 카메라가 계속 안 잡히면 5초마다 무한 재시작한다 — 그건 고쳐야 할 상태이지
+# 숨길 상태가 아니다. 짧은 간격에 너무 여러 번이면 멈추고 실패로 남긴다.
+StartLimitIntervalSec=120
+StartLimitBurst=10
 StandardOutput=journal
 StandardError=journal
 

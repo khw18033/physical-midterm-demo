@@ -67,6 +67,11 @@ rsync -az --delete-after \
 # **모델을 보내지 않는다.** 말단에는 이제 신경망이 없다 — 캡처와 KLT 플로우
 # 정렬뿐이고 검출·거리는 전부 엣지 몫이다(AI-B-10). 예전에는 20MB RPN ONNX를
 # 따로 보냈고, rsync --delete-after가 그걸 지우는 사고도 한 번 있었다.
+#
+# 아래 의존성 점검에서 onnxruntime을 뺀 것도 같은 이유다. RPN을 걷어낸 뒤에도
+# 점검만 남아 있어서, requirements.txt가 "onnxruntime도 없다"고 적어 둔 그것을
+# 찾다가 배포가 마지막 단계에서 실패했다(2026-09-29). 점검은 실제로 쓰는 것만
+# 본다 — 안 쓰는 것을 찾으면 성공한 배포가 실패로 보인다.
 
 if [[ "$DO_VENV" == "1" ]]; then
   echo "== venv 구성(이미 있으면 갱신만)"
@@ -76,7 +81,7 @@ if [[ "$DO_VENV" == "1" ]]; then
     [ -d venv ] || python3 -m venv venv
     ./venv/bin/pip install -q --upgrade pip
     ./venv/bin/pip install -q -r requirements.txt
-    ./venv/bin/python -c 'import numpy,onnxruntime,cv2; print(\"deps OK\")'
+    ./venv/bin/python -c 'import numpy,cv2; print(\"deps OK\")'
   "
 fi
 

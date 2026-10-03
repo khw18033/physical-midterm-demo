@@ -15,9 +15,13 @@
     "jpeg_quality": 85,
     "send_frame": true,
     "max_frames": 0,
-    "$comment_geometry": "카메라 기하. **엣지 depth와 클래스 크기 사전이 이 값을 쓴다.** AerialMetric 실측에서 intrinsics 없이 돌린 항공 영상의 δ₁이 5~34%였다 — 아는 값을 안 넘기면 그만큼 잃는다.\n**현재 값은 imx708 표준(Camera Module 3, 4.74mm, dFoV 66°) 기준이다**(2026-09-22, pi3로 카메라 이전). 1280x720 출력에서 대각 66°를 역산해 focal_px 1131 / hFoV 59.0°.\n이전 pi4의 imx708_wide(2.75mm, dFoV 102°)는 focal_px 595 / hFoV 94.2°였다 — **렌즈를 바꾸면 반드시 이 둘을 같이 고친다.** 안 고치면 depth가 틀린 FoV로 스케일을 잡고 크기 사전 거리가 약 1.9배 어긋난다(조용히 틀린다).\n표준 렌즈가 장거리에 유리하다: 100m의 사람이 wide에서 10px, 표준에서 19px이다. 대신 시야가 94°→59°로 좁아진다.\n**이 값은 dFoV 사양에서 역산한 것이지 체커보드 실측이 아니다** — 재서 덮어써야 한다(AI-B-01).",
-    "hfov_deg": 59.0,
-    "focal_px": 1131,
+    "stall_timeout_s": 10.0,
+    "startup_timeout_s": 20.0,
+    "$comment_stall": "카메라가 이만큼 조용하면 **죽는다**. rpicam-vid가 죽어도 캡처 루프는 take()가 None인 채로 영원히 돌았고, 프로세스가 살아 있으니 drone-agent.service의 Restart=always가 걸리지 않았다 — 2026-09-29 실측으로 15분간 /api/health는 200을 주는데 frame_seq는 34301에 고정이었다. 조용해지면 예외를 내 스레드를 끝내고, 마지막 워커면 프로세스가 끝나며 systemd가 5초 뒤 다시 띄운다. 8fps면 정상 간격이 125ms이므로 10초는 80프레임을 놓친 뒤다 — 일시적 끊김으로 재시작 고리에 빠지지 않을 만큼 넉넉하다.\nstartup_timeout_s는 첫 프레임에만 쓴다. rpicam-vid가 센서를 올리는 데 몇 초 걸려서 같은 문턱을 쓰면 기동마다 재시작한다.",
+    "$comment_geometry": "카메라 기하. **엣지 depth가 metric 스케일을 잡는 데 쓴다.** AerialMetric 실측에서 intrinsics 없이 돌린 항공 영상의 δ₁이 5~34%였다 — 아는 값을 안 넘겨서 모델이 추정하게 두면 그만큼 잃는다. 값 출처: imx708_wide = Camera Module 3 Wide, 초점거리 2.75mm, dFoV 102도. 1280x720 출력 기준 focal_px는 대각 102도에서 역산한 약 590px이며 **실측 캘리브레이션 값이 아니다** — 체커보드로 재서 덮어써야 한다(AI-B-01).",
+    "hfov_deg": 94.2,
+    "focal_px": 590,
+    "$comment_range_limit": "장거리 한계는 모델이 아니라 이 렌즈다. focal_px 590에서 100m 거리의 사람(1.7m)은 10px, 차량(1.5m)은 9px이다. 표준 Camera Module 3(4.74mm, dFoV 66도)로 바꾸면 focal_px가 약 1130으로 1.9배가 되어 같은 거리의 픽셀이 2배가 된다. 광각 1대 + 표준 1대 조합이 현실적이다.",
     "input_crop": {
       "$comment": "센서 유효 영역. 어안 비네팅처럼 무효한 테두리를 **인지 전에** 자른다 — 안 자르면 RPN이 검은 경계에 후보를 대량으로 내고 화면 전체를 감싼 박스가 객체로 잡힌다(2026-09-21 실내 어안 실측). source_size가 일치할 때만 적용하므로 다른 카메라 프레임에는 자동으로 적용되지 않는다.",
       "enabled": false,
@@ -41,8 +45,7 @@
       }
     ],
     "$comment_cameras": "**카메라 1대**(사용자 2026-09-21). 2대일 때 RPN 스레드를 4→2로 나눠야 했고(4코어에 8스레드가 다투지 않게) 프레임당 310→500~590ms로 늘었다. 1대면 4스레드를 다 쓰고 CPU 부하가 절반이 된다 — 발열도 그만큼 줄어 클럭이 덜 깎인다. cameras에 항목을 추가하면 CameraWorker가 그만큼 뜬다. rpicam-vid는 프레임당 542ms인 rpicam-still 대신 MJPEG 파이프를 쓰고, 항상 **최신 프레임만** 처리한다.",
-    "$comment_stereo": "두 카메라를 알려진 baseline으로 강체 고정하면 **학습 없이 기하학적 metric depth**가 나온다. baseline 0.2m·focal_px 590·매칭오차 0.2px 기준 거리오차: 20m에서 0.7m(3.4%), 50m에서 4.2m(8.5%), 100m에서 16.9m(17%). ~30m까지는 어떤 단안 모델보다 정확하므로 **엣지 depth의 스케일을 현장에서 보정하는 진실값**으로 쓸 수 있다. 지금은 두 카메라가 독립 시점으로 교대 처리되며 stereo는 구현되어 있지 않다 — baseline 실측과 캘리브레이션이 선행 조건이다.",
-    "$comment_lens": "렌즈 교체 시 고치는 곳은 여기 둘(hfov_deg, focal_px)뿐이다. 말단은 이 값을 meta.camera로 실어 보내기만 하고 쓰지 않는다 — 쓰는 쪽은 엣지다."
+    "$comment_stereo": "두 카메라를 알려진 baseline으로 강체 고정하면 **학습 없이 기하학적 metric depth**가 나온다. baseline 0.2m·focal_px 590·매칭오차 0.2px 기준 거리오차: 20m에서 0.7m(3.4%), 50m에서 4.2m(8.5%), 100m에서 16.9m(17%). ~30m까지는 어떤 단안 모델보다 정확하므로 **엣지 depth의 스케일을 현장에서 보정하는 진실값**으로 쓸 수 있다. 지금은 두 카메라가 독립 시점으로 교대 처리되며 stereo는 구현되어 있지 않다 — baseline 실측과 캘리브레이션이 선행 조건이다."
   },
   "spool": {
     "$comment": "링크 단절 구간을 살리는 디스크 스풀. **이것이 온디바이스 RPN의 존재 이유다** — 프레임만 흘려보내는 설계였다면 단절 구간이 통째로 사라진다. 한계에 닿으면 오래된 것의 픽셀부터 버리고 메타는 살린다.",
@@ -65,5 +68,12 @@
     "obstacle_ttl_s": 6.0,
     "$comment_ttl": "엣지 판정을 현재 상태로 내보내는 유효기간(초). 만료가 없으면 화면에 수십 초 전 판정이 남는다(예전 실측 28.6s). 플로우는 프레임마다 오차가 쌓이므로 이 창이 곧 드리프트 상한이기도 하다.",
     "max_obstacles": 200
+  },
+  "state_sync": {
+    "$comment": "프레임마다 drone-node(hw/pi/drone/drone_node.py)에 captured_at을 루프백 UDP로 알린다. drone-node는 이걸 받을 때마다 드론 상태 JSON을 발행하고 ts에 captured_at을 싣는다 — 상태가 이미지와 같은 주기(8fps)·같은 시각 기준을 갖는다. 받는 쪽이 없어도 캡처에는 영향이 없다. port는 /etc/hw-drone.env의 HW_DRONE_FRAME_SYNC_PORT와 같아야 한다.",
+    "enabled": true,
+    "host": "127.0.0.1",
+    "port": 14600,
+    "camera": 0
   }
 }

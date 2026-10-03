@@ -27,6 +27,7 @@ from __future__ import annotations
 import argparse
 import json
 import signal
+import socket
 import subprocess
 import threading
 import time
@@ -143,6 +144,17 @@ class CameraStream:
 
     def available(self) -> bool:
         return self._error is None and self._latest is not None
+
+    @property
+    def error(self) -> str | None:
+        """_run이 남긴 실패 사유. **이걸 읽는 쪽이 있어야 의미가 있다.**
+
+        rpicam-vid가 죽으면 _run은 "stream ended"를 적고 조용히 끝난다. 예전에는
+        이 값을 아무도 보지 않아서, 캡처가 멈춘 채로 프로세스가 살아 있고
+        systemd의 Restart=always도 걸리지 않았다(2026-09-29 실측: 15분간 헬스는
+        200인데 frame_seq는 고정).
+        """
+        return self._error
 
     def take(self) -> tuple[bytes | None, int]:
         with self._lock:
@@ -264,8 +276,30 @@ class State:
         self.latest: dict[int, tuple[dict, bytes | None]] = {}
         self.stores: dict[int, ObstacleStore] = {}
         self.aligners: dict[int, object] = {}
+        # main이 카메라를 연 뒤 채운다. 헬스가 카메라 상태를 내보내려면 핸들러가
+        # 이 객체들을 봐야 하는데, 핸들러는 카메라보다 먼저 만들어진다.
+        self.cams: dict[int, object] = {}
         self.last_pull_at = 0.0          # 엣지가 마지막으로 가져간 시각
         self.served = self.not_modified = self.verdicts_in = 0
+
+    def camera_status(self) -> dict:
+        """카메라별 실패 사유와 마지막 프레임 나이.
+
+        **캡처가 멈춘 것을 원격에서 볼 수 있어야 한다.** 예전 헬스는 카메라 목록만
+        냈고, 그래서 캡처가 15분 멈춘 동안에도 초록이었다(2026-09-29).
+        """
+        now, out = time.time(), {}
+        for idx, cam in self.cams.items():
+            got = self.latest.get(idx)
+            age = (now - float(got[0].get("captured_at", now))) if got else None
+            st = cam.stats() if hasattr(cam, "stats") else {}
+            out[str(idx)] = {
+                "error": st.get("error"),
+                "capture_seq": st.get("seq"),
+                "dropped": st.get("dropped"),
+                "last_frame_age_s": round(age, 1) if age is not None else None,
+            }
+        return out
 
     def publish(self, cam: int, meta: dict, jpeg: bytes | None) -> None:
         with self.lock:
@@ -383,7 +417,10 @@ def make_handler(cfg: dict, state: State, spool: Spool):
                     "not_modified": state.not_modified,
                     "verdicts_in": state.verdicts_in,
                     "idle_s": round(state.idle_s(), 1),
-                    "cameras": sorted(state.latest.keys())})
+                    "cameras": sorted(state.latest.keys()),
+                    # 캡처가 살아 있나. error가 null이 아니거나
+                    # last_frame_age_s가 계속 커지면 카메라 쪽 문제다.
+                    "camera_status": state.camera_status()})
             return self._json(404, {"error": "unknown path"})
 
         def do_POST(self):
@@ -427,22 +464,52 @@ def make_handler(cfg: dict, state: State, spool: Spool):
 # ─────────────────────────────────────────────────────────────────────────────
 # 메인
 # ─────────────────────────────────────────────────────────────────────────────
-def frames_from_camera(cam: CameraStream):
+class CameraStalled(RuntimeError):
+    """카메라가 프레임을 끊었다. **죽어서 systemd가 다시 띄우게 한다.**"""
+
+
+def frames_from_camera(cam: CameraStream, *, stall_s: float = 10.0,
+                       startup_s: float = 20.0):
     """한 카메라의 최신 프레임만 계속 낸다. (frame_id, bgr)
 
     **카메라마다 이 생성기를 자기 스레드에서 돌린다.** 예전에는 한 스레드가
     두 카메라를 번갈아 처리해서, 어느 카메라든 다른 카메라의 RPN이 끝나기를
     기다려야 했다 — 실측으로 카메라당 프레임 간격이 821ms(1.4 fps)였고 RPN은
     310ms였다. 나머지 500ms는 순전히 상대 카메라를 기다린 시간이다.
+
+    **조용해지면 죽는다.** 예전에는 `take()`가 None이면 5ms 자고 계속 돌았다.
+    rpicam-vid가 죽어도 이 루프는 영원히 돌았고, 프로세스가 살아 있으니
+    drone-agent.service의 Restart=always가 걸리지 않았다. 유닛 주석은 "카메라가
+    빠지면 에이전트도 함께 끝난다"를 전제하는데 그 전제가 틀렸던 것이다
+    (2026-09-29 실측: 15분간 /api/health는 200, frame_seq는 34301에 고정).
+    이제 stall_s 동안 한 장도 못 받거나 스트림이 끝났다고 기록되면 예외를 낸다 —
+    워커 스레드가 죽고, 그게 마지막이면 main의 감시 루프가 빠져나가 프로세스가
+    끝나며, systemd가 5초 뒤 다시 띄운다.
+
+    첫 프레임에는 startup_s를 따로 준다. rpicam-vid가 센서를 올리는 데 몇 초가
+    걸려서, 같은 문턱을 쓰면 기동마다 재시작 고리에 빠진다.
     """
+    last_ok = time.time()
+    seen_any = False
     while True:
         jpeg, _ = cam.take()
         if jpeg is None:
+            err = cam.error
+            quiet = time.time() - last_ok
+            limit = stall_s if seen_any else startup_s
+            if err is not None:
+                raise CameraStalled(
+                    f"cam{cam.index}: {err} ({quiet:.1f}s 무응답)")
+            if quiet > limit:
+                raise CameraStalled(
+                    f"cam{cam.index}: {quiet:.1f}s 동안 프레임 없음"
+                    f" (문턱 {limit:.0f}s)")
             time.sleep(0.005)
             continue
         bgr = cv2.imdecode(np.frombuffer(jpeg, np.uint8), cv2.IMREAD_COLOR)
         if bgr is None:
             continue
+        last_ok, seen_any = time.time(), True
         yield f"cam{cam.index}_{time.time():.3f}", bgr
 
 
@@ -460,6 +527,40 @@ def frames_from_dir(cfg: dict):
                 yield p.stem, bgr
         if not cfg["pi"].get("loop", True):
             return
+
+
+class StateSync:
+    """프레임이 나올 때마다 드론 상태 노드(drone-node)에 그 시각을 알린다.
+
+    드론 상태 JSON은 원래 1Hz였고 카메라는 8fps라 둘을 프레임 단위로 짝지을 수
+    없었다. 이제 상태 노드가 이 신호를 받을 때마다 상태를 발행하고 `ts`에 여기
+    `captured_at`을 그대로 싣는다 — 상태와 이미지가 같은 주기·같은 시각을 갖는다.
+
+    루프백 UDP 한 줄이다. 받는 쪽이 죽어 있어도 캡처는 아무 영향을 받지 않는다
+    (보내고 잊는다). 새 의존성도 없다.
+    """
+
+    def __init__(self, addr: tuple[str, int]):
+        self.addr = addr
+        self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.sock.setblocking(False)
+
+    @classmethod
+    def from_config(cls, cfg: dict, cam_id: int) -> "StateSync | None":
+        sc = cfg.get("state_sync", {})
+        # 카메라가 여럿이면 한 대만 보낸다 — 둘 다 보내면 상태 주기가 두 배가 된다.
+        if not sc.get("enabled", False) or int(sc.get("camera", 0)) != cam_id:
+            return None
+        return cls((sc.get("host", "127.0.0.1"), int(sc.get("port", 14600))))
+
+    def send(self, meta: dict) -> None:
+        try:
+            self.sock.sendto(json.dumps(
+                {"frame_seq": meta["frame_seq"], "camera_id": meta["camera_id"],
+                 "captured_at": meta["captured_at"], "ts": meta["ts"]}).encode(),
+                self.addr)
+        except OSError:
+            pass
 
 
 class CameraWorker:
@@ -489,6 +590,7 @@ class CameraWorker:
         self.seq = 0
         self._stop = threading.Event()
         self._last_spooled = 0.0
+        self._sync = StateSync.from_config(cfg, self.cam_id)
 
     def stop(self):
         self._stop.set()
@@ -499,9 +601,22 @@ class CameraWorker:
         spool_idle = float(scfg.get("spool_after_idle_s", 5.0))
         spool_every = float(scfg.get("spool_min_interval_s", 1.0))
         max_frames = int(pcfg.get("max_frames", 0))
-        src = (frames_from_camera(self.cam) if self.cam is not None
-               else frames_from_dir(cfg))
+        src = (frames_from_camera(
+                   self.cam,
+                   stall_s=float(pcfg.get("stall_timeout_s", 10.0)),
+                   startup_s=float(pcfg.get("startup_timeout_s", 20.0)))
+               if self.cam is not None else frames_from_dir(cfg))
 
+        try:
+            self._loop(src, spool_idle, spool_every, max_frames)
+        except CameraStalled as exc:
+            # 이유를 한 줄로 남기고 스레드를 끝낸다. 마지막 워커였다면 main의
+            # 감시 루프가 빠져나가 프로세스가 끝나고, systemd가 다시 띄운다.
+            print(f"[cam{self.cam_id}] 캡처 중단 — {exc}", flush=True)
+
+    def _loop(self, src, spool_idle: float, spool_every: float,
+              max_frames: int) -> None:
+        cfg, pcfg = self.cfg, self.cfg["pi"]
         for frame_id, bgr in src:
             if self._stop.is_set():
                 return
@@ -527,6 +642,9 @@ class CameraWorker:
                 "frame_id": frame_id, "frame_seq": self.seq,
                 "node_id": cfg.get("node_id", "pi"), "camera_id": self.cam_id,
                 "captured_at": now, "observed_at": now,
+                # 이미지 생성 시각. 드론 상태 JSON의 ts와 같은 값이라 둘을
+                # 이 값으로 짝짓는다(StateSync가 같은 meta에서 보낸다).
+                "ts": now,
                 "frame_wh": [w, h],
                 # crop을 적용했으면 좌표계가 원본과 다르다(AI-C-02).
                 "input_crop": crop_box,
@@ -548,6 +666,8 @@ class CameraWorker:
                     jpeg = enc.tobytes()
 
             self.state.publish(self.cam_id, meta, jpeg)
+            if self._sync:
+                self._sync.send(meta)
 
             idle = self.state.idle_s()
             if idle > spool_idle and (now - self._last_spooled) >= spool_every:
@@ -627,6 +747,7 @@ def main() -> None:
                                           ensure_ascii=False))
         print(f"카메라 {len(live)}대 — 각각 자기 스레드 "
               f"(플로우 정렬만, 검출·추적은 엣지 몫)")
+        state.cams = {c.index: c for c in live}   # 헬스가 상태를 읽는다
         workers = [CameraWorker(cfg, c, state, spool, log, log_lock)
                    for c in live]
     else:
