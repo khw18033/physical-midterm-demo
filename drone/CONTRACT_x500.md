@@ -187,7 +187,7 @@ FC 로는 아무것도 나가지 않는다.
 
 ### 7-1. `state` (1Hz, QoS 1, retained 아님)
 
-공통 봉투 + 드론 본문. **FC 링크가 없으면 `battery`·`flight`·`gps`·`attitude`·`altitude`
+공통 봉투 + 드론 본문. **FC 링크가 없으면 `battery`·`flight`·`gps`·`rtk`·`attitude`·`altitude`
 가 전부 `null` 이다** — 마지막 값을 현재값처럼 재사용하지 않는다.
 
 > **백엔드가 `state.drone.schema.json` 을 만들 목적이면 §13 을 볼 것.** 같은 메시지를
@@ -234,6 +234,7 @@ FC 분리 상태에서 실제로 캡처한 것:
 | `battery` | 아래 표 | — | `null` |
 | `flight` | 아래 표 | — | `null` |
 | `gps` | 아래 표 | — | `null` |
+| `rtk` | 아래 표 (RTK 보정 주입 상태, 2026-10-02 추가) | — | `null` |
 | `attitude` | `roll_deg`·`pitch_deg`·`yaw_deg`·`age_s` | 도 / 초 | `null` |
 | `altitude` | `relative_m`·`amsl_m`·`age_s` | m / 초 | `null` |
 | `warnings` | FC STATUSTEXT 최근 5줄 `{severity, text, age_s}` | `severity` = `WARNING`·`CRITICAL` … | `[]` |
@@ -269,6 +270,17 @@ FC 분리 상태에서 실제로 캡처한 것:
 | `lat` / `lon` | 도. **fix_type < 2 면 `null`** — fix 없을 때의 0,0 은 좌표가 아니라 데이터 부재다 |
 | `eph_m` | m | 
 | `age_s` | 초 |
+
+`rtk` — GPS_RTCM_DATA(지상국이 FC 로 주입하는 보정) 수신 상태. 라우터가 같은 흐름을 이 노드 포트로도 중계해서 보인다.
+`corrections` 는 "보정이 흐른다", `fix` 는 "FC 가 그걸 써서 RTK 해를 냈다" — 따로 본다.
+
+| 키 | 값 |
+|---|---|
+| `corrections` | `true` = 최근 3초 안에 RTCM 수신 |
+| `rtcm_age_s` | 마지막 RTCM 이후 초. 한 번도 못 받았으면 `null` |
+| `rtcm_msgs_per_s` / `rtcm_bytes_per_s` | 최근 5초 평균 (실측 약 7.5개/s, 약 820 B/s) |
+| `rtcm_source` | 보낸 쪽 `"sysid/compid"` — 예 `"255/190"`(GCS). 못 받았으면 `null` |
+| `fix` | `RTK_FIXED` · `RTK_FLOAT` · `NONE`. GPS_RAW_INT 가 없으면 `null` |
 
 ### 7-2. `status` (10초 요약, QoS 1, **retained**)
 
@@ -478,6 +490,7 @@ mosquitto_sub -h pi3.local -V 5 -t 'terminal/x500-001/uplink' -F '%x'   # 규약
 | `battery` | `object` \| `null` | §13-3 | ✅ | `null` | **`null`** |
 | `flight` | `object` \| `null` | §13-3 | ✅ | `null` | **`null`** |
 | `gps` | `object` \| `null` | §13-3 | ✅ | `null` | **`null`** |
+| `rtk` | `object` \| `null` | §13-3 | ✅ | `null` | **`null`** |
 | `attitude` | `object` \| `null` | §13-3 | ✅ | `null` | **`null`** |
 | `altitude` | `object` \| `null` | §13-3 | ✅ | `null` | **`null`** |
 | `warnings` | `array` (§13-3) | FC STATUSTEXT 최근 5줄·120초 이내 | ✅ | `[]` (빈 배열, `null` 아님) | `[]` 또는 **끊기기 직전 경고가 남아 있다** |
@@ -524,6 +537,17 @@ mosquitto_sub -h pi3.local -V 5 -t 'terminal/x500-001/uplink' -F '%x'   # 규약
 | `lon` | `number` \| `null` | 도 | ✅ | 위와 같다 |
 | `eph_m` | `number` \| `null` | m | ✅ | `null` (PX4 `0`·`65535`·`9999` = 모름) |
 | `age_s` | `number` \| `null` | 초 | ✅ | `null` |
+
+**`rtk`** (GPS_RTCM_DATA, 2026-10-02 추가)
+
+| 키 | 타입 | 값 | 필수 | 없을 때 |
+|---|---|---|---|---|
+| `corrections` | `boolean` | 최근 3초 안에 RTCM 수신 | ✅ | — |
+| `rtcm_age_s` | `number` \| `null` | 초 | ✅ | `null` = 한 번도 못 받음 |
+| `rtcm_msgs_per_s` | `number` | 최근 5초 평균 | ✅ | `0.0` |
+| `rtcm_bytes_per_s` | `number` | 최근 5초 평균 | ✅ | `0.0` |
+| `rtcm_source` | `string` \| `null` | `"sysid/compid"` | ✅ | `null` |
+| `fix` | `string` \| `null` | `RTK_FIXED`·`RTK_FLOAT`·`NONE` | ✅ | `null` = GPS_RAW_INT 미수신 |
 
 **`attitude`** (ATTITUDE 100Hz, 1초 넘으면 객체가 통째로 `null`)
 

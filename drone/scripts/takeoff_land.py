@@ -151,7 +151,7 @@ def main():
         description="이륙 1.5m → 8초 호버 → 착륙. 위치 추정이 정상일 때만 진행한다.")
     ap.add_argument("--address", default=DEFAULT_ADDRESS,
                     help=f"MAVSDK 연결 주소 (기본 {DEFAULT_ADDRESS})")
-    ap.add_argument("--altitude", type=float, default=1.5, help="이륙 고도(m), 기본 1.5")
+    ap.add_argument("--altitude", type=float, default=3, help="이륙 고도(m), 기본 1.5")
     ap.add_argument("--hold", type=float, default=8.0, help="호버 시간(초), 기본 8")
     ap.add_argument("--connect-timeout", type=float, default=30.0, help="연결 대기(초), 기본 30")
     ap.add_argument("--position-timeout", type=float, default=60.0,
