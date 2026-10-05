@@ -1,6 +1,14 @@
 #!/usr/bin/env python3
 # ============================================================================
-# sar_test.py — SAR 레이더 캡처용 고정 경로 반복 비행 (MAVSDK-Python)
+# sar_test_rtk.py — SAR 레이더 캡처용 고정 경로 반복 비행, RTK 확인판 (MAVSDK-Python)
+#
+# sar_test.py 에 RTK 확인을 더했다. 나머지 동작은 sar_test.py 와 같다.
+#   · 이륙 전·매 패스 전 RTK Fixed 가 --rtk-min 초(기본 30) 연속 유지될 때까지 기다린다
+#     (--rtk-timeout 초(기본 120) 안에 안 되면 이륙 전엔 중단, 비행 중엔 캡처 OFF + --abort).
+#   · 경로 기준점(L)·지면 고도는 RTK 가 안정된 뒤에 잡는다.
+#   · 캡처 구간 중 Fixed 가 풀리면 경고 + SUMMARY rtk=LOST (그 패스는 재비행 대상).
+#   · 보정은 지상 노트북 cansar_rtcm_send.py → cansar.service(UDP 14660) → FC. 비행 내내 켜 둘 것.
+#   · RTK 없이 시험: --rtk-min 0
 #
 # 경로    : 이륙 지점을 L 로 두고 고정 헤딩 방향 한 직선 위에 네 점을 잡는다.
 #
@@ -403,28 +411,34 @@ async def run(args):
 
 
 async def fly(drone, tm, args):
+    # ── RTK 먼저: Fixed 직후 EKF 위치가 수십 cm~1 m 움직이므로, 경로 기준점(L)과
+    #    지면 고도는 Fixed 가 안정된 뒤에 잡는다. dry-run 은 기다리지 않고 현재 상태만 보인다.
+    if not args.dry_run:
+        try:
+            await wait_rtk(tm, args, "이륙 전")
+        except RuntimeError as e:
+            log(f"[중단] {e} — arm 하지 않는다")
+            return 1
+
     # ── 경로 계산: 지금 서 있는 자리가 L ──
     home = await first(drone.telemetry.home())
     heading = args.heading if args.heading is not None else (await first(drone.telemetry.heading())).heading_deg
     args.heading_fixed = heading % 360.0
     line = Line(tm.pos.latitude_deg, tm.pos.longitude_deg, args.heading_fixed,
                 args.lead_in, args.length, args.lead_out)
-    abs_alt = home.absolute_altitude_m + args.altitude
+    # home 은 부팅 시(RTK 이전)에 잡혔을 수 있다. 지면 기준은 지금(RTK 안정 후) 서 있는 자리의 AMSL 로 한다.
+    # arm 할 때 PX4 가 home 을 이 자리로 다시 잡으므로 상대 고도 기준과도 맞는다.
+    ground = tm.pos.absolute_altitude_m
+    abs_alt = ground + args.altitude
     log(f"[경로] 헤딩(고정) {args.heading_fixed:.1f}°")
     for name, d in (("L", 0.0), ("S", line.s_at), ("E", line.e_at), ("X", line.x_at)):
         lat, lon = line.pts[name]
         log(f"[경로] {name}  {lat:.7f}, {lon:.7f}  ({d:.0f}m)")
-    log(f"[경로] 고도 AMSL {abs_alt:.1f}m (home {home.absolute_altitude_m:.1f}m + {args.altitude}m)")
+    log(f"[경로] 고도 AMSL {abs_alt:.1f}m (지면 {ground:.1f}m + {args.altitude}m, 기존 home {home.absolute_altitude_m:.1f}m)")
     log(f"[RTK] 현재 {tm.gps_str()}, Fixed {tm.rtk_fixed_for():.0f}초 연속 (요구 {args.rtk_min:.0f}초, 0=확인 안 함)")
     if args.dry_run:
         log("[dry-run] 여기서 끝낸다. arm 하지 않았다.")
         return 0
-
-    try:
-        await wait_rtk(tm, args, "이륙 전")
-    except RuntimeError as e:
-        log(f"[중단] {e} — arm 하지 않는다")
-        return 1
 
     log(f"[설정] 이륙 고도 {args.altitude}m")
     try:
@@ -572,7 +586,7 @@ def main():
 
     log_dir = Path(args.log_dir)
     log_dir.mkdir(parents=True, exist_ok=True)
-    log_path = log_dir / f"sar_test_{datetime.datetime.now():%Y%m%d_%H%M%S}.log"
+    log_path = log_dir / f"sar_test_rtk_{datetime.datetime.now():%Y%m%d_%H%M%S}.log"
     _logf = open(log_path, "a")
     log(f"[로그] {log_path}")
     log(f"[설정] {vars(args)}")

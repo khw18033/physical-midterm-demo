@@ -1,7 +1,16 @@
-# sar_test.py — SAR 레이더 캡처용 반복 직선 비행
+# sar_test_rtk.py — SAR 레이더 캡처용 반복 직선 비행 (RTK 확인판)
 
 PX4 기체(x500)를 정해진 직선 위로 같은 방향으로 여러 번 날리면서, 등속 구간에서만 레이더 캡처를 켜는 스크립트입니다.
-`takeoff_land.py`(시험비행 성공)의 연결·안전 확인 흐름을 그대로 쓰고, 그 위에 경로 비행과 캡처 트리거를 얹었습니다.
+`sar_test.py` 에 **RTK 확인**을 더한 판이며, 경로·캡처 동작은 `sar_test.py` 와 같습니다.
+
+| | `sar_test.py` | `sar_test_rtk.py` |
+|---|---|---|
+| RTK Fixed 대기 | 없음 | 이륙 전·매 패스 전 30 초 연속 유지 대기 |
+| 경로 기준점(L)·지면 고도 | 실행 시점 위치 | **RTK 안정 후** 위치 |
+| 캡처 중 RTK 풀림 | 확인 안 함 | 경고 + SUMMARY `rtk=LOST` |
+| 로그 파일 | `sar_test_*.log` | `sar_test_rtk_*.log` |
+
+RTK 없이 비행하려면 `sar_test.py` 를 쓰거나 이 스크립트에 `--rtk-min 0` 을 줍니다.
 
 > ⚠ **기체가 실제로 이륙해 100 m 직선을 여러 번 오갑니다.** 사람이 조종기를 들고 직접 실행합니다. systemd·cron 같은 자동 실행에 넣지 않습니다.
 
@@ -78,9 +87,10 @@ PX4 기체(x500)를 정해진 직선 위로 같은 방향으로 여러 번 날�
 
 ---
 
-## 2-1. RTK 확인 (추가)
+## 2-1. RTK 확인
 
 - **이륙 전**과 **매 패스 시작 전**에 GPS 가 RTK Fixed 로 `--rtk-min`(30 초) 이상 연속 유지됐는지 기다립니다. Fixed 직후에는 EKF 위치가 수십 cm~1 m 움직이기 때문입니다.
+- **경로 기준점(L)과 지면 고도는 이륙 전 RTK 대기가 끝난 뒤에** 잡습니다. 그래야 직선이 RTK 위치 기준으로 고정됩니다. (`--dry-run` 은 RTK 를 기다리지 않으므로, dry-run 좌표는 그 순간의 위치 기준입니다.)
 - `--rtk-timeout`(120 초) 안에 조건이 안 되면 이륙 전에는 arm 하지 않고 끝내고, 비행 중에는 캡처를 끄고 `--abort` 동작을 합니다.
 - 캡처 구간 중 Fixed 가 풀리면 비행은 계속하되 `[경고] … RTK Fixed 풀림` 을 남기고 SUMMARY 에 `rtk=LOST` 를 붙입니다. 그 패스는 재비행 대상입니다.
 - 보정은 베이스를 꽂은 지상 노트북의 `cansar_rtcm_send.py` → Pi `cansar.service`(UDP 14660) → FC 로 들어갑니다. 비행 내내 그 창이 켜져 있어야 합니다.
@@ -100,8 +110,9 @@ PX4 기체(x500)를 정해진 직선 위로 같은 방향으로 여러 번 날�
    systemctl status cansar.service    # 레이더 캡처 브리지
    ls /home/physical/CAP_ON           # "No such file" 이어야 정상
    ```
-4. **배터리:** 기본 설정에서 비행 시간은 대략 3~4 분입니다(패스당 왕복 200 m + 정지·간격). 여유 있게 충전합니다.
-5. **조종기:** 손에 들고 즉시 모드 전환(Position 등)으로 개입할 수 있게 합니다.
+4. **RTK 보정:** 베이스를 꽂은 지상 노트북에서 `cansar_rtcm_send.py` 를 켜 두고, 비행이 끝날 때까지 끄지 않습니다. QGC 에서 GPS 가 RTK Fixed 인지 먼저 확인합니다.
+5. **배터리:** 기본 설정에서 비행 시간은 대략 3~4 분이고, 여기에 **패스마다 RTK 대기(최소 30 초, 최대 120 초)** 가 더해집니다. 2 패스면 대략 4~8 분으로 보고 여유 있게 충전합니다.
+6. **조종기:** 손에 들고 즉시 모드 전환(Position 등)으로 개입할 수 있게 합니다.
 
 ---
 
@@ -114,7 +125,7 @@ PX4 기체(x500)를 정해진 직선 위로 같은 방향으로 여러 번 날�
 FC 에 연결해 위치·헤딩을 읽고 **계산된 L·S·E·X 좌표만 출력**합니다. arm 하지 않고 캡처 파일도 만들지 않습니다.
 
 ```bash
-drone/venv/bin/python drone/scripts/sar_test.py --dry-run
+drone/venv/bin/python drone/scripts/sar_test_rtk.py --dry-run
 ```
 
 출력 예:
@@ -124,23 +135,25 @@ drone/venv/bin/python drone/scripts/sar_test.py --dry-run
 [경로] S  36.3498575, 127.2998642  (20m)
 [경로] E  36.3494299, 127.2994568  (80m)
 [경로] X  36.3492873, 127.2993210  (100m)
-[경로] 고도 AMSL 87.3m (home 67.3m + 20.0m)
+[경로] 고도 AMSL 87.3m (지면 67.3m + 20.0m, 기존 home 67.1m)
+[RTK] 현재 fix RTK_FIXED 위성 22, Fixed 45초 연속 (요구 30초, 0=확인 안 함)
 ```
 
-헤딩과 좌표가 현장(지도)과 맞는지 확인합니다.
+헤딩과 좌표가 현장(지도)과 맞는지, RTK 줄이 `RTK_FIXED` 인지 확인합니다.
 
 ### 4-2. 실제 비행
 
 ```bash
-drone/venv/bin/python drone/scripts/sar_test.py
+drone/venv/bin/python drone/scripts/sar_test_rtk.py
 ```
 
 안전 확인 문구가 나오면 직접 `yes` 를 입력해야 진행됩니다. 이후 순서:
 
 1. FC 연결 → 이미 arm 상태면 중단 → GPS·home 위치 정상 확인
-2. 경로 계산 → 이륙 고도 설정 → arm → takeoff
-3. 20 m 도달 → L 정렬 → 패스 반복 → L 복귀 → 착륙
-4. 착륙 확인 후 종료
+2. **RTK Fixed 30 초 연속 유지 대기** (안 되면 arm 하지 않고 종료)
+3. 경로 계산 → 이륙 고도 설정 → arm → takeoff
+4. 20 m 도달 → L 정렬 → [**RTK 대기** → 패스] 반복 → L 복귀 → 착륙
+5. 착륙 확인 후 종료
 
 비행 중 2 초마다 `진행 거리 / 속도 / 고도` 가 출력되고, 캡처 중이면 `CAP` 표시가 붙습니다.
 
@@ -172,29 +185,31 @@ drone/venv/bin/python drone/scripts/sar_test.py
 예: 4 m/s 로 3 패스, 동쪽 방향
 
 ```bash
-drone/venv/bin/python drone/scripts/sar_test.py --speed 4 --passes 3 --heading 90
+drone/venv/bin/python drone/scripts/sar_test_rtk.py --speed 4 --passes 3 --heading 90
 ```
 
 ---
 
 ## 5. 로그
 
-`/home/physical/cansar_logs/sar_test_<날짜시각>.log` 에 저장되며, 모든 줄 앞에 `[time.time()]` 이 붙습니다(cansar `pi.log` 와 같은 형식이라 시각으로 바로 맞춰 볼 수 있습니다).
+`/home/physical/cansar_logs/sar_test_rtk_<날짜시각>.log` 에 저장되며, 모든 줄 앞에 `[time.time()]` 이 붙습니다(cansar `pi.log` 와 같은 형식이라 시각으로 바로 맞춰 볼 수 있습니다).
 
 패스마다 남는 줄:
 
 ```
 PASS 1 START t=1790857072.516 속도 4.98m/s 고도 20.1m
 PASS 1 END   t=1790857084.533 속도 5.01m/s 고도 19.9m
-PASS 1 SUMMARY start=... end=... dur=12.02s speed min/mean/max=4.81/4.99/5.12m/s alt min/max=19.8/20.2m cross-track max=0.6m
+PASS 1 SUMMARY start=... end=... dur=12.02s speed min/mean/max=4.81/4.99/5.12m/s alt min/max=19.8/20.2m cross-track max=0.6m rtk=OK
 ```
 
 - **START / END:** 캡처 ON / OFF 시각(time.time()), 패스 번호
-- **SUMMARY:** 캡처 구간의 속도·고도 범위, 직선에서 옆으로 벗어난 최대 거리
+- **SUMMARY:** 캡처 구간의 속도·고도 범위, 직선에서 옆으로 벗어난 최대 거리, RTK 유지 여부(`rtk=OK` / `rtk=LOST`)
+- **RTK 줄:** `[RTK] 패스 n 전: Fixed ...초 유지 ✔` — 패스 전 대기 결과
 - 끝날 때 전체 패스의 `PASS n start= end=` 목록을 한 번 더 남깁니다.
 
 확인할 것:
 - **속도 경고:** `[경고] ... 속도가 5±0.5m/s 를 벗어났다` 가 있으면 등속이 아니었다는 뜻입니다. S 진입 속도 경고가 반복되면 `--lead-in` 을 늘립니다(예: 30).
+- **RTK 풀림:** `rtk=LOST` 인 패스는 재비행 대상입니다.
 - **cansar 쪽 판정:** cansar 쪽 `passes.csv` 의 패스 판정(OK / 재비행?)도 함께 봅니다.
 
 ---
@@ -203,7 +218,7 @@ PASS 1 SUMMARY start=... end=... dur=12.02s speed min/mean/max=4.81/4.99/5.12m/s
 
 1. **QGC 에서 .ulg 로그 받기** — Analyze Tools → Log Download → 이번 비행 로그 선택 → Download
 2. 정리할 파일:
-   - **비행 스크립트 로그:** `cansar_logs/sar_test_<날짜시각>.log`
+   - **비행 스크립트 로그:** `cansar_logs/sar_test_rtk_<날짜시각>.log`
    - **cansar 로그:** `cansar_logs/<날짜시각>/` (`events.csv`, `passes.csv`, `mav.csv`, `pi.log`)
    - **레이더 데이터:** `flight/iq_N.bin`, `meta_N.txt`
 3. **CAP_ON 정리 확인:** `ls /home/physical/CAP_ON` 이 없어야 정상입니다.
