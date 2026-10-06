@@ -17,6 +17,9 @@ fi
   echo "venv가 없다. 먼저 배포한다:  ./deploy.sh --host <pi>" >&2; exit 1; }
 
 sudo cp "$HERE/drone-agent.service" "$UNIT"
+# 드롭인(시험비행 메타데이터 로테이션 등)도 함께 깐다 — 빠지면 설치본과 저장소가 다시 어긋난다.
+sudo mkdir -p "$UNIT.d"
+sudo cp "$HERE"/drone-agent.service.d/*.conf "$UNIT.d/"
 sudo systemctl daemon-reload
 sudo systemctl enable --now drone-agent
 sleep 3
