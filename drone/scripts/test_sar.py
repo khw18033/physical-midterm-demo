@@ -64,7 +64,7 @@ import sys
 import time
 from pathlib import Path
 
-from mavsdk import System
+import mavsdk_guard as guard
 from mavsdk.telemetry import FlightMode
 
 DEFAULT_ADDRESS = "udpin://0.0.0.0:14540"
@@ -449,26 +449,25 @@ async def rotate_pass(drone, tm, line, n, abs_alt, args):
     return t_start, t_end
 
 
-async def abort(drone, how):
-    log(f"[중단] {how} 명령을 보낸다 — ★ 필요하면 즉시 조종기로 개입할 것 ★")
-    try:
-        if how == "rtl":
-            await drone.action.return_to_launch()
-        elif how == "land":
-            await drone.action.land()
-        else:
-            await drone.action.hold()
-    except Exception as e:
-        log(f"[오류] {how} 실패: {e} — ★ 즉시 조종기로 개입할 것 ★")
-
-
 async def run(args):
     # SIGTERM 도 Ctrl+C 처럼 이 태스크를 취소 → 캡처 끄고 abort
     asyncio.get_running_loop().add_signal_handler(signal.SIGTERM, asyncio.current_task().cancel)
 
     log(f"[연결] {args.address} ...")
-    drone = System()
-    await drone.connect(system_address=args.address)
+    try:
+        drone = await guard.connect(args.address, log)
+    except guard.StaleServer as e:
+        log(f"[중단] {e} — 기체에 아무 명령도 보내지 않았다.")
+        return 1
+    # 어떤 경로로 끝나든 mavsdk_server 를 내린다 — 안 내리면 [종료] 뒤에도 프로세스가 안 끝나고
+    # 서버가 기체 연결·포트를 쥔 채 남는다(다음 실행이 여기에 붙는다).
+    try:
+        return await _run(drone, args)
+    finally:
+        guard.stop(drone)
+
+
+async def _run(drone, args):
     try:
         async with asyncio.timeout(args.connect_timeout):
             async for s in drone.core.connection_state():
@@ -580,7 +579,7 @@ async def fly(drone, tm, args):
         # Ctrl+C·SIGTERM — 공중에 둔 채 끝내지 않는다.
         cap_off()
         log("[중단] 사용자 중단 (Ctrl+C/SIGTERM) — 캡처 OFF")
-        await abort(drone, args.abort)
+        await guard.abort(drone, args.abort, args.address, log)
         raise
     except ModeLost as e:
         cap_off()
@@ -589,12 +588,12 @@ async def fly(drone, tm, args):
     except TimeoutError:
         cap_off()
         log("[오류] 시간 초과 — 목표에 도달하지 못했다 — 캡처 OFF")
-        await abort(drone, args.abort)
+        await guard.abort(drone, args.abort, args.address, log)
         return 1
     except Exception as e:
         cap_off()
         log(f"[오류] 비행 중 명령 실패: {e} — 캡처 OFF")
-        await abort(drone, args.abort)
+        await guard.abort(drone, args.abort, args.address, log)
         return 1
     finally:
         cap_off()

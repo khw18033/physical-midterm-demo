@@ -67,7 +67,11 @@ pkill mavsdk_server          # 남아 있으면 (다른 창에서 비행 중인 
 
 ⚠ 기존 서버에 붙은 채로 진행되면 **다른 스크립트의 연결로 기체에 명령을 보내게 된다.** 이번에는 서버가 바로 죽어 위치 확인 단계에서 끝났다.
 
-## 남은 일 (제안, 미적용)
+## 남은 일 → 적용됨
+
+같은 원인으로 13:18 비행 중 사고가 났다. 원인 확정과 수정은 [REPORT_mavsdk_stale_server_261008.md](REPORT_mavsdk_stale_server_261008.md) 참고.
+
+### (당시 제안)
 
 - `test_sar.py` · `test_sar_rtk.py` · `sar_test.py` · `sar_test_rtk.py` 시작 시 UDP 14540 또는 TCP 50051 이 이미 쓰이고 있으면
   **연결하지 않고 중단**하고, 잡고 있는 프로세스(PID·명령)를 출력한다.
