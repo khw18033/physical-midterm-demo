@@ -14,7 +14,7 @@
 #   · 속도: PX4 는 미션을 멈췄다 다시 시작하면 순항 속도를 기본값으로 되돌리므로 waypoint 마다 앞에
 #     DO_CHANGE_SPEED 를 둔다.
 #   · 패스 간격: 패스 사이 L 에서 max(settle, gap) 초 머문다(hold time). 이동 시간을 빼지 않아 넉넉하다.
-#   · 캡처 S~E 구간 안에는 waypoint 를 두지 않는다 — PX4 가 waypoint 앞에서 감속하기 때문.
+#   · 가감속 구간이 없다 — L 출발부터 X 도달까지 전체를 캡처한다(가속·감속 중 데이터도 들어간다).
 #
 #   Pi 에 남는 일 (Pi 가 죽으면 이것만 멈추고 비행은 계속된다):
 #   · 캡처 켜고 끄기 — 미션 진행(현재 항목)과 위치로 S·E 를 판정해 CAP 파일을 만들고 지운다.
@@ -36,26 +36,25 @@
 # ---- 이하 test_sar.py 설명 ----
 #
 # 용도    : 본 비행(sar_test_rtk.py) 전에 저고도·단거리로 경로·헤딩·CAP_ON 켜고 끄기·중단 처리를 확인한다.
-#           실행하면 이동 방향·고도·이동거리(L→X 전체)·속도·왕복 횟수를 먼저 묻고, 그다음 yes 확인을 받는다.
-#           이동거리는 가속 20% · 캡처 60% · 감속 20% 로 나눈다.
-#           이동 방향 선택: 전후(기본, 기수 방향) / 좌우(기수 오른쪽, 옆으로 비행) /
+#           실행하면 이동 방향·먼저 갈 쪽·고도·이동거리(L→X)·속도·왕복 횟수를 먼저 묻고, 그다음 yes 확인을 받는다.
+#           이동 방향 선택: 전후(앞 또는 뒤로 먼저) / 좌우(오른쪽 또는 왼쪽으로 먼저, 옆으로 비행) /
 #                           회전(제자리에서 360° 시계방향 회전, 회전 중 캡처, 전후좌우 이동 없음).
 #           어느 경우든 기수는 이륙 직전 방향으로 고정된다(회전 패스 제외).
-#             · 기본: 고도 5m, 전체 5m (가속 1m + 캡처 3m + 감속 1m), 속도 1m/s, 도달 반경 0.5m, 왕복 2회
-#           ⚠ 거리가 짧아 등속에 들어가지 못한다 — 이 비행의 레이더 데이터는 본 측정으로 쓰지 않는다.
+#             · 기본: 고도 5m, 이동거리 5m, 속도 1m/s, 도달 반경 0.5m, 왕복 2회
+#           ⚠ 가감속 구간이 없어 캡처 처음·끝은 등속이 아니다(MPC_ACC_HOR 3m/s² 기준 4m/s 면 약 1.3초·2.7m씩).
 #           ⚠ 일반 GPS 는 위치 오차가 1m 안팎이라 5m 경로에서는 흔들림이 크게 보일 수 있다.
 #
 # 경로    : 이륙 지점을 L 로 두고 이동선 위에 네 점을 잡는다.
 #
-#             L ──가속── S ════ 등속 직선(캡처) ════ E ──감속── X
-#             (이륙)     ←lead-in→  ←── length ──→   ←lead-out→
+#             L ════════════ 캡처 ════════════ X
+#             (이륙)      ←── length(이동거리) ──→
 #
-#           이륙 → L → [L→X 패스, S~E 구간만 캡처] → L 복귀 → (gap 초 이상 대기) → 다음 패스
+#           이륙 → L → [L→X 패스, 전 구간 캡처] → L 복귀 → (gap 초 이상 대기) → 다음 패스
 #           → 마지막 패스 후 L 에 착륙
 #           · 복귀(X→L)는 기수를 돌리지 않고 후진(좌우면 옆으로).
 #
 # 레이더 캡처 : cansar.service 가 CAP 파일(/home/physical/CAP_ON)이 있는 동안 캡처한다.
-#           · S 통과 시 touch, E 통과 시 unlink.
+#           · L 출발(패스 항목 시작) 시 touch, X 도달(반경 --accept-radius 안) 시 unlink. 복귀(X→L)는 캡처 안 함.
 #           · 예외·Ctrl+C·SIGTERM·모드 이탈(RTL·조종기 개입 등) 시에도 반드시 unlink 한다.
 #
 # 로그    : 패스 번호와 시작/끝 시각(time.time())을 화면과 --log-dir 의 파일에 남긴다.
@@ -101,6 +100,10 @@ MIN_PASSES, MAX_PASSES = 1, 10    # 왕복(회전) 횟수
 # 이동 방향: 전후 = 기수 방향 직선, 좌우 = 기수 오른쪽 직선(옆으로 비행), 회전 = 제자리 360° 회전
 PATTERNS = {"전후": "fb", "좌우": "lr", "회전": "rotate"}
 PATTERN_NAME = {v: k for k, v in PATTERNS.items()}
+# 먼저 갈 쪽: 기수 기준 이동선 방향(도). 전후는 앞/뒤, 좌우는 오른쪽/왼쪽 중에서 고른다.
+SIDES = {"fb": {"앞": "forward", "뒤": "back"}, "lr": {"오른쪽": "right", "왼쪽": "left"}}
+SIDE_NAME = {"forward": "앞", "back": "뒤", "right": "오른쪽", "left": "왼쪽"}
+SIDE_DEG = {"forward": 0.0, "back": 180.0, "right": 90.0, "left": 270.0}
 ROTATE_STEP = 90.0   # 도 — PX4 는 최단 방향으로 돌므로 180° 미만 단계로 나눠 시계방향을 보장한다
 
 # MAVLink 상수
@@ -229,14 +232,10 @@ class Telem:
 class Line:
     """L 을 원점, 이동 방향을 +축으로 하는 직선 좌표."""
 
-    def __init__(self, lat, lon, heading, lead_in, length, lead_out):
+    def __init__(self, lat, lon, heading, length):
         self.lat, self.lon, self.heading = lat, lon, heading
-        self.s_at = lead_in
-        self.e_at = lead_in + length
-        self.x_at = lead_in + length + lead_out
-        self.pts = {"L": (lat, lon)}
-        for name, d in (("S", self.s_at), ("E", self.e_at), ("X", self.x_at)):
-            self.pts[name] = offset(lat, lon, d, heading)
+        self.x_at = length
+        self.pts = {"L": (lat, lon), "X": offset(lat, lon, length, heading)}
 
     def along_cross(self, p):
         n, e = ne(self.lat, self.lon, p.latitude_deg, p.longitude_deg)
@@ -381,8 +380,8 @@ def ask_int(prompt, default, lo, hi):
 
 
 def ask_flight(args):
-    """실행 직후 이동 방향·고도·이동거리·속도·왕복 횟수를 묻는다 (회전은 고도·횟수만).
-    이동거리는 L→X 전체이고 2:6:2 로 나눈다 (가속 20% · 캡처 60% · 감속 20%. 5m → 1·3·1, 100m → 20·60·20)."""
+    """실행 직후 이동 방향·먼저 갈 쪽·고도·이동거리·속도·왕복 횟수를 묻는다 (회전은 고도·횟수만).
+    이동거리는 L→X 전체이고 전부 캡처 구간이다."""
     print("=" * 64)
     print("  비행 설정 입력")
     print("=" * 64)
@@ -394,17 +393,26 @@ def ask_flight(args):
             args.pattern = PATTERNS[raw]
             break
         print("    전후, 좌우, 회전 중 하나로 입력하세요.")
+    if args.pattern != "rotate":
+        sides = SIDES[args.pattern]
+        if args.side not in sides.values():
+            args.side = next(iter(sides.values()))
+        names = "/".join(sides)
+        while True:
+            raw = input(f"  먼저 갈 쪽 [{names}, Enter={SIDE_NAME[args.side]}]: ").strip()
+            if not raw:
+                break
+            if raw in sides:
+                args.side = sides[raw]
+                break
+            print(f"    {', '.join(sides)} 중 하나로 입력하세요.")
     args.altitude = ask_float("비행 고도(m)", args.altitude, MIN_ALT, MAX_ALT)
     if args.pattern == "rotate":
         args.passes = ask_int("회전 횟수(회)", args.passes, MIN_PASSES, MAX_PASSES)
         print("  → 제자리에서 이륙 → 360° 회전 × 횟수 → 착륙 (전후좌우 이동 없음)")
         print()
         return
-    total = args.lead_in + args.length + args.lead_out
-    total = ask_float("이동거리(m, 한 방향 L→X 전체)", total, MIN_DIST, MAX_DIST)
-    args.lead_in = args.lead_out = total * 0.2
-    args.length = total * 0.6
-    print(f"  → 가속 {args.lead_in:g}m + 캡처 {args.length:g}m + 감속 {args.lead_out:g}m")
+    args.length = ask_float("이동거리(m, 한 방향 L→X, 전부 캡처)", args.length, MIN_DIST, MAX_DIST)
     args.speed = ask_float("수평 속도(m/s)", args.speed, MIN_SPEED, MAX_SPEED)
     args.passes = ask_int("왕복 횟수(회)", args.passes, MIN_PASSES, MAX_PASSES)
     print()
@@ -417,8 +425,7 @@ def estimate_s(args):
     if args.pattern == "rotate":
         per = 360.0 / 30.0 + rest                                          # 회전(넉넉히 30°/s)
     else:
-        x = args.lead_in + args.length + args.lead_out
-        per = 2 * (x / args.speed + 4) + args.settle + rest                # 왕복(가감속 여유 4s씩)
+        per = 2 * (args.length / args.speed + 4) + args.settle + rest                # 왕복(가감속 여유 4s씩)
     return t + per * args.passes
 
 
@@ -448,21 +455,21 @@ def print_mission_note(args):
 
 
 def confirm(args):
-    total = args.lead_in + args.length + args.lead_out
+    total = args.length
     if args.pattern == "rotate":
         return confirm_rotate(args)
-    side = "오른쪽(옆으로 비행)" if args.pattern == "lr" else "헤딩"
+    side = SIDE_NAME[args.side] + ("(옆으로 비행)" if args.pattern == "lr" else "")
     print("=" * 64)
     print(f"  ⚠⚠  이 스크립트는 기체를 {args.altitude}m 까지 이륙시켜 {total:.0f}m 직선을 "
           f"{args.passes}회 왕복합니다.")
     print("=" * 64)
-    print(f"  · 이동 방향: {PATTERN_NAME[args.pattern]} — 기수는 고정, 이동은 {side} 방향")
+    print(f"  · 이동 방향: {PATTERN_NAME[args.pattern]}, {side} 먼저 — 기수는 고정, 캡처는 {side} 으로 갈 때만")
     print(f"  · 이륙 지점에서 {side} 방향으로 {total:.0f}m, 고도 {args.altitude}m 공간이 비어 있습니까?")
     print("  · 사람·장애물과 충분히 떨어져 있습니까?")
     print("  · 조종기를 손에 들고 즉시 개입할 수 있습니까?")
     print("  · 배터리 잔량이 충분합니까?")
     print("  · cansar.service 가 떠 있습니까? (CAP 파일로 캡처를 켜고 끕니다)")
-    print(f"  · 순서: takeoff({args.altitude}m) → [L → S~E 캡처({args.length:g}m) → X → L] × "
+    print(f"  · 순서: takeoff({args.altitude}m) → [L → X 캡처({args.length:g}m, 가감속 구간 없음) → L] × "
           f"{args.passes} → land")
     print(f"  · 속도 {args.speed}m/s, 헤딩 고정, 패스 간격 ≥{args.gap}초, 예상 {estimate_s(args) / 60:.1f}분")
     print_mission_note(args)
@@ -573,8 +580,6 @@ class PassLog:
             s += "(360° 회전) "
         log(s + f"rtk={'LOST' if self.rtk_lost else 'OK'}")
         if self.cross:
-            if min(self.speeds) < args.speed - args.speed_tol or max(self.speeds) > args.speed + args.speed_tol:
-                log(f"[경고] 패스 {self.n}: 캡처 구간 속도가 {args.speed}±{args.speed_tol}m/s 를 벗어났다")
             if max(self.yaw_err) > 15.0:
                 log(f"[경고] 패스 {self.n}: 기수가 고정 헤딩에서 최대 {max(self.yaw_err):.0f}° 벗어났다")
 
@@ -647,16 +652,15 @@ async def monitor(drone, tm, plan, line, args):
             else:
                 active = kind == "pass" and n == p.n
                 along, xt = line.along_cross(tm.pos)
-                if active and p.t_start is None and along >= line.s_at:
+                if active and p.t_start is None:
                     p.start(tm, args, f"속도 {tm.ground_speed():.2f}m/s")
-                    if abs(tm.ground_speed() - args.speed) > args.speed_tol:
-                        log(f"[경고] 패스 {p.n}: S 진입 속도 {tm.ground_speed():.2f}m/s 가 목표 {args.speed}m/s 와 "
-                            f"다르다 — 가속이 덜 끝났을 수 있다 (이동거리를 늘릴 것)")
                 if p.t_start is not None and p.t_end is None:
-                    if active and along < line.e_at:
+                    # X 도달(도달 반경 안) 전까지. 패스 항목은 X 에서 settle 초 머무는 동안에도 현재 항목이라
+                    # 항목이 넘어가기를 기다리면 정지 비행까지 캡처된다.
+                    if active and along < line.x_at - args.accept_radius:
                         p.sample(tm, args, xt)
                     else:
-                        # E 통과, 또는 E 전에 미션 항목이 넘어갔다(도달 판정) — 어느 쪽이든 끈다
+                        # X 도달, 또는 그 전에 미션 항목이 넘어갔다 — 어느 쪽이든 끈다
                         p.end(tm, f"속도 {tm.ground_speed():.2f}m/s")
                         p.summary(args)
 
@@ -733,13 +737,14 @@ async def fly(drone, tm, args):
     heading = args.heading if args.heading is not None else tm.hdg.heading_deg
     args.heading_fixed = heading % 360.0
     # 기수(yaw)는 항상 heading_fixed. 좌우는 이동선만 기수 오른쪽 90° 로 돌린다.
-    bearing = (args.heading_fixed + (90.0 if args.pattern == "lr" else 0.0)) % 360.0
-    line = Line(tm.pos.latitude_deg, tm.pos.longitude_deg, bearing,
-                args.lead_in, args.length, args.lead_out)
+    # 기수(yaw)는 항상 heading_fixed. 이동선만 먼저 갈 쪽(앞 0°·오른쪽 90°·뒤 180°·왼쪽 270°)으로 돌린다.
+    bearing = (args.heading_fixed + (0.0 if args.pattern == "rotate" else SIDE_DEG[args.side])) % 360.0
+    line = Line(tm.pos.latitude_deg, tm.pos.longitude_deg, bearing, args.length)
     log(f"[경로] 이동 방향 {PATTERN_NAME[args.pattern]}, 헤딩(고정) {args.heading_fixed:.1f}°"
-        + (f", 이동선 {bearing:.1f}°" if args.pattern != "rotate" else "") + f", {args.passes}회")
+        + (f", {SIDE_NAME[args.side]} 먼저, 이동선 {bearing:.1f}°" if args.pattern != "rotate" else "")
+        + f", {args.passes}회")
     names = (("L", 0.0),) if args.pattern == "rotate" else \
-        (("L", 0.0), ("S", line.s_at), ("E", line.e_at), ("X", line.x_at))
+        (("L", 0.0), ("X", line.x_at))
     for name, d in names:
         lat, lon = line.pts[name]
         log(f"[경로] {name}  {lat:.7f}, {lon:.7f}  ({d:.0f}m)")
@@ -843,13 +848,12 @@ def main():
                     help=f"MAVSDK 연결 주소 (기본 {DEFAULT_ADDRESS})")
     ap.add_argument("--altitude", type=float, default=5.0, help="비행 고도(m, home 기준, ≥2), 기본 5")
     ap.add_argument("--speed", type=float, default=1.0, help="수평 속도(m/s, 0.5~5), 기본 1")
-    ap.add_argument("--speed-tol", type=float, default=0.5,
-                    help="등속 판정 허용 오차(m/s), 로그 경고용, 기본 0.5")
-    ap.add_argument("--length", type=float, default=3.0, help="캡처 구간 길이(m), 기본 3")
-    ap.add_argument("--lead-in", type=float, default=1.0, help="가속 구간 L→S(m), 기본 1")
-    ap.add_argument("--lead-out", type=float, default=1.0, help="감속 구간 E→X(m), 기본 1")
+    ap.add_argument("--length", type=float, default=5.0, help="이동거리 L→X(m), 전부 캡처, 기본 5")
     ap.add_argument("--pattern", choices=["fb", "lr", "rotate"], default="fb",
                     help="이동 방향: fb=전후(기본), lr=좌우(옆으로), rotate=제자리 360° 회전. "
+                         "터미널에서 실행하면 시작할 때 묻는다")
+    ap.add_argument("--side", choices=["forward", "back", "right", "left"], default=None,
+                    help="먼저 갈 쪽: 전후면 forward(기본)/back, 좌우면 right(기본)/left. "
                          "터미널에서 실행하면 시작할 때 묻는다")
     ap.add_argument("--passes", type=int, default=2,
                     help=f"왕복(회전) 횟수({MIN_PASSES}~{MAX_PASSES}), 기본 2. 터미널에서 실행하면 시작할 때 묻는다")
@@ -876,6 +880,8 @@ def main():
     args = ap.parse_args()
 
     # 실행하면 먼저 비행 설정을 묻는다. --yes 이거나 터미널이 아니면 옵션 값 그대로 쓴다.
+    if args.side is None:
+        args.side = "right" if args.pattern == "lr" else "forward"
     if not args.yes and sys.stdin.isatty():
         try:
             ask_flight(args)
@@ -883,6 +889,9 @@ def main():
             print("\n  [중단] 입력이 없었습니다.")
             return 1
 
+    if args.pattern != "rotate" and args.side not in SIDES[args.pattern].values():
+        ap.error(f"--side 는 {PATTERN_NAME[args.pattern]} 이면 "
+                 f"{'/'.join(SIDES[args.pattern].values())} 중 하나여야 한다")
     if not MIN_SPEED <= args.speed <= MAX_SPEED:
         ap.error(f"--speed 는 {MIN_SPEED:g}~{MAX_SPEED:g} m/s 여야 한다")
     if not MIN_ALT <= args.altitude <= MAX_ALT:
@@ -891,12 +900,10 @@ def main():
         ap.error("--length 는 0 보다 커야 한다")
     if not MIN_PASSES <= args.passes <= MAX_PASSES:
         ap.error(f"--passes 는 {MIN_PASSES}~{MAX_PASSES} 여야 한다")
-    if args.accept_radius >= min(args.lead_in, args.lead_out) + args.length:
+    if args.accept_radius >= args.length:
         ap.error("--accept-radius 가 경로보다 크다 — 도달 판정이 출발 즉시 끝난다")
     if args.gap < 10.0:
         ap.error("--gap 은 10초 이상이어야 한다")
-    if args.lead_in <= 0 or args.lead_out <= 0:
-        ap.error("--lead-in, --lead-out 은 0 보다 커야 한다")
 
     if not args.dry_run and not confirm(args):
         return 1
