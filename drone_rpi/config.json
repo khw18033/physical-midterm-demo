@@ -41,17 +41,9 @@
         "index": 0,
         "width": 1280,
         "height": 720,
-        "framerate": 8,
-        "extra_args": [
-          "--autofocus-mode", "manual",
-          "--lens-position", "0",
-          "--exposure", "sport",
-          "--quality", "85",
-          "--metadata", "/home/physical/flight_meta.json"
-        ]
+        "framerate": 8
       }
     ],
-    "$comment_extra_args": "비행 중 흐림 대책(2026-10-06): 이륙 전 연속 AF가 근거리 잔디에 맞고 진동 때문에 다시 맞추지 못해 호버링 내내 뿌옇던 문제. 초점을 무한대(lens-position 0)에 고정하고 노출은 sport(짧은 셔터 우선)로 둔다. --shutter 고정값은 어두울 때 화면이 망가져 쓰지 않는다. **--metadata는 시험비행 전용이다 — 운용 전에 반드시 지운다.** 영상이 stdout(-o -)으로 나가므로 메타데이터는 파일 경로로만 지정하며, 프레임마다 덧붙어 파일이 계속 커진다. rpicam-vid는 기동마다 이 파일을 새로 쓰므로, drone-agent 기동 직전에 rotate_flight_meta.sh(drone-agent.service.d 드롭인)가 직전 파일을 /home/physical/flight_meta/<시각>.json으로 옮기고 최근 100개만 남긴다.",
     "$comment_cameras": "**카메라 1대**(사용자 2026-09-21). 2대일 때 RPN 스레드를 4→2로 나눠야 했고(4코어에 8스레드가 다투지 않게) 프레임당 310→500~590ms로 늘었다. 1대면 4스레드를 다 쓰고 CPU 부하가 절반이 된다 — 발열도 그만큼 줄어 클럭이 덜 깎인다. cameras에 항목을 추가하면 CameraWorker가 그만큼 뜬다. rpicam-vid는 프레임당 542ms인 rpicam-still 대신 MJPEG 파이프를 쓰고, 항상 **최신 프레임만** 처리한다.",
     "$comment_stereo": "두 카메라를 알려진 baseline으로 강체 고정하면 **학습 없이 기하학적 metric depth**가 나온다. baseline 0.2m·focal_px 590·매칭오차 0.2px 기준 거리오차: 20m에서 0.7m(3.4%), 50m에서 4.2m(8.5%), 100m에서 16.9m(17%). ~30m까지는 어떤 단안 모델보다 정확하므로 **엣지 depth의 스케일을 현장에서 보정하는 진실값**으로 쓸 수 있다. 지금은 두 카메라가 독립 시점으로 교대 처리되며 stereo는 구현되어 있지 않다 — baseline 실측과 캘리브레이션이 선행 조건이다."
   },

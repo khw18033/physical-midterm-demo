@@ -13,6 +13,11 @@
 #     쓰고(MPC_YAW_MODE 무시), 헤딩이 MIS_YAW_ERR 안에 들어와야 지점 도달로 친다.
 #   · 속도: PX4 는 미션을 멈췄다 다시 시작하면 순항 속도를 기본값으로 되돌리므로 waypoint 마다 앞에
 #     DO_CHANGE_SPEED 를 둔다.
+#   · 이륙 yaw 복원: 경로를 잡을 때의 기수(yaw)를 고정 헤딩으로 기억하고, arm 직전에 다시 읽어
+#     ±ARM_YAW_TOL° · ARM_MOVE_TOL m 안인지 확인한다(벗어나면 이륙하지 않는다). PX4 는 이륙 중 헤딩을
+#     무시해 상승하면서 기수가 돌 수 있으므로, 목표 고도 도달 직후 L 상공에서 'yaw 정렬' 항목으로
+#     기억한 yaw 로 돌린 뒤 --align-hold 초 머문다. FC 안에서 하므로 Pi 가 죽어도 정렬된다.
+#     Pi 는 오차가 ALIGN_TOL° 안에 들었는지 로그로 남긴다(안 들면 경고).
 #   · 패스 간격: 패스 사이 L 에서 max(settle, gap) 초 머문다(hold time). 이동 시간을 빼지 않아 넉넉하다.
 #   · 가감속 구간이 없다 — L 출발부터 X 도달까지 전체를 캡처한다(가속·감속 중 데이터도 들어간다).
 #
@@ -104,6 +109,9 @@ PATTERN_NAME = {v: k for k, v in PATTERNS.items()}
 SIDES = {"fb": {"앞": "forward", "뒤": "back"}, "lr": {"오른쪽": "right", "왼쪽": "left"}}
 SIDE_NAME = {"forward": "앞", "back": "뒤", "right": "오른쪽", "left": "왼쪽"}
 SIDE_DEG = {"forward": 0.0, "back": 180.0, "right": 90.0, "left": 270.0}
+ALIGN_TOL = 3.0      # 도 — 이륙 후 yaw 정렬 판정(로그용). PX4 자체 도달 판정은 MIS_YAW_ERR(12°)
+ARM_YAW_TOL = 5.0    # 도 — 경로를 잡은 뒤 arm 직전까지 기수가 이만큼 돌았으면 이륙하지 않는다
+ARM_MOVE_TOL = 1.0   # m — 같은 이유로 위치
 ROTATE_STEP = 90.0   # 도 — PX4 는 최단 방향으로 돌므로 180° 미만 단계로 나눠 시계방향을 보장한다
 
 # MAVLink 상수
@@ -280,6 +288,9 @@ def build_plan(line, args):
     alt, yaw, acc = args.altitude, args.heading_fixed, args.accept_radius
     # NAV_TAKEOFF: p4 헤딩(PX4 는 이륙 중 무시), z 이륙 고도
     p.add(("takeoff", 0), NAV_TAKEOFF, FRAME_GLOBAL_REL_ALT, 0.0, 0.0, 0.0, yaw, lat, lon, alt)
+    # 목표 고도 도달 후 L 상공에서 이륙 직전 yaw 로 돌린다. PX4 는 헤딩이 MIS_YAW_ERR 안에 들어와야
+    # 도달로 치고, 그 뒤 align_hold 초 머무는 동안에도 같은 yaw 를 계속 맞춘다.
+    p.wp(("align", 0), lat, lon, alt, yaw, args.align_hold, acc)
     p.speed(args.speed)
     p.wp(("hold", 0), lat, lon, alt, yaw, args.settle, acc)
     for n in range(1, args.passes + 1):
@@ -304,7 +315,7 @@ def build_plan(line, args):
 def describe(item, role):
     name = CMD_NAME.get(item.command, str(item.command))
     kind, n = role
-    tag = {"takeoff": "이륙", "speed": "속도", "hold": f"L 대기(패스 {n} 뒤)" if n else "L 대기",
+    tag = {"takeoff": "이륙", "align": "yaw 정렬", "speed": "속도", "hold": f"L 대기(패스 {n} 뒤)" if n else "L 대기",
            "pass": f"패스 {n} L→X", "rot": f"패스 {n} 회전", "land": "착륙"}[kind]
     if item.command == DO_CHANGE_SPEED:
         return f"#{item.seq:<2} {name:<8} {tag:<14} {item.param2:g}m/s"
@@ -420,7 +431,7 @@ def ask_flight(args):
 
 def estimate_s(args):
     """미션 예상 시간(초) — 시간 초과 판정의 기준. 대략값이다."""
-    t = args.altitude / 1.0 + args.settle + args.altitude / 0.7 + 10   # 이륙·첫 대기·착륙·여유
+    t = args.altitude / 1.0 + 6 + args.align_hold + args.settle + args.altitude / 0.7 + 10  # 이륙·정렬·첫 대기·착륙·여유
     rest = max(args.settle, args.gap)
     if args.pattern == "rotate":
         per = 360.0 / 30.0 + rest                                          # 회전(넉넉히 30°/s)
@@ -439,7 +450,7 @@ def confirm_rotate(args):
     print("  · 조종기를 손에 들고 즉시 개입할 수 있습니까?")
     print("  · 배터리 잔량이 충분합니까?")
     print("  · cansar.service 가 떠 있습니까? (회전하는 동안 CAP 파일로 캡처를 켭니다)")
-    print(f"  · 순서: takeoff({args.altitude}m) → [제자리 360° 시계방향 회전, 회전 중 캡처] × "
+    print(f"  · 순서: takeoff({args.altitude}m) → 이륙 yaw 로 정렬 → [제자리 360° 시계방향 회전, 회전 중 캡처] × "
           f"{args.passes} → land")
     print(f"  · 전후좌우 이동 없음, 패스 간격 ≥{args.gap}초, 예상 {estimate_s(args) / 60:.1f}분")
     print_mission_note(args)
@@ -469,7 +480,7 @@ def confirm(args):
     print("  · 조종기를 손에 들고 즉시 개입할 수 있습니까?")
     print("  · 배터리 잔량이 충분합니까?")
     print("  · cansar.service 가 떠 있습니까? (CAP 파일로 캡처를 켜고 끕니다)")
-    print(f"  · 순서: takeoff({args.altitude}m) → [L → X 캡처({args.length:g}m, 가감속 구간 없음) → L] × "
+    print(f"  · 순서: takeoff({args.altitude}m) → 이륙 yaw 로 정렬 → [L → X 캡처({args.length:g}m, 가감속 구간 없음) → L] × "
           f"{args.passes} → land")
     print(f"  · 속도 {args.speed}m/s, 헤딩 고정, 패스 간격 ≥{args.gap}초, 예상 {estimate_s(args) / 60:.1f}분")
     print_mission_note(args)
@@ -609,6 +620,7 @@ async def monitor(drone, tm, plan, line, args):
     PassLog 목록을 돌려준다. 미션 자체는 FC 가 진행한다."""
     passes = {n: PassLog(n) for n in range(1, args.passes + 1)}
     gated = set()
+    align_seen = align_ok = align_done = False
     deadline = time.monotonic() + estimate_s(args) * 2 + 60
     last_log = 0.0
     last_cur = None
@@ -629,6 +641,21 @@ async def monitor(drone, tm, plan, line, args):
             if 0 <= cur < len(plan.items):
                 log(f"[미션] 진행 {describe(plan.items[cur], plan.roles[cur])}")
             last_cur = cur
+
+        # 이륙 후 yaw 정렬: 정렬 항목 동안 오차를 보고, 항목을 떠날 때 결과를 남긴다
+        err = yaw_diff(tm.hdg.heading_deg, args.heading_fixed)
+        if kind == "align":
+            align_seen = True
+            if not align_ok and err <= ALIGN_TOL:
+                align_ok = True
+                log(f"[정렬] 이륙 yaw {args.heading_fixed:.1f}° 로 정렬 ✔ (현재 {tm.hdg.heading_deg:.1f}°, 오차 {err:.1f}°)")
+        elif align_seen and not align_done:
+            align_done = True
+            if align_ok:
+                log(f"[정렬] 정렬 단계 끝 — 오차 {err:.1f}°")
+            else:
+                log(f"[경고] 정렬 단계가 끝났는데 기수 오차가 {err:.1f}° 다 (목표 {args.heading_fixed:.1f}°, "
+                    f"현재 {tm.hdg.heading_deg:.1f}°, 판정 {ALIGN_TOL:g}°) — --align-hold 를 늘릴 것")
 
         # 패스 앞 L 대기: L 에 돌아와 머무는 동안 다음 패스 전 RTK 확인 (한 번만).
         # hold 항목은 X→L 복귀 중에도 현재 항목이므로 L 근처에 온 뒤에 본다.
@@ -770,6 +797,17 @@ async def fly(drone, tm, args):
         log("[dry-run] 여기서 끝낸다. arm 하지 않았다.")
         return 0
 
+    # 이륙 직전 yaw·위치를 다시 읽어 미션에 넣은 값과 맞는지 본다 (업로드하는 동안 누가 기체를 돌리거나 옮겼으면 중단)
+    yaw_now = tm.hdg.heading_deg
+    moved = distance(tm.pos.latitude_deg, tm.pos.longitude_deg, *line.pts["L"])
+    log(f"[정렬] 이륙 직전 yaw {yaw_now:.1f}° 기억 (미션 헤딩 {args.heading_fixed:.1f}°, 차이 "
+        f"{yaw_diff(yaw_now, args.heading_fixed):.1f}°, L 에서 {moved:.2f}m)")
+    if yaw_diff(yaw_now, args.heading_fixed) > ARM_YAW_TOL or moved > ARM_MOVE_TOL:
+        log(f"[중단] 경로를 잡은 뒤 기체가 돌았거나 움직였다 (허용 {ARM_YAW_TOL:g}°·{ARM_MOVE_TOL:g}m) — "
+            f"arm 하지 않는다. 다시 실행할 것.")
+        await clear_mission(drone)
+        return 1
+
     log("[명령] arm")
     try:
         await drone.action.arm()
@@ -862,6 +900,8 @@ def main():
     ap.add_argument("--heading", type=float, default=None,
                     help="고정 헤딩(도, 0=북, 시계방향). 기본: 이륙 직전 기수 방향")
     ap.add_argument("--accept-radius", type=float, default=0.5, help="waypoint 도달 반경(m), 기본 0.5")
+    ap.add_argument("--align-hold", type=float, default=3.0,
+                    help="이륙 후 이륙 직전 yaw 로 정렬하고 머무는 시간(초), 기본 3")
     ap.add_argument("--settle", type=float, default=2.0, help="각 지점 도달 후 정지(초), 기본 2")
     ap.add_argument("--abort", choices=["rtl", "hold", "land"], default="rtl",
                     help="Ctrl+C·시간 초과·RTK 대기 초과 시 동작, 기본 rtl")
@@ -902,6 +942,8 @@ def main():
         ap.error(f"--passes 는 {MIN_PASSES}~{MAX_PASSES} 여야 한다")
     if args.accept_radius >= args.length:
         ap.error("--accept-radius 가 경로보다 크다 — 도달 판정이 출발 즉시 끝난다")
+    if args.align_hold < 0:
+        ap.error("--align-hold 는 0 이상이어야 한다")
     if args.gap < 10.0:
         ap.error("--gap 은 10초 이상이어야 한다")
 
