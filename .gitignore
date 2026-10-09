@@ -8,6 +8,7 @@
 !/README.md
 !/drone/
 !/drone_rpi/
+!/SAR_FLIGHT_SCRIPTS.md
 # 개발 계획·조사 문서. 진입점은 docs/00_통합개발계획서_x500.md 다.
 # drone/ 안이 아니라 루트에 둔 이유: drone_rpi/ 까지 함께 다루는 문서가 섞여 있다.
 !/docs/
