@@ -41,7 +41,8 @@
         "index": 0,
         "width": 1280,
         "height": 720,
-        "framerate": 8
+        "framerate": 8,
+        "extra_args": ["--metadata", "/home/physical/flight_meta.json"]
       }
     ],
     "$comment_cameras": "**카메라 1대**(사용자 2026-09-21). 2대일 때 RPN 스레드를 4→2로 나눠야 했고(4코어에 8스레드가 다투지 않게) 프레임당 310→500~590ms로 늘었다. 1대면 4스레드를 다 쓰고 CPU 부하가 절반이 된다 — 발열도 그만큼 줄어 클럭이 덜 깎인다. cameras에 항목을 추가하면 CameraWorker가 그만큼 뜬다. rpicam-vid는 프레임당 542ms인 rpicam-still 대신 MJPEG 파이프를 쓰고, 항상 **최신 프레임만** 처리한다.",
