@@ -379,8 +379,18 @@ PX4 로 기체를 움직이는 방법은 크게 둘이다.
 |---|---|
 | [`arm_disarm_test.py`](scripts/arm_disarm_test.py) | arm → 3초 → disarm. **프로펠러 제거 필수** |
 | [`takeoff_land.py`](scripts/takeoff_land.py) | 1.5m 이륙 → 8초 → 착륙. **조종기 필수** |
+| [`sar_test.py`](scripts/sar_test.py) · [`sar_test_rtk.py`](scripts/sar_test_rtk.py) | SAR 캡처용 100m 직선 반복 비행(미션 방식). 설명: [`SAR_FLIGHT_SCRIPTS.md`](scripts/SAR_FLIGHT_SCRIPTS.md) |
+| [`test_sar.py`](scripts/test_sar.py) · [`test_sar_rtk.py`](scripts/test_sar_rtk.py) | 위의 5m 단거리 시험판(미션 방식) |
 
-둘 다 `yes` 를 직접 입력해야 진행되고, 터미널이 아니면 거부한다.
+모두 `yes` 를 직접 입력해야 진행되고, 터미널이 아니면 거부한다.
+
+### 🆘 비상
+
+| 스크립트 | 하는 일 | 포트 |
+|---|---|---|
+| [`emergency_land.py`](scripts/emergency_land.py) | 별도 연결로 LAND(기본)·`--rtl`·`--hold` 전송 후 착륙까지 감시. 확인 질문 없음 | **5760** |
+
+비행 스크립트가 살아 있어도 같이 붙는다. 사용법: [`SAR_FLIGHT_SCRIPTS.md` 6장](scripts/SAR_FLIGHT_SCRIPTS.md#6-비상-착륙--emergency_landpy)
 
 ### 🧪 시험 도구
 

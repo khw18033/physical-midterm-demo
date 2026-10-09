@@ -70,3 +70,10 @@ MAVSDK-Python 3.17.4 `mavsdk/system.py`:
 - 검증: 지상 `--dry-run` 3종(좌우 3회·전후 1회·회전 2회) 업로드·대조 일치·삭제, 감시 로직 모의 비행(캡처 ON/OFF·RTK 일시정지/재개·착륙 판정).
   **실비행 미검증** — 5m·저속으로 먼저 확인할 것(특히 좌우 비행 중 기수 고정, 패스 SUMMARY 의 yaw-err).
 - goto 방식 원본은 git 이력(399598a)에 있다.
+
+## 후속: 나머지 3개도 미션 방식 전환·비상 착륙 스크립트 (2026-10-09)
+
+- `sar_test.py` · `sar_test_rtk.py` · `test_sar.py` 도 `test_sar_rtk.py` 와 같은 미션 방식으로 바꿨다(각자의 경로·S~E 캡처·RTK 유무는 그대로).
+- 13:2x 에 기체를 내린 방법(별도 연결로 LAND)을 `scripts/emergency_land.py` 로 만들었다. mavlink-router TCP 5760·compid 191 로 붙어 비행 스크립트가 살아 있어도 쓸 수 있다.
+- `mavsdk_guard.busy_ports()` 가 직전 실행의 TCP TIME_WAIT 를 "사용 중" 으로 오판해 종료 후 약 1분간 재실행이 거부되던 것을 고쳤다(SO_REUSEADDR, LISTEN 중인 서버는 여전히 막는다).
+- 설명은 [scripts/SAR_FLIGHT_SCRIPTS.md](scripts/SAR_FLIGHT_SCRIPTS.md) 한 곳으로 합쳤다(구 `sar_test.md`·`sar_test_rtk.md` 삭제).

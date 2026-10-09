@@ -42,6 +42,9 @@ def _holders(proto, port):
 def _bindable(proto, host, port):
     kind = socket.SOCK_DGRAM if proto == "udp" else socket.SOCK_STREAM
     s = socket.socket(socket.AF_INET, kind)
+    if proto == "tcp":
+        # 직전 실행이 남긴 TIME_WAIT 는 통과시킨다(SO_REUSEADDR). LISTEN 중인 서버가 있으면 여전히 실패한다.
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     try:
         s.bind((host, port))
         return True
