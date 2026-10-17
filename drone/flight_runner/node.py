@@ -6,20 +6,25 @@
 선언하는 action (Capability 로 나간다 → 가시화 「비행 제어」 탭의 버튼이 열린다):
     rtk_test_start · rtk_test_stop · rtk_test_emergency
 
-⚠ **공통 틀(~/hw/pi/common/node.py)에 맞춰 확인되지 않았다.** 이 저장소에 그 코드가 없어, 같은 일을 하는
-가시화 쪽 `viz-debugger/drone/sar_pass/agent.py` 가 적어 둔 규약을 따랐다. 아래 「가정」을 Pi 에서 실제 코드와
-대조하고 틀린 곳을 고칠 것 — `PI3_작업_261014.md` §2.
+공통 틀(~/hw/pi/common/node.py · physical_command.py, HW 브랜치 02241ac)과 pi3 에서 대조했다(2026-10-17,
+REPORT_pi3_261017.md §2). 처음엔 가시화 쪽 `sar_pass/agent.py` 의 규약을 따른 가정이었다.
 
-가정 (sar_pass/agent.py 에서 온 것)
-  A1  클래스 속성 `ACTIONS: dict[str, handler]` 의 키가 Capability 로 나간다.
-  A2  handler(node, params) 는 (stage, detail) 를 내는 제너레이터이고, 마지막 ("completed", {숫자}) 가 result 다.
-  A3  `validate(action, params)` 가 Acceptance 전에 paho 망 스레드에서 불린다 — 입출력 금지.
-      거기서 `code` · `message` 를 가진 예외를 던지면 그것이 rejection 이 된다.
-  A4  `node.publish(topic, body, qos=, retain=, allow_spool=)` · `node.base`(= zoneA/drone/<id>) · `node.identity`.
-  A5  `common.node.main(cls)` 가 진입점이다(SIGTERM → 정상 종료).
-  A6  ★ handler 가 **command_id 를 알 길**이 정해져 있지 않다. 가시화의 dry-run 통과 판정이 flight_run 의
-      `command_id` 로 짝을 맞추므로 꼭 필요하다. 아래 `command_id_of()` 가 몇 가지 이름을 찾아보고 못 찾으면 None —
-      None 이면 화면의 「비행 시작」이 영영 안 열린다. 실제 틀에서 얻는 방법으로 고칠 것.
+확인된 규약
+  A1  클래스 속성 `ACTIONS: dict[str, handler]` 의 키가 Capability 로 나간다(`PhysicalCommandServer.publish_capability`).
+  A2  handler(owner, params) 는 (stage, detail) 를 내는 제너레이터. 종료 stage("completed")의 마지막 detail(dict)이
+      CommandResult.result(map<string,double>) — 다른 stage 는 CommandStatus(EXECUTING, detail=stage).
+      params 는 `dict(cmd.parameters)` 라 **값이 모두 float** 이다.
+  A3  `validate(action, params)` 가 Acceptance 전에 paho 망 스레드에서 불린다 — 입출력 금지. 예외의 `code`(str) ·
+      `message` 가 rejection 이 된다(공통 틀의 `CommandError` 를 상속할 필요 없다 — `_err()` 가 속성만 본다).
+      핸들러 안에서 던진 예외는 CommandResult ABORTED(failure.code · message)가 된다.
+  A4  `node.publish(topic, payload, qos=, retain=, allow_spool=)` · `node.base`(= identity.topic_base) ·
+      `node.identity.entity_id / node_id / zone_id`.
+  A5  `common.node.main(cls)` 가 진입점이다(SIGTERM → KeyboardInterrupt → `node.shutdown()`).
+      ⚠ 공통 틀의 `shutdown()` 은 `on_shutdown()` 을 부르지 않는다 — 그래서 실행기 정리는 `shutdown()` 에서 한다.
+  A6  ★ 공통 틀은 핸들러에 **command_id 를 넘기지 않는다**(params 에도, 노드 속성에도 없다). 대신 수락한 명령마다
+      `PhysicalCommandServer._execute(cmd, entry)` 를 **새 스레드**에서 돌린다. 그래서 감싸개가 그 메서드를 노드의
+      `pcmd` 인스턴스에서 덮어, 그 스레드의 지역 변수에 command_id 를 적어 둔다 — `command_id_of()` 가 그것을 읽는다.
+      공통 틀은 고치지 않는다. 그 메서드 이름이 바뀌면 `_hook_command_id()` 가 경고를 남기고 command_id 는 None 이 된다.
 """
 
 from __future__ import annotations
@@ -28,6 +33,7 @@ import argparse
 import importlib
 import logging
 import os
+import threading
 from pathlib import Path
 
 from .core import DEFAULT_OUT_DIR, DEFAULT_PYTHON, DEFAULT_SCRIPTS, FlightRunner, LocalLauncher, Rejected, SystemdLauncher
@@ -37,15 +43,33 @@ log = logging.getLogger("flight_runner.node")
 DEFAULT_NODE = "drone.drone_node:DroneNode"
 
 
+_current = threading.local()     # 명령 스레드마다 — 지금 그 스레드가 돌리는 명령의 command_id (가정 A6)
+
+
 def command_id_of(node, params: dict) -> str | None:
-    """가정 A6 — 지금 처리 중인 명령의 command_id. 공통 틀이 어디에 두는지 확인해 이 함수만 고친다."""
-    for name in ("current_command_id", "command_id", "_current_command_id"):
-        value = getattr(node, name, None)
-        if isinstance(value, str) and value:
-            return value
-    current = getattr(node, "current_command", None)
-    value = getattr(current, "command_id", None) or getattr(current, "commandId", None)
+    """가정 A6 — 지금 처리 중인 명령의 command_id. `_hook_command_id()` 가 명령 스레드에 적어 둔 값."""
+    value = getattr(_current, "command_id", None)
     return value if isinstance(value, str) and value else None
+
+
+def _hook_command_id(node) -> bool:
+    """공통 틀의 명령 서버(`node.pcmd`)가 명령마다 새 스레드에서 부르는 `_execute(cmd, entry)` 를 인스턴스에서 감싼다.
+    `threading.Thread(target=self._execute, …)` 는 부를 때 속성을 찾으므로 인스턴스 속성이 이긴다."""
+    server = getattr(node, "pcmd", None)
+    original = getattr(server, "_execute", None)
+    if original is None:
+        log.warning("명령 서버(pcmd._execute)를 못 찾았다 — flight_run 의 command_id 가 비어 「비행 시작」이 안 열린다")
+        return False
+
+    def execute(cmd, *args, **kwargs):
+        _current.command_id = getattr(cmd, "command_id", None)
+        try:
+            return original(cmd, *args, **kwargs)
+        finally:
+            _current.command_id = None
+
+    server._execute = execute
+    return True
 
 
 def act_start(node, params):
@@ -108,6 +132,7 @@ def with_flight_runner(node_cls: type) -> type:
             # 공통 틀의 __init__ 이 곧바로 명령을 받기 시작한다. 그 사이에 온 명령은 validate 가 UNAVAILABLE 로 거절한다.
             self.flight = None
             super().__init__(*args, **kwargs)
+            _hook_command_id(self)          # 가정 A6 — self.flight 를 채우기 전에(그 전엔 validate 가 거절한다)
             self.flight = self.make_flight_runner()
             self.flight.start_background()
             self.flight.publish_now()
@@ -146,6 +171,7 @@ def with_flight_runner(node_cls: type) -> type:
                 parent()
 
         def shutdown(self):
+            # 공통 틀의 main 은 SIGTERM 에 shutdown() 만 부른다(on_shutdown 은 안 부른다) — 그래서 여기서도 닫는다.
             self._close_flight()
             super().shutdown()
 

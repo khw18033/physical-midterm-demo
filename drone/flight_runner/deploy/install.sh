@@ -54,8 +54,11 @@ check() {
   if [ -f "$HOME_DIR/hw/pi/common/node.py" ]; then
     ok "공통 틀 ~/hw/pi/common/node.py"
     grep -q "ACTIONS" "$HOME_DIR/hw/pi/common/node.py" && ok "  ACTIONS 가 보인다 (가정 A1)" || warn "  ACTIONS 가 안 보인다 — 가정 A1 을 확인할 것"
-    grep -qE "command_id|commandId" "$HOME_DIR/hw/pi/common/node.py" && ok "  command_id 를 다루는 자리가 있다 — 가정 A6 확인 대상" \
-      || warn "  command_id 가 안 보인다 — 가정 A6(핸들러가 command_id 를 아는 길)을 직접 찾을 것"
+    # 가정 A6: 명령 서버가 명령마다 새 스레드에서 _execute(cmd, entry) 를 돈다 — node.py 가 그것을 감싸 command_id 를 얻는다
+    grep -qE "def _execute\(self, cmd" "$HOME_DIR/hw/pi/common/physical_command.py" 2>/dev/null \
+      && grep -qE "target=self\._execute" "$HOME_DIR/hw/pi/common/physical_command.py" \
+      && ok "  명령 서버 _execute(cmd, …) 가 보인다 (가정 A6 — command_id 를 얻는 길)" \
+      || warn "  명령 서버 _execute(cmd, …) 가 안 보인다 — 가정 A6 이 깨졌다. flight_run 의 command_id 가 비어 「비행 시작」이 안 열린다"
   else bad "공통 틀 ~/hw/pi/common/node.py 없음"; fi
 
   step "systemd"
@@ -78,7 +81,9 @@ check() {
   return 0
 }
 
-install() {
+# 함수 이름을 install 로 두면 안 된다 — 안의 `run install -d …` 가 /usr/bin/install 대신 이 함수를 다시 불러
+# 끝없이 돈다(2026-10-17 pi3 에서 실제로 돌았다. --dry-run 에선 run 이 찍기만 해서 안 드러난다).
+do_install() {
   need_root "$@"
   check
   if [ -f "$SAR_DROPIN" ]; then echo; echo "sar_pass 덮어쓰기가 있어 멈춘다." >&2; exit 1; fi
@@ -96,7 +101,7 @@ install() {
   check
 }
 
-uninstall() {
+do_uninstall() {
   need_root "$@"
   step "덮어쓰기만 걷어 낸다"
   run rm -f "$DROPIN"
@@ -107,6 +112,6 @@ uninstall() {
 
 case "$MODE" in
   check) check ;;
-  install) install "$@" ;;
-  uninstall) uninstall "$@" ;;
+  install) do_install "$@" ;;
+  uninstall) do_uninstall "$@" ;;
 esac

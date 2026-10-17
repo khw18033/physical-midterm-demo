@@ -9,13 +9,15 @@ from __future__ import annotations
 
 import os
 import sys
+import threading
 import time
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 
 from flight_runner.core import FlightRunner, LocalLauncher, Rejected, build_emergency_argv, build_start_argv
-from flight_runner.node import HANDLERS, with_flight_runner
+from flight_runner.node import HANDLERS, command_id_of, with_flight_runner
 
 POSIX = os.name == "posix"
 
@@ -206,10 +208,43 @@ def test_emergency_runs_beside_flight(env):
     wait_exit(runner)
 
 
-# ── 노드에 붙이기 (공통 틀 흉내 — 가정 A1~A6) ─────────────────────────
+# ── 노드에 붙이기 (공통 틀 모양 — 가정 A1~A6, ~/hw/pi 02241ac 와 대조) ─────────
 
 class FakeIdentity:
     entity_id, node_id, zone_id, entity_type = "x500-001", "pi3", "zoneA", "drone"
+
+
+class FakeCommandServer:
+    """공통 틀 `PhysicalCommandServer` 의 모양: 망 스레드에서 validate → 수락 → 명령마다 **새 스레드**에서
+    `_execute(cmd, entry)` 가 `ACTIONS[action](owner, dict(cmd.parameters))` 를 돈다. command_id 는 핸들러에 안 간다."""
+
+    def __init__(self, owner):
+        self.owner = owner
+        self.sent = []
+
+    def on_command(self, command_id, action, params):
+        params = {k: float(v) for k, v in params.items()}           # 규약 parameters 는 map<string,double>
+        if action not in self.owner.ACTIONS:
+            self.sent.append(("rejected", command_id, "UNIMPLEMENTED", ""))
+            return None
+        try:
+            self.owner.validate(action, dict(params))
+        except Exception as e:  # noqa: BLE001
+            self.sent.append(("rejected", command_id, e.code, e.message))
+            return None
+        cmd = SimpleNamespace(command_id=command_id, action=action, parameters=params)
+        t = threading.Thread(target=self._execute, args=(cmd, {}), daemon=True)
+        t.start()
+        return t
+
+    def _execute(self, cmd, entry):
+        last = None
+        try:
+            for _stage, detail in self.owner.ACTIONS[cmd.action](self.owner, dict(cmd.parameters)):
+                last = detail
+            self.sent.append(("succeeded", cmd.command_id, last))
+        except Exception as e:  # noqa: BLE001
+            self.sent.append(("aborted", cmd.command_id, getattr(e, "code", None)))
 
 
 class FakeDroneNode:
@@ -220,7 +255,10 @@ class FakeDroneNode:
         self.base = "zoneA/drone/x500-001"
         self.published = []
         self.validated = []
-        self.current_command_id = None
+        self.pcmd = self.make_command_server()
+
+    def make_command_server(self):
+        return FakeCommandServer(self)
 
     def validate(self, action, params):
         self.validated.append(action)
@@ -236,32 +274,117 @@ class FakeDroneNode:
         pass
 
 
-def test_node_declares_and_validates(env, tmp_path):
-    make, _ = env
-
-    class Node(with_flight_runner(FakeDroneNode)):
+def node_class(make, base=FakeDroneNode):
+    class Node(with_flight_runner(base)):
         def make_flight_runner(self):
             runner = make()
             runner._publish = lambda body: self.publish(f"{self.base}/flight_run", body, qos=1, retain=True, allow_spool=False)
             return runner
+    return Node
 
-    node = Node()
+
+def test_node_declares_and_validates(env, tmp_path):
+    make, _ = env
+    node = node_class(make)()
     try:
         assert {"ping", *HANDLERS} <= set(node.ACTIONS)
         node.validate("ping", {})
         assert node.validated == ["ping"]                       # 원래 검증은 그대로
         with pytest.raises(Rejected):
             node.validate("rtk_test_start", {**FB, "dry_run": 0})
-        node.validate("rtk_test_start", {**FB, "dry_run": 1})
-        node.current_command_id = "cmd-node"
-        stages = list(HANDLERS["rtk_test_start"](node, {**FB, "dry_run": 1}))
-        assert stages[-1] == ("completed", {"launched": 1.0, "dry_run": 1.0})
+        assert node.pcmd.on_command("cmd-nc", "rtk_test_start", {**FB, "dry_run": 0}) is None
+        assert node.pcmd.sent[-1] == ("rejected", "cmd-nc", "INVALID_ARGUMENT", "not_confirmed")
+
+        node.pcmd.on_command("cmd-node", "rtk_test_start", {**FB, "dry_run": 1}).join(5)
+        assert node.pcmd.sent[-1] == ("succeeded", "cmd-node", {"launched": 1.0, "dry_run": 1.0})
         proc = wait_exit(node.flight)
-        assert proc.command_id == "cmd-node"
+        assert proc.command_id == "cmd-node"                    # 가정 A6 — 화면의 dry-run 짝짓기
+        assert proc.argv[-1] == "--dry-run" and "--altitude" in proc.argv
+        assert proc.argv[proc.argv.index("--altitude") + 1] == "5"   # float 5.0 → "5"
         node.flight.publish_now()
         topic, body, qos, retain, spool = node.published[-1]
         assert topic == "zoneA/drone/x500-001/flight_run" and retain is True and spool is False and qos == 1
+        assert body["run"]["command_id"] == "cmd-node" and body["run"]["exit_code"] == 0
         assert node.status_extra()["fc"] == "ok" and node.status_extra()["flight_run"]["running"] is False
+    finally:
+        node.shutdown()
+
+
+def test_command_id_does_not_leak_between_threads(env):
+    make, _ = env
+    node = node_class(make)()
+    try:
+        node.pcmd.on_command("cmd-e", "rtk_test_emergency", {"mode": 2}).join(5)
+        assert wait_exit(node.flight, "emergency").command_id == "cmd-e"
+        assert command_id_of(node, {}) is None                  # 이 (시험) 스레드는 명령 스레드가 아니다
+    finally:
+        node.shutdown()
+
+
+HW_PI = Path(os.environ.get("HW_PI", "/home/physical/hw/pi"))
+
+
+def _real_server():
+    if str(HW_PI) not in sys.path:
+        sys.path.insert(0, str(HW_PI))
+    try:
+        from common import physical_command
+    except Exception:  # noqa: BLE001 — ~/hw 가 없거나 protobuf 가 없다
+        return None
+    return physical_command
+
+
+@pytest.mark.skipif(not (HW_PI / "common" / "physical_command.py").exists(), reason="공통 틀(~/hw/pi)이 없다")
+def test_real_command_server_carries_command_id(env):
+    """실물 `PhysicalCommandServer` 에 규약 봉투(protobuf)를 넣는다 — 가정 A1 · A2 · A3 · A6 을 실물로 본다."""
+    pc = _real_server()
+    if pc is None:
+        pytest.skip("공통 틀 import 실패 (protobuf?)")
+    pb = pc.pb
+    make, _ = env
+    uplink = []
+
+    class RealShapedNode(FakeDroneNode):
+        def make_command_server(self):
+            return pc.PhysicalCommandServer(client=None, device_id=self.identity.entity_id, owner=self, log=lambda *_: None,
+                                            publish=lambda t, payload, qos: uplink.append(payload),
+                                            subscribe=lambda t, qos: None)
+
+    node = node_class(make, RealShapedNode)()
+    try:
+        node.pcmd.publish_capability()
+        cap = pb.PhysicalCommandEnvelope.FromString(uplink[-1]).capability
+        assert {"ping", *HANDLERS} <= set(cap.actions)                       # A1
+
+        def send(cid, action, params):
+            env_ = pb.PhysicalCommandEnvelope()
+            env_.command.command_id, env_.command.target, env_.command.action = cid, "x500-001", action
+            for k, v in params.items():
+                env_.command.parameters[k] = v
+            node.pcmd.on_message(env_.SerializeToString())
+
+        def uplinks():
+            return [pb.PhysicalCommandEnvelope.FromString(b) for b in uplink]
+
+        send("cmd-real-bad", "rtk_test_start", {**FB, "dry_run": 0})          # A3 — 거절
+        acc = uplinks()[-1].acceptance
+        assert acc.command_id == "cmd-real-bad" and not acc.accepted
+        assert (acc.rejection.code, acc.rejection.message) == ("INVALID_ARGUMENT", "not_confirmed")
+
+        send("cmd-real", "rtk_test_start", {**FB, "dry_run": 1})
+        end = time.time() + 5
+        while time.time() < end and not any(e.WhichOneof("body") == "result" and e.result.command_id == "cmd-real"
+                                            for e in uplinks()):
+            time.sleep(0.05)
+        result = [e.result for e in uplinks() if e.WhichOneof("body") == "result" and e.result.command_id == "cmd-real"]
+        assert result and result[0].status == pb.TerminalStatus.SUCCEEDED                # A2
+        assert dict(result[0].result) == {"launched": 1.0, "dry_run": 1.0}
+        proc = wait_exit(node.flight)
+        assert proc.command_id == "cmd-real" and proc.exit_code == 0                     # A6
+
+        send("cmd-real-stop", "rtk_test_stop", {})                                        # 안 돌고 있다 → 거절
+        acc = uplinks()[-1].acceptance
+        assert not acc.accepted and acc.rejection.message == "not_running"
     finally:
         node.shutdown()
 
