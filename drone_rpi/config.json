@@ -38,7 +38,7 @@
     },
     "cameras": [
       {
-        "index": 0,
+        "index": 1,
         "width": 1280,
         "height": 720,
         "framerate": 8,
@@ -75,6 +75,6 @@
     "enabled": true,
     "host": "127.0.0.1",
     "port": 14600,
-    "camera": 0
+    "camera": 1
   }
 }
