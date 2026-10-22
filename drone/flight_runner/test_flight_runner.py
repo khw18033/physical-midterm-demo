@@ -376,12 +376,13 @@ def test_real_command_server_carries_command_id(env):
         pytest.skip("공통 틀 import 실패 (protobuf?)")
     pb = pc.pb
     make, _ = env
-    uplink = []
+    uplink, retained = [], []
 
     class RealShapedNode(FakeDroneNode):
         def make_command_server(self):
             return pc.PhysicalCommandServer(client=None, device_id=self.identity.entity_id, owner=self, log=lambda *_: None,
-                                            publish=lambda t, payload, qos: uplink.append(payload),
+                                            publish=lambda t, payload, qos, retain=False: (uplink.append(payload),
+                                                                                          retained.append(retain)),
                                             subscribe=lambda t, qos: None)
 
     node = node_class(make, RealShapedNode)()
@@ -389,6 +390,7 @@ def test_real_command_server_carries_command_id(env):
         node.pcmd.publish_capability()
         cap = pb.PhysicalCommandEnvelope.FromString(uplink[-1]).capability
         assert {"ping", *HANDLERS} <= set(cap.actions)                       # A1
+        assert retained[-1] is True                                          # 늦게 붙은 가시화도 선언을 받는다
 
         def send(cid, action, params):
             env_ = pb.PhysicalCommandEnvelope()
