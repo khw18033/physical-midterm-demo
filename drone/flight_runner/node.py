@@ -6,6 +6,9 @@
 선언하는 action (Capability 로 나간다 → 가시화 「비행 제어」 탭의 버튼이 열린다):
     rtk_test_start · rtk_test_stop · rtk_test_emergency
 
+rtk_test_start 는 그때 RTK 보정이 FC 로 들어오고 있으면 test_sar_rtk.py, 아니면 test_sar.py(같은 옵션, RTK 확인 없음)를
+띄운다 — 판정은 노드가 이미 보고 있는 `node.link.snapshot()["rtk"]`(`rtk_connected()`).
+
 공통 틀(~/hw/pi/common/node.py · physical_command.py, HW 브랜치 02241ac)과 pi3 에서 대조했다(2026-10-17,
 REPORT_pi3_261017.md §2). 처음엔 가시화 쪽 `sar_pass/agent.py` 의 규약을 따른 가정이었다.
 
@@ -75,7 +78,7 @@ def _hook_command_id(node) -> bool:
 def act_start(node, params):
     yield "launching", None
     proc = node.flight.start(command_id_of(node, params), dict(params))
-    yield "completed", {"launched": 1.0, "dry_run": 1.0 if proc.dry_run else 0.0}
+    yield "completed", {"launched": 1.0, "dry_run": 1.0 if proc.dry_run else 0.0, "rtk": 1.0 if proc.rtk else 0.0}
 
 
 def act_stop(node, params):
@@ -96,6 +99,13 @@ def node_identity(node) -> dict:
     ident = getattr(node, "identity", None)
     return {"source_id": getattr(ident, "entity_id", "x500-001"), "node_id": getattr(ident, "node_id", ""),
             "zone_id": getattr(ident, "zone_id", "zoneA")}
+
+
+def rtk_connected(node) -> bool:
+    """RTK 가 붙어 있나 — 보정(GPS_RTCM_DATA)이 FC 쪽으로 흐르고 있거나(RTCM_STALE 3초 안), FC 가 이미 RTK 해를 냈다.
+    FC 링크가 없으면 snapshot 의 rtk 가 None 이라 False. Fixed 까지 기다리는 것은 test_sar_rtk.py 가 한다."""
+    rtk = node.link.snapshot().get("rtk") or {}
+    return bool(rtk.get("corrections") or rtk.get("fix") in ("RTK_FLOAT", "RTK_FIXED"))
 
 
 def make_launcher():
@@ -119,6 +129,8 @@ def default_runner(node) -> FlightRunner:
         python=Path(os.environ.get("FLIGHT_RUNNER_PYTHON", str(DEFAULT_PYTHON))),
         scripts=Path(os.environ.get("FLIGHT_RUNNER_SCRIPTS", str(DEFAULT_SCRIPTS))),
         out_dir=Path(os.environ.get("FLIGHT_RUNNER_OUT_DIR", str(DEFAULT_OUT_DIR))),
+        # 링크가 없는 노드(시험용 가짜 등)는 예전처럼 늘 test_sar_rtk.py
+        rtk_ok=(lambda: rtk_connected(node)) if hasattr(node, "link") else None,
     )
 
 

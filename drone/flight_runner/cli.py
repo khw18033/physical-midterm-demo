@@ -1,6 +1,7 @@
 """손으로 시험하는 입구 — 드론 노드를 건드리기 전에 실행기만 확인한다.
 
     cd ~/drone && ./venv/bin/python -m flight_runner start pattern=0 side=0 altitude_m=3 length_m=3 speed_mps=1 passes=1 dry_run=1
+    ./venv/bin/python -m flight_runner start --no-rtk …  # test_sar.py 로 (노드 밖에서는 RTK 를 판정하지 않는다 — 기본 test_sar_rtk.py)
     ./venv/bin/python -m flight_runner status          # 마지막 실행 · 비상 명령
     ./venv/bin/python -m flight_runner follow          # 돌고 있는 실행의 출력을 따라 본다 (Ctrl+C 는 따라보기만 끝낸다)
     ./venv/bin/python -m flight_runner stop            # 주 프로세스에 SIGTERM (= 스크립트의 Ctrl+C)
@@ -89,6 +90,7 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--device", default="x500-001")
     ap.add_argument("--zone", default="zoneA")
     ap.add_argument("--no-follow", action="store_true")
+    ap.add_argument("--no-rtk", action="store_true", help="start: test_sar_rtk.py 대신 test_sar.py (RTK 확인 없음)")
     ap.add_argument("--owner", action="store_true", help="노드 덮어쓰기가 있어도 이 도구를 주인으로 (노드가 꺼져 있을 때만)")
     a = ap.parse_args(argv)
     node_owns = NODE_DROPIN.exists() and not a.owner
@@ -102,11 +104,11 @@ def main(argv: list[str] | None = None) -> int:
     runner = FlightRunner(launcher, publish, device_id=a.device, zone_id=a.zone, python=Path(a.python),
                           scripts=Path(a.scripts), out_dir=Path(a.out_dir),
                           # 보기만 하는 명령은 상태 파일 · 유닛을 건드리지 않는다 — 노드 안의 실행기가 주인일 수 있다
-                          read_only=node_owns)
+                          read_only=node_owns, rtk_ok=(lambda: False) if a.no_rtk else None)
     try:
         if a.command == "start":
             proc = runner.start(f"cli-{int(time.time())}", parse_params(a.args))
-            print(f"--- 띄웠다: {proc.unit} · {' '.join(proc.argv)}", flush=True)
+            print(f"--- 띄웠다: {proc.unit} · {proc.script} {' '.join(proc.argv)}", flush=True)
             if a.no_follow:
                 return 0
             code = follow(runner)

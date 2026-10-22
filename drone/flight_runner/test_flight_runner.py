@@ -17,7 +17,7 @@ from types import SimpleNamespace
 import pytest
 
 from flight_runner.core import FlightRunner, LocalLauncher, Rejected, build_emergency_argv, build_start_argv
-from flight_runner.node import HANDLERS, command_id_of, with_flight_runner
+from flight_runner.node import HANDLERS, command_id_of, rtk_connected, with_flight_runner
 
 POSIX = os.name == "posix"
 
@@ -54,6 +54,11 @@ log("[확인] 착륙 완료 ✔")
 log("[종료]")
 '''
 
+# test_sar.py 는 --rtk-min · --rtk-timeout 이 없다 — 붙어 오면 argparse 처럼 2 로 끝난다
+FAKE_NO_RTK = "import sys\n" \
+    "if any(a.startswith('--rtk') for a in sys.argv): print('test_sar.py: error: unrecognized arguments', file=sys.stderr); sys.exit(2)\n" \
+    + FAKE_SCRIPT
+
 FAKE_EMERGENCY = r'''
 import sys, time
 print(f"[{time.time():.3f}] [명령] {'RTL' if '--rtl' in sys.argv else 'HOLD' if '--hold' in sys.argv else 'LAND'} 전송", flush=True)
@@ -67,13 +72,14 @@ def env(tmp_path):
     scripts = tmp_path / "drone" / "scripts"
     scripts.mkdir(parents=True)
     (scripts / "test_sar_rtk.py").write_text(FAKE_SCRIPT, encoding="utf-8")
+    (scripts / "test_sar.py").write_text(FAKE_NO_RTK, encoding="utf-8")
     (scripts / "emergency_land.py").write_text(FAKE_EMERGENCY, encoding="utf-8")
     published = []
     launcher = LocalLauncher()
 
-    def make():
+    def make(rtk_ok=None):
         return FlightRunner(launcher, published.append, device_id="x500-001", python=Path(sys.executable),
-                            scripts=scripts, out_dir=tmp_path / "out")
+                            scripts=scripts, out_dir=tmp_path / "out", rtk_ok=rtk_ok)
     return make, published
 
 
@@ -99,6 +105,15 @@ def test_argv_matches_request_doc():
     assert dry is True
     assert argv == ["--yes", "--pattern", "fb", "--side", "forward", "--altitude", "5", "--length", "5", "--speed", "1",
                     "--passes", "2", "--gap", "10", "--accept-radius", "0.5", "--rtk-min", "30", "--abort", "rtl", "--dry-run"]
+
+
+def test_no_rtk_argv_drops_rtk_options():
+    params = {**FB, "rtk_min_s": 30, "rtk_timeout_s": 120, "gap_s": 10, "dry_run": 1}
+    with_rtk, _ = build_start_argv(params)
+    without, _ = build_start_argv(params, rtk=False)
+    assert "--rtk-min" in with_rtk and "--rtk-timeout" in with_rtk
+    assert not any(a.startswith("--rtk") for a in without)
+    assert [a for a in with_rtk if a not in ("--rtk-min", "30", "--rtk-timeout", "120")] == without
 
 
 def test_rotate_drops_side_length_speed():
@@ -150,6 +165,25 @@ def test_dry_run_exits_zero_and_reports(env):
     assert run["command_id"] == "cmd-dry" and run["state"] == "exited" and run["exit_code"] == 0 and run["dry_run"] is True
     assert [line["seq"] for line in run["lines"]] == list(range(1, len(run["lines"]) + 1))
     assert Path(run["out_path"]).exists()
+
+
+@pytest.mark.parametrize("rtk_ok, script, rtk", [
+    (None, "test_sar_rtk.py", True),                 # 판정 없음(cli 기본) — 예전처럼
+    (lambda: True, "test_sar_rtk.py", True),
+    (lambda: False, "test_sar.py", False),
+    (lambda: 1 / 0, "test_sar.py", False),           # 판정이 깨지면 「없다」
+])
+def test_picks_script_by_rtk(env, rtk_ok, script, rtk):
+    make, published = env
+    runner = make(rtk_ok)
+    proc = runner.start("cmd-rtk", {**FB, "rtk_min_s": 30, "rtk_timeout_s": 120, "dry_run": 1})
+    assert proc.script == script and proc.rtk is rtk
+    assert proc.unit.startswith("test-sar-rtk-" if rtk else "test-sar-2")
+    assert ("--rtk-min" in proc.argv) is rtk
+    assert wait_exit(runner).exit_code == 0                 # test_sar.py 가짜는 --rtk-* 가 오면 2
+    runner.publish_now()
+    assert published[-1]["run"]["script"] == script and published[-1]["run"]["rtk"] is rtk
+    assert make(rtk_ok).run.script == script                # 다시 떠도 어느 스크립트였는지 안다
 
 
 def test_bad_option_exit_two_with_stderr(env):
@@ -296,7 +330,7 @@ def test_node_declares_and_validates(env, tmp_path):
         assert node.pcmd.sent[-1] == ("rejected", "cmd-nc", "INVALID_ARGUMENT", "not_confirmed")
 
         node.pcmd.on_command("cmd-node", "rtk_test_start", {**FB, "dry_run": 1}).join(5)
-        assert node.pcmd.sent[-1] == ("succeeded", "cmd-node", {"launched": 1.0, "dry_run": 1.0})
+        assert node.pcmd.sent[-1] == ("succeeded", "cmd-node", {"launched": 1.0, "dry_run": 1.0, "rtk": 1.0})
         proc = wait_exit(node.flight)
         assert proc.command_id == "cmd-node"                    # 가정 A6 — 화면의 dry-run 짝짓기
         assert proc.argv[-1] == "--dry-run" and "--altitude" in proc.argv
@@ -378,7 +412,7 @@ def test_real_command_server_carries_command_id(env):
             time.sleep(0.05)
         result = [e.result for e in uplinks() if e.WhichOneof("body") == "result" and e.result.command_id == "cmd-real"]
         assert result and result[0].status == pb.TerminalStatus.SUCCEEDED                # A2
-        assert dict(result[0].result) == {"launched": 1.0, "dry_run": 1.0}
+        assert dict(result[0].result) == {"launched": 1.0, "dry_run": 1.0, "rtk": 1.0}
         proc = wait_exit(node.flight)
         assert proc.command_id == "cmd-real" and proc.exit_code == 0                     # A6
 
@@ -400,3 +434,15 @@ def test_read_only_viewer_does_not_steal_exit_code(env, tmp_path):
     assert seen.exit_code == 0
     assert owner.launcher.poll(owner.run.unit) == (False, 0)      # 유닛이 그대로 남아 주인이 읽을 수 있다
     assert wait_exit(owner).exit_code == 0
+
+
+@pytest.mark.parametrize("rtk, expected", [
+    (None, False),                                                       # FC 링크 없음
+    ({"corrections": False, "fix": "NONE"}, False),
+    ({"corrections": True, "fix": "NONE"}, True),                        # 보정이 흐른다 — Fixed 는 스크립트가 기다린다
+    ({"corrections": False, "fix": "RTK_FIXED"}, True),
+    ({"corrections": False, "fix": "RTK_FLOAT"}, True),
+])
+def test_rtk_connected_reads_link_snapshot(rtk, expected):
+    node = SimpleNamespace(link=SimpleNamespace(snapshot=lambda: {"fc_link": rtk is not None, "rtk": rtk}))
+    assert rtk_connected(node) is expected

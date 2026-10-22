@@ -1,9 +1,11 @@
-"""비행 실행기 본체 — test_sar_rtk.py · emergency_land.py 를 **고치지 않고** 옵션으로 띄우고, 출력을 따라 읽어 상태를 낸다.
+"""비행 실행기 본체 — test_sar_rtk.py(RTK 없으면 test_sar.py) · emergency_land.py 를 **고치지 않고** 옵션으로 띄우고,
+출력을 따라 읽어 상태를 낸다.
 
 규약: 가시화 저장소의 `261014_드론비행실행기_요청_VZ.md` (명령 §2 · 실행기 §3 · 상태 토픽 §4).
 이 파일은 드론 노드 공통 틀(BaseNode)을 모른다 — 붙이는 것은 `node.py`, 손으로 시험하는 것은 `cli.py`.
 
     params(map<string,double>) ─ build_*_argv ─▶ Launcher.launch ─▶ (systemd 유닛) python -u test_sar_rtk.py --yes …
+                                                                            (RTK 보정 없음 → test_sar.py, --rtk-* 뺀 같은 옵션)
                                                                             │ stdout·stderr
     publish(flight_run 본문) ◀─ report() ◀─ 따라 읽기(_pump) ◀── <out_dir>/<run_id>.out
 
@@ -60,6 +62,10 @@ NUMERIC_FLAGS = {
     "rtk_timeout_s": "--rtk-timeout",
 }
 START_KEYS = set(NUMERIC_FLAGS) | {"pattern", "side", "abort", "dry_run", "confirmed"}
+RTK_KEYS = {"rtk_min_s", "rtk_timeout_s"}     # test_sar.py 에는 없는 옵션 — RTK 없이 띄울 때는 받아 두고 버린다
+
+SCRIPT_RTK = "test_sar_rtk.py"
+SCRIPT_NO_RTK = "test_sar.py"                 # test_sar_rtk.py 에서 RTK 확인만 뺀 판(옵션이 같다)
 
 
 class Rejected(Exception):
@@ -89,8 +95,9 @@ def _code(params: dict, key: str, table: dict, required: bool) -> str | None:
     return table[int(v)]
 
 
-def build_start_argv(params: dict) -> tuple[list[str], bool]:
-    """`rtk_test_start` 파라미터 → test_sar_rtk.py 옵션. (옵션, dry_run). 범위 검사는 스크립트(ap.error)에 맡긴다."""
+def build_start_argv(params: dict, rtk: bool = True) -> tuple[list[str], bool]:
+    """`rtk_test_start` 파라미터 → test_sar_rtk.py 옵션(rtk=False 면 test_sar.py 옵션 — rtk_* 를 뺀다).
+    (옵션, dry_run). 범위 검사는 스크립트(ap.error)에 맡긴다."""
     unknown = set(params) - START_KEYS
     if unknown:
         raise Rejected("INVALID_ARGUMENT", f"unknown parameter {', '.join(sorted(unknown))}")
@@ -112,7 +119,7 @@ def build_start_argv(params: dict) -> tuple[list[str], bool]:
     if not rotate:
         argv += ["--side", side]
     for key, flag in NUMERIC_FLAGS.items():
-        if key not in params or (rotate and key in ("length_m", "speed_mps")):
+        if key not in params or (rotate and key in ("length_m", "speed_mps")) or (not rtk and key in RTK_KEYS):
             continue
         argv += [flag, _num(params[key])]
     abort = _code(params, "abort", ABORT, required=False)
@@ -258,6 +265,8 @@ class Proc:
     command_id: str | None = None
     dry_run: bool | None = None
     mode: str | None = None
+    script: str | None = None       # run 만 — test_sar_rtk.py · test_sar.py
+    rtk: bool | None = None         # run 만 — 띄울 때 RTK 보정이 들어오고 있었나
     started_at: float = field(default_factory=time.time)
     ended_at: float | None = None
     exit_code: int | None = None
@@ -270,7 +279,7 @@ class Proc:
 
     def meta(self) -> dict:
         return {k: getattr(self, k) for k in ("kind", "run_id", "unit", "out_path", "argv", "command_id", "dry_run",
-                                             "mode", "started_at", "ended_at", "exit_code", "state")}
+                                             "mode", "script", "rtk", "started_at", "ended_at", "exit_code", "state")}
 
     def wire(self) -> dict:
         body = {"run_id": self.run_id, "command_id": self.command_id, "state": self.state, "dry_run": self.dry_run,
@@ -278,6 +287,9 @@ class Proc:
                 "out_path": self.out_path, "lines": [{"seq": s, "text": t} for s, t in self.lines]}
         if self.mode is not None:
             body["mode"] = self.mode
+        if self.kind == "run":
+            body["script"] = self.script or SCRIPT_RTK     # 이 필드가 생기기 전의 상태 파일은 test_sar_rtk.py 였다
+            body["rtk"] = self.rtk
         return body
 
 
@@ -293,7 +305,7 @@ class FlightRunner:
     def __init__(self, launcher: Launcher, publish: Callable[[dict], None], *, device_id: str, zone_id: str = "zoneA",
                  node_id: str = "", python: Path = DEFAULT_PYTHON, scripts: Path = DEFAULT_SCRIPTS,
                  out_dir: Path = DEFAULT_OUT_DIR, clock: Callable[[], float] = time.time,
-                 read_only: bool = False) -> None:
+                 read_only: bool = False, rtk_ok: Callable[[], bool] | None = None) -> None:
         self.launcher = launcher
         self._publish = publish
         self.device_id, self.zone_id, self.node_id = device_id, zone_id, node_id
@@ -302,6 +314,9 @@ class FlightRunner:
         # 읽기 전용 — 남(노드 안의 실행기)이 쥔 실행을 들여다보기만 한다. 상태 파일을 안 쓰고 끝난 유닛도 안 치운다
         # (치우면 주인이 종료 코드를 잃는다). cli 의 status · follow 가 쓴다.
         self.read_only = read_only
+        # 「지금 RTK 보정이 FC 로 들어오고 있나」 — 비행 시작 때 한 번 묻는다. False 면 test_sar.py 를 띄운다.
+        # None 이면 묻지 않고 늘 test_sar_rtk.py (드론 노드 밖 — cli 의 기본).
+        self.rtk_ok = rtk_ok
         self.run: Proc | None = None
         self.emergency: Proc | None = None
         self._lock = threading.RLock()
@@ -372,12 +387,23 @@ class FlightRunner:
         self.launcher.launch(proc.unit, [str(self.python), "-u", str(self.scripts / script), *args],
                              Path(proc.out_path), self.scripts.parent)
 
+    def _rtk_now(self) -> bool:
+        if self.rtk_ok is None:
+            return True
+        try:
+            return bool(self.rtk_ok())
+        except Exception:  # noqa: BLE001 — 모르면 「없다」로 친다(RTK 대기로 이륙 못 하고 끝나는 것보다 낫다)
+            return False
+
     def start(self, command_id: str | None, params: dict) -> Proc:
         with self._lock:
             self.precheck("rtk_test_start", params)
-            args, dry = build_start_argv(params)
-            proc = self._new_proc("run", "test-sar-rtk", args, command_id, dry_run=dry)
-            self._launch(proc, "test_sar_rtk.py", args)
+            rtk = self._rtk_now()
+            script = SCRIPT_RTK if rtk else SCRIPT_NO_RTK
+            args, dry = build_start_argv(params, rtk=rtk)
+            proc = self._new_proc("run", "test-sar-rtk" if rtk else "test-sar", args, command_id, dry_run=dry,
+                                  script=script, rtk=rtk)
+            self._launch(proc, script, args)
             self.run = proc
             self._changed()
             return proc
