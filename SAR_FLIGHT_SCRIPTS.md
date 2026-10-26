@@ -30,7 +30,15 @@
 
 ### 2-1. 왜 바꿨나
 
-예전에는 Pi 가 지점마다 `goto` 명령을 보냈습니다. 2026-10-08 13:18 에 비행 중 명령 통로(mavsdk_server)가 죽자, FC 는 마지막 명령을 끝낸 뒤 **18 m 상공에서 HOLD 로 떠 있었습니다.** 귀환(rtl) 명령도 같은 통로로 나가야 해서 보내지 못했습니다. ([REPORT_mavsdk_stale_server_261008.md](../REPORT_mavsdk_stale_server_261008.md))
+예전에는 Pi 가 지점마다 `goto` 명령을 보냈습니다. 2026-10-08 13:18 에 비행 중 명령 통로(mavsdk_server)가 죽자, FC 는 마지막 명령을 끝낸 뒤 **18 m 상공에서 HOLD 로 떠 있었습니다.** 귀환(rtl) 명령도 같은 통로로 나가야 해서 보내지 못했습니다. 그때 기체는 별도 연결로 LAND 를 보내 내렸고, 이 방법이 [6장](#6-비상-착륙--emergency_landpy) `emergency_land.py` 가 되었습니다.
+
+이 사고에서 드러난 구멍 세 가지와, 지금 막는 방법:
+
+| 구멍 | 막는 곳 |
+|---|---|
+| 이전 실행이 남긴 mavsdk_server 가 포트를 쥔 채 살아 있으면, 새 스크립트가 **그 남의 서버에 붙는다**(언제 죽을지 모름) | `mavsdk_guard.connect()` — 연결 전 UDP 14540·TCP 50051 이 비었는지 검사, 연결 뒤 내 서버가 살아 있는지 확인 |
+| 스크립트가 `[종료]` 를 찍고도 프로세스가 안 끝나 서버가 기체 연결·포트를 계속 쥠 | `mavsdk_guard.stop()` — 어떤 경로로 끝나든 내 mavsdk_server 를 직접 죽임 |
+| 명령 통로가 죽으면 rtl 도 같은 통로라 못 보냄 | ① 비행 전체를 미션으로 FC 에 미리 넣음 ② `mavsdk_guard.abort()` — 실패하면 새 서버를 다른 포트로 띄워 한 번 더 보냄 |
 
 지금은 **이륙부터 착륙까지 모든 명령을 비행 전에 FC 에 넣어 둡니다.** 비행 중에 Pi·SSH·mavsdk_server 가 죽어도 **FC 가 혼자 끝까지 날고 L 에 착륙합니다.**
 
@@ -85,8 +93,8 @@ Pi 쪽 오류에 rtl 을 보내지 않는 이유: 미션이 FC 에 있으니 그
 
 | | 켜는 때 | 끄는 때 |
 |---|---|---|
-| `sar_test` · `sar_test_rtk` · `test_sar`(전후·좌우) | 패스(L→X) 중 **S 통과** | **E 통과** |
-| `test_sar_rtk`(전후·좌우) | 패스(L→X) **시작** | **X 도달** (가속·감속 구간 포함) |
+| `sar_test` · `sar_test_rtk` | 패스(L→X) 중 **S 통과** | **E 통과** |
+| `test_sar` · `test_sar_rtk`(전후·좌우) | 패스(L→X) **시작** | **X 도달**(도달 반경 안) — 가속·감속 구간 포함 |
 | `test_sar` · `test_sar_rtk`(회전) | 회전 시작 | 회전 끝 |
 
 - X→L 복귀 중에는 캡처하지 않습니다.
@@ -130,8 +138,15 @@ Pi 쪽 오류에 rtl 을 보내지 않는 이유: 미션이 FC 에 있으니 그
 
 ### 3-4. `test_sar_rtk.py` — 단거리 시험 + RTK
 
-- 실행하면 **이동 방향 → 먼저 갈 쪽(앞/뒤 · 오른쪽/왼쪽) → 고도 → 이동거리 → 속도 → 왕복 횟수(1~10)** 를 묻습니다.
-- **가속·감속 구간이 없습니다.** L 출발부터 X 도달까지 전부 캡처합니다(처음·끝은 등속이 아님).
+```
+ L ════════════════ 캡처 ════════════════ X
+(이륙)        ←── --length(이동거리) ──→
+```
+
+- 실행하면 **이동 방향 → 먼저 갈 쪽(앞/뒤 · 오른쪽/왼쪽) → 고도 → 이동거리 → 속도 → 왕복 횟수(1~10)** 를 묻습니다. Enter 는 기본값입니다.
+- 범위: 고도 2~30 m, 이동거리 2~150 m(입력 때), 속도 0.5~5 m/s, 왕복 1~10 회, `--gap` 10초 이상, `--accept-radius` 는 이동거리보다 작아야 함.
+- 이동선 방향 = 고정 헤딩 + 먼저 갈 쪽(앞 0° · 오른쪽 90° · 뒤 180° · 왼쪽 270°). 기수는 언제나 고정 헤딩입니다.
+- **가속·감속 구간이 없습니다.** L 출발부터 X 도달까지 전부 캡처합니다(처음·끝은 등속이 아님 — 수평 가속도 3 m/s² 기준 4 m/s 면 약 1.3초·2.7 m 씩).
 - RTK 확인은 `sar_test_rtk.py` 와 같습니다.
 - `--heading` 을 지금 기수 방향과 다르게 주면 arm 직전 확인(기체가 5° 넘게 돌았나)에 걸려 멈춥니다. **기체를 원하는 방향으로 놓고 실행하세요.**
 
@@ -150,9 +165,24 @@ Pi 쪽 오류에 rtl 을 보내지 않는 이유: 미션이 FC 에 있으니 그
 | `--settle SEC` | 2 | 각 지점 도달 후 정지 시간 |
 | `--abort` | rtl | Ctrl+C·시간 초과(·RTK 대기 초과) 때 보낼 명령: `rtl` / `hold` / `land` |
 | `--log-dir DIR` | /home/physical/cansar_logs | 로그 폴더 |
-| `--yes` | — | 확인 입력 생략(안전을 이미 확인한 경우에만). 시험판은 입력 질문도 건너뜀 |
+| `--yes` | — | 확인 입력 생략(안전을 이미 확인한 경우에만). 시험판은 입력 질문도 건너뜀. 터미널이 아닌 곳(비행 실행기 등)에서는 이것이 없으면 거부 |
+| `--address` | `udpin://0.0.0.0:14540` | MAVSDK 연결 주소(mavlink-router 가 내보내는 UDP) |
+| `--connect-timeout SEC` | 30 | FC 연결 대기 |
+| `--position-timeout SEC` | 60 | GPS·home 정상 대기 |
 
-`sar_test` 계열은 `--length`·`--lead-in`·`--lead-out`·`--speed-tol`, RTK 판은 `--rtk-min`·`--rtk-timeout`, 시험판은 `--pattern`(`fb`/`lr`/`rotate`)이 더 있습니다. `--help` 로 확인하세요.
+스크립트별로 더 있는 옵션:
+
+| 옵션 | 스크립트 | 기본값 | 설명 |
+|---|---|---|---|
+| `--length M` | 전부 | 60 / 5 | `sar_test` 계열: 캡처(등속) 구간 S→E, 60 이상. 시험판: 이동거리 L→X 전체 |
+| `--lead-in M` · `--lead-out M` | `sar_test` 계열 | 20 · 20 | 가속 구간 L→S · 감속 구간 E→X |
+| `--speed-tol M/S` | `sar_test` 계열 | 0.5 | 캡처 구간 속도 허용 오차(넘으면 경고) |
+| `--pattern` | 시험판 | `fb` | `fb` 전후 · `lr` 좌우 · `rotate` 제자리 회전 |
+| `--side` | 시험판 | (묻는다) | 먼저 갈 쪽. `fb` 면 `forward`/`back`, `lr` 이면 `right`/`left` |
+| `--rtk-min SEC` | RTK 판 | 30 | 이륙 전·매 패스 전 RTK Fixed 연속 유지 시간. 0 = 확인 안 함 |
+| `--rtk-timeout SEC` | RTK 판 | 120 | RTK 대기 최대 시간. 이륙 전이면 중단, 비행 중이면 `--abort` |
+
+`--help` 로도 확인할 수 있습니다.
 미션 방식으로 바뀌면서 `--land-timeout` 은 없어졌습니다(착륙 확인은 미션 시간 초과 판정에 포함).
 
 ---
@@ -220,10 +250,10 @@ cd ~/drone
 - **기체 방향이 헷갈립니다.** 기수를 고정한 채 X→L 복귀는 후진, 좌우 패턴은 옆으로 납니다. 100 m 떨어져 20 m 높이에 있으면 기수가 어디를 보는지 눈으로 알기 어렵고, 스틱 방향이 눈에 보이는 진행 방향과 다릅니다.
 - **스로틀 스틱 위치.** 개입하면 Position 모드로 넘어가는데, 이 모드에서 스로틀 스틱은 상승·하강 명령입니다. 스틱이 바닥에 있으면 **넘어가는 순간 하강합니다.** 먼저 스로틀을 가운데에 둡니다.
 - **모드 스위치는 "바뀔 때"만 먹힙니다.** 스위치가 이미 Position 자리에 있었다면 한 번 다른 자리로 갔다가 돌아와야 모드가 바뀝니다.
-- **FC 가 대신 지켜 주지 않는 것들**(2026-09-24 기준선 `baseline/fc_260924/failsafe.txt`)
+- **FC 가 대신 지켜 주지 않는 것들**(2026-09-24 에 FC 에서 읽은 페일세이프 파라미터. 지금 값은 QGC 에서 다시 확인)
   - Pi 연결이 끊겨도 아무 동작 안 함(`NAV_DLL_ACT=0`) — 미션 방식이라 착륙까지는 가지만, 중간에 바꾸려면 사람이 해야 합니다.
   - 배터리가 부족해도 경고만 함(`COM_LOW_BAT_ACT=0`).
-  - 조종기 신호가 끊기면 RTL(`NAV_RCL_ACT=2`) — 30 m 까지 올라간 뒤 돌아옵니다.
+  - 조종기 신호가 끊기면 RTL(`NAV_RCL_ACT=2`) — `RTL_RETURN_ALT=30` m 까지 올라간 뒤 돌아옵니다.
 
 **개입하는 방법** (쉬운 순서)
 
@@ -293,12 +323,147 @@ PASS 1 SUMMARY start=... end=... dur=12.02s speed min/mean/max=4.81/4.99/5.12m/s
 ```
 
 - **START / END**: 캡처 ON / OFF 시각.
-- **SUMMARY**: 캡처 구간의 속도·고도 범위, 직선에서 옆으로 벗어난 최대 거리(`cross-track`), RTK 판은 `rtk=OK/LOST`, `test_sar_rtk` 는 기수 오차(`yaw-err`)도.
+- **SUMMARY**: 캡처 구간의 속도·고도 범위, 직선에서 옆으로 벗어난 최대 거리(`cross-track`).
+  시험판(`test_sar`·`test_sar_rtk`)은 기수 오차(`yaw-err`)도 남깁니다. 끝의 RTK 표시는 RTK 판이 `rtk=OK/LOST`, `test_sar` 는 `rtk=OFF`, `sar_test` 는 없음.
 - **경고 확인**: `속도가 …를 벗어났다`, `S 진입 속도`, `RTK Fixed 풀림`, `정렬 단계가 끝났는데 기수 오차가` 가 있으면 그 패스를 다시 봅니다.
 
 ---
 
-## 8. 알려진 한계
+## 8. 코드 구조
+
+### 8-1. 파일
+
+모두 `~/drone/` 아래에 있고, `~/drone/venv/bin/python`(MAVSDK-Python 설치됨)으로 실행합니다.
+
+| 파일 | 하는 일 |
+|---|---|
+| `scripts/sar_test.py` | 본 측정 (가속·캡처·감속 직선) |
+| `scripts/sar_test_rtk.py` | `sar_test.py` + RTK 확인 |
+| `scripts/test_sar_rtk.py` | 단거리 시험 (전후·좌우·회전, 전 구간 캡처) + RTK 확인 |
+| `scripts/test_sar.py` | `test_sar_rtk.py` 에서 RTK 확인만 뺀 판 |
+| `scripts/mavsdk_guard.py` | 위 4개가 같이 쓰는 연결·종료·중단 안전장치 |
+| `scripts/emergency_land.py` | 비상 착륙 (6장) |
+| `flight_runner/` | 가시화 화면에서 `test_sar_rtk.py`/`test_sar.py`·`emergency_land.py` 를 띄우는 실행기 (9장) |
+
+비행 스크립트 4개는 **한 파일 안에 모든 것이 들어 있는 독립 스크립트**입니다(서로 import 하지 않고 `mavsdk_guard` 만 씀). 그래서 같은 함수가 파일마다 따로 있습니다. 한 파일을 고치면 짝 파일도 같이 고칩니다(`sar_test` ↔ `sar_test_rtk`, `test_sar_rtk` ↔ `test_sar`).
+
+### 8-2. 연결
+
+```
+FC ──시리얼── mavlink-router (drone.target) ─┬─ UDP 14540 ──▶ 비행 스크립트 (MAVSDK, 컴포넌트 ID 190, gRPC 50051)
+                                             └─ TCP 5760  ──▶ emergency_land.py (컴포넌트 ID 191, 빈 gRPC 포트)
+```
+
+MAVSDK-Python 은 `System()` 을 만들 때 mavsdk_server 프로세스를 띄우고, 파이썬은 gRPC(TCP 50051)로 그 서버에 명령합니다. 서버가 죽으면 "명령 통로"가 끊깁니다.
+
+### 8-3. 실행 흐름 (네 스크립트 공통 뼈대)
+
+| 함수 | 하는 일 |
+|---|---|
+| `main()` | 옵션 읽기 → (시험판) `ask_flight()` 로 설정 묻기 → 범위 검사(`ap.error`) → `confirm()` 로 점검 목록과 `yes` 확인 → 로그 파일 열기 → 남은 `CAP_ON` 지우기 → `asyncio.run(run(args))` |
+| `run()` | SIGTERM 을 Ctrl+C 와 같게(현재 태스크 취소) → `guard.connect()` → `_run()` → 끝나면 언제나 `guard.stop()` |
+| `_run()` | 연결 대기 → 이미 arm 이면 중단 → `wait_position_ok()`(GPS·home 정상) → `Telem.start()` → `fly()` |
+| `fly()` | (RTK 판) `wait_rtk()` → 경로(`Line`) 계산 → `build_plan()` → `upload_verified()` → (dry-run 이면 삭제하고 끝) → arm 직전 기수·위치 재확인 → `arm` → `start_mission` → MISSION 모드 확인 → `monitor()` → 예외별 처리(2-3 표) → `clear_mission()` |
+| `monitor()` | 0.05초마다: 착륙 완료 확인 → 모드 이탈 확인(`ModeLost`) → 시간 초과 확인 → 정렬 단계 오차 기록 → (RTK 판) 패스 앞 `rtk_gate()` → 캡처 ON/OFF·표본 수집 → 2초마다 진행 줄 출력 |
+
+### 8-4. 주요 클래스
+
+- **`Telem`** — MAVSDK 텔레메트리 스트림(위치·속도 10 Hz, 모드, 헤딩, GPS, in_air, 미션 진행)을 백그라운드 태스크로 받아 최신값만 들고 있습니다. `allowed` 에 모드 집합을 넣으면, 그 밖의 모드가 들어온 순간을 기록하고 `check()` 에서 `ModeLost` 를 던집니다. RTK 판은 `rtk_since` 로 Fixed 가 이어진 시간(`rtk_fixed_for()`)을 셉니다.
+- **`Line`** — L 을 원점, 이동 방향을 +축으로 하는 직선 좌표. `pts` 에 L·(S·E)·X 위경도, `along_cross(pos)` 가 (진행 거리, 옆으로 벗어난 거리)를 돌려줍니다. 위경도 계산은 평면 근사(WGS84 장반경)입니다.
+- **`Plan`** — FC 에 올릴 `MissionItem` 목록 `items` 와 항목별 역할 `roles[seq] = (종류, 패스 번호)`. 종류는 `takeoff`·`align`·`speed`·`hold`(L 대기)·`pass`(L→X)·`rot`(회전 단계)·`land`. `monitor()` 는 FC 가 알려 주는 현재 항목 번호로 `roles` 를 찾아 지금 무슨 단계인지 압니다.
+- **`PassLog`** — 패스 하나의 캡처 시작·끝 시각과 속도·고도·cross-track(·yaw 오차) 표본. `start()` 가 `CAP_ON` 을 만들고 `end()` 가 지우며, `summary()` 가 SUMMARY 줄을 씁니다.
+
+### 8-5. 미션 항목 만드는 법 (`build_plan`)
+
+| 항목 | MAVLink 명령 | 좌표계 | 파라미터 |
+|---|---|---|---|
+| 이륙 | `NAV_TAKEOFF`(22) | GLOBAL_RELATIVE_ALT(3) | p4 헤딩(PX4 는 이륙 중 무시), z 고도 |
+| 지점 | `NAV_WAYPOINT`(16) | GLOBAL_RELATIVE_ALT(3) | p1 머무는 시간, p2 도달 반경, p4 **고정 헤딩** |
+| 속도 | `DO_CHANGE_SPEED`(178) | MISSION(2) | p1=1(대지속도), p2 속도, p3=-1 |
+| 착륙 | `NAV_LAND`(21) | GLOBAL_RELATIVE_ALT(3) | L 좌표, p4 헤딩 |
+
+- 위경도는 1e7 을 곱한 정수(`MISSION_ITEM_INT`)로 넣습니다.
+- PX4 1.16 은 ROI 가 없으면 waypoint 의 p4 헤딩을 그대로 쓰고, 헤딩이 `MIS_YAW_ERR`(12°) 안에 들어와야 도달로 칩니다.
+- 회전 패턴은 헤딩을 90°(`ROTATE_STEP`)씩 바꾼 waypoint 4개입니다. PX4 는 최단 방향으로 돌기 때문에 180° 미만으로 나눠야 시계방향이 보장됩니다.
+- **대조**(`upload_verified` → `same_item`): 올린 뒤 내려받아 seq·명령·좌표계·정수 좌표는 정확히, 실수는 1e-3 안으로 같아야 합니다. PX4 는 좌표계 0·3 을 `_INT` 짝 5·6 으로 돌려주므로 같은 것으로 봅니다. 하나라도 다르면 arm 하지 않습니다.
+- **예상 시간**(`estimate_s`)은 이륙(1 m/s)·정렬·첫 대기·착륙(0.7 m/s)·여유 10초에, 패스마다 왕복 이동(가감속 여유 4초씩, 회전은 30°/s) + 대기 시간을 더한 대략값입니다. `monitor()` 는 그 2배 + 60초를 넘으면 시간 초과로 봅니다. RTK 판은 패스 전 RTK 를 기다린 시간만큼 기한을 늘립니다.
+
+### 8-6. 캡처 판정 (`monitor` 안)
+
+- `sar_test` 계열: 현재 항목이 그 패스의 `pass` 이고 진행 거리 ≥ S 이면 ON. 진행 거리가 E 에 닿거나 항목이 넘어가면 OFF.
+- 시험판 전후·좌우: 그 패스의 `pass` 항목이 시작되면 ON. 진행 거리가 X − 도달 반경에 닿거나 항목이 넘어가면 OFF. (패스 항목은 X 에서 `--settle` 초 머무는 동안에도 현재 항목이라, 항목이 넘어가기를 기다리면 정지 비행까지 캡처됩니다.)
+- 시험판 회전: 그 패스의 `rot` 항목이 시작되면 ON, `rot` 이 아닌 항목으로 넘어가면 OFF.
+- (RTK 판) 패스 앞 `hold` 항목이면서 L 에서 max(1 m, 도달 반경 × 2) 안에 들어오면 `rtk_gate()` 를 한 번 부릅니다. Fixed 가 모자라면 `pause_mission`(HOLD) → `wait_rtk` → `start_mission`. 그동안은 HOLD 도 허용 모드로 둡니다.
+
+### 8-7. `mavsdk_guard.py`
+
+| 함수 | 하는 일 |
+|---|---|
+| `connect(address, log)` | `busy_ports()` 로 UDP 14540·TCP 50051 을 bind 해 보고, 쓰는 프로세스가 있으면 `ss` 출력과 함께 `StaleServer`(→ 스크립트는 아무 명령도 보내지 않고 끝). 연결 0.5초 뒤 내 서버가 죽었으면 역시 `StaleServer` |
+| `stop(drone)` | 내 mavsdk_server 프로세스를 kill. 이것이 없으면 서버 출력을 읽는 non-daemon 스레드 때문에 프로세스가 안 끝납니다 |
+| `abort(drone, how, address, log)` | `rtl`/`land`/`hold` 를 5초 안에 보냄. 실패하면 서버를 내리고 빈 gRPC 포트로 새 서버를 띄워 다시 연결해 한 번 더 보냄 |
+
+포트 검사가 TIME_WAIT 은 통과시키므로(SO_REUSEADDR), 스크립트가 끝난 직후 다시 실행해도 됩니다. `[오류] ... 를 이미 다른 프로세스가 쓰고 있다` 가 나오면 다른 창에서 비행 중인 스크립트가 없는지 확인한 뒤 `pkill -f mavsdk_server`.
+
+### 8-8. `emergency_land.py` 내부
+
+`run()` → TCP 5760 으로 연결(10초) → `status()`(armed·in_air·모드·고도) → 지상·disarm 이면 끝(`--force` 제외) → `send()` 를 5초 제한으로 최대 3번 → `CAP_ON` 삭제 → `clear_mission()`(`--keep-mission` 제외) → hold 면 끝, 아니면 1초마다 상태를 찍으며 착륙·disarm 대기(`--watch`).
+
+---
+
+## 9. 비행 실행기 — `flight_runner/`
+
+가시화 화면의 「비행 제어」 탭에서 비행을 시작·중단하기 위한 부분입니다. **비행 스크립트를 고치지 않고** 옵션을 붙여 띄운 뒤 출력을 그대로 전달합니다.
+
+| 파일 | 하는 일 |
+|---|---|
+| `core.py` | `FlightRunner` 본체: 파라미터 → 명령줄, 실행, 출력 따라 읽기, 상태 발행 |
+| `node.py` | 드론 노드(`drone.drone_node:DroneNode`, `~/hw/pi`)를 감싸 action 세 개를 붙임 |
+| `cli.py` | 노드 없이 손으로 시험하는 입구(`python -m flight_runner …`) |
+| `deploy/` | `60-flight-runner.conf`(drone-node.service 덮어쓰기), `install.sh --install/--uninstall` |
+
+**action** (`node.py` 가 선언 → 가시화 버튼이 열림)
+
+| action | 하는 일 |
+|---|---|
+| `rtk_test_start` | 그때 RTK 보정이 FC 로 들어오고 있으면 `test_sar_rtk.py`, 아니면 `test_sar.py` 를 띄움(`--rtk-*` 는 뺌) |
+| `rtk_test_stop` | 돌고 있는 스크립트의 **주 프로세스에만** SIGTERM (= Ctrl+C → 캡처 OFF → `--abort`). 그룹 전체에 보내면 mavsdk_server 가 먼저 죽어 abort 를 못 보냅니다 |
+| `rtk_test_emergency` | `emergency_land.py` 실행. `mode` 0 land · 1 rtl · 2 hold |
+
+**`rtk_test_start` 파라미터** (값은 모두 숫자)
+
+| 키 | 옵션 | |
+|---|---|---|
+| `pattern` | `--pattern` | 0 fb · 1 lr · 2 rotate (필수) |
+| `side` | `--side` | 0 forward · 1 back · 2 right · 3 left (회전 아니면 필수) |
+| `dry_run` | `--dry-run` | 0/1 (필수). 0 이면 `confirmed=1` 이 있어야 받음 |
+| `altitude_m` · `passes` | `--altitude` · `--passes` | 필수, passes 는 정수 |
+| `length_m` · `speed_mps` | `--length` · `--speed` | 회전 아니면 필수 |
+| `gap_s` · `heading_deg` · `accept_radius_m` · `align_hold_s` · `settle_s` · `rtk_min_s` · `rtk_timeout_s` | 같은 이름의 옵션 | 선택 |
+| `abort` | `--abort` | 0 rtl · 1 hold · 2 land (선택) |
+
+언제나 `--yes` 를 붙입니다(사람의 확인은 화면이 받음). 범위 검사는 스크립트에 맡깁니다.
+
+**지키는 것**
+
+- 스크립트는 `systemd-run --user` 로 **별도 유닛**에서 돕니다. 실행기·노드가 재시작돼도 비행은 계속되고, 재시작하면 `cansar_logs/runner/runner_state.json` 으로 같은 유닛·출력 파일(`cansar_logs/runner/<run_id>.out`)에 다시 붙습니다.
+- 출력은 가공하지 않고 최근 200줄을 `<토픽 base>/flight_run` 에 retain 으로 냅니다(새 줄이 있으면 최대 2 Hz, 없으면 5초마다).
+- 이미 돌고 있으면 새 시작은 거절(`already_running`). 자동 실행·재시도 경로는 없습니다.
+
+**손으로 시험** (`cd ~/drone`)
+
+```bash
+./venv/bin/python -m flight_runner start pattern=0 side=0 altitude_m=3 length_m=3 speed_mps=1 passes=1 dry_run=1
+./venv/bin/python -m flight_runner start --no-rtk …   # test_sar.py 로 (노드 밖에서는 RTK 를 판정하지 않아 기본은 test_sar_rtk.py)
+./venv/bin/python -m flight_runner status | follow | stop
+./venv/bin/python -m flight_runner emergency land
+```
+
+드론 노드에 실행기가 설치돼 있으면 노드가 주인이라, `cli` 는 `status`·`follow`·`stop` 만 하고 `start`·`emergency` 는 거절합니다(`--owner` 로 강제, 노드가 꺼져 있을 때만).
+
+---
+
+## 10. 알려진 한계
 
 - **실비행 미검증**: `sar_test`·`sar_test_rtk`·`test_sar` 의 미션 방식은 지상에서 실제 FC 로 업로드·대조·삭제(dry-run)와 감시 로직 모의 비행까지만 확인했습니다. **처음에는 `test_sar` 를 5 m·저속으로 날려** 기수 고정과 캡처 시점을 확인하세요.
 - **등속은 FC 가 정합니다**: 가속·감속은 PX4 가 계획합니다. 20 m 여유 안에서 등속에 들어간다는 것은 가정이고, SUMMARY 의 속도로 확인해야 합니다.
