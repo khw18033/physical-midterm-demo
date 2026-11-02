@@ -2,311 +2,9 @@
   "conf": 0.25,
   "imgsz": 256,
   "frames": 27,
-  "present": 8,
+  "present": 10,
   "unsure_excluded": [],
   "runs": {
-    "yolov8n_graybox_v2": {
-      "present_hit": 6,
-      "absent_frames_with_detection": 0,
-      "wrong_boxes_total": 2,
-      "per_frame": [
-        {
-          "frame": "hall1_1793593669_rot000",
-          "present": true,
-          "unsure": false,
-          "detections": [
-            {
-              "box_xyxy": [
-                0.0,
-                123.4,
-                45.7,
-                162.0
-              ],
-              "score": 0.659
-            }
-          ],
-          "hit": true,
-          "wrong": 0
-        },
-        {
-          "frame": "hall1_1793593669_rot045",
-          "present": false,
-          "unsure": false,
-          "detections": [],
-          "hit": false,
-          "wrong": 0
-        },
-        {
-          "frame": "hall1_1793593669_rot090",
-          "present": false,
-          "unsure": false,
-          "detections": [],
-          "hit": false,
-          "wrong": 0
-        },
-        {
-          "frame": "hall1_1793593669_rot135",
-          "present": false,
-          "unsure": false,
-          "detections": [],
-          "hit": false,
-          "wrong": 0
-        },
-        {
-          "frame": "hall1_1793593669_rot180",
-          "present": false,
-          "unsure": false,
-          "detections": [],
-          "hit": false,
-          "wrong": 0
-        },
-        {
-          "frame": "hall1_1793593669_rot225",
-          "present": false,
-          "unsure": false,
-          "detections": [],
-          "hit": false,
-          "wrong": 0
-        },
-        {
-          "frame": "hall1_1793593669_rot270",
-          "present": false,
-          "unsure": false,
-          "detections": [],
-          "hit": false,
-          "wrong": 0
-        },
-        {
-          "frame": "hall1_1793593669_rot315",
-          "present": true,
-          "unsure": false,
-          "detections": [
-            {
-              "box_xyxy": [
-                133.2,
-                126.4,
-                183.9,
-                167.0
-              ],
-              "score": 0.923
-            }
-          ],
-          "hit": true,
-          "wrong": 0
-        },
-        {
-          "frame": "hall2_1793595212_rot000",
-          "present": false,
-          "unsure": false,
-          "detections": [],
-          "hit": false,
-          "wrong": 0
-        },
-        {
-          "frame": "hall2_1793595212_rot045",
-          "present": true,
-          "unsure": false,
-          "detections": [
-            {
-              "box_xyxy": [
-                174.0,
-                118.8,
-                237.0,
-                176.2
-              ],
-              "score": 0.928
-            }
-          ],
-          "hit": true,
-          "wrong": 0
-        },
-        {
-          "frame": "hall2_1793595212_rot090",
-          "present": true,
-          "unsure": false,
-          "detections": [
-            {
-              "box_xyxy": [
-                86.1,
-                122.4,
-                154.3,
-                173.7
-              ],
-              "score": 0.827
-            }
-          ],
-          "hit": true,
-          "wrong": 0
-        },
-        {
-          "frame": "hall2_1793595212_rot135",
-          "present": false,
-          "unsure": false,
-          "detections": [],
-          "hit": false,
-          "wrong": 0
-        },
-        {
-          "frame": "hall2_1793595212_rot180",
-          "present": false,
-          "unsure": false,
-          "detections": [],
-          "hit": false,
-          "wrong": 0
-        },
-        {
-          "frame": "hall2_1793595212_rot225",
-          "present": false,
-          "unsure": false,
-          "detections": [],
-          "hit": false,
-          "wrong": 0
-        },
-        {
-          "frame": "hall2_1793595212_rot270",
-          "present": false,
-          "unsure": false,
-          "detections": [],
-          "hit": false,
-          "wrong": 0
-        },
-        {
-          "frame": "hall2_1793595212_rot315",
-          "present": false,
-          "unsure": false,
-          "detections": [],
-          "hit": false,
-          "wrong": 0
-        },
-        {
-          "frame": "officeA_1793544975_rot000",
-          "present": false,
-          "unsure": false,
-          "detections": [],
-          "hit": false,
-          "wrong": 0
-        },
-        {
-          "frame": "officeA_1793544975_rot045",
-          "present": true,
-          "unsure": false,
-          "detections": [],
-          "hit": false,
-          "wrong": 0
-        },
-        {
-          "frame": "officeA_1793544975_rot090",
-          "present": true,
-          "unsure": false,
-          "detections": [
-            {
-              "box_xyxy": [
-                107.6,
-                74.2,
-                130.0,
-                240.3
-              ],
-              "score": 0.508
-            }
-          ],
-          "hit": false,
-          "wrong": 1
-        },
-        {
-          "frame": "officeB_1793546275_rot000",
-          "present": false,
-          "unsure": false,
-          "detections": [],
-          "hit": false,
-          "wrong": 0
-        },
-        {
-          "frame": "officeB_1793546275_rot045",
-          "present": false,
-          "unsure": false,
-          "detections": [],
-          "hit": false,
-          "wrong": 0
-        },
-        {
-          "frame": "officeB_1793546275_rot090",
-          "present": false,
-          "unsure": false,
-          "detections": [],
-          "hit": false,
-          "wrong": 0
-        },
-        {
-          "frame": "officeB_1793546275_rot135",
-          "present": false,
-          "unsure": false,
-          "detections": [],
-          "hit": false,
-          "wrong": 0
-        },
-        {
-          "frame": "officeB_1793546275_rot180",
-          "present": false,
-          "unsure": false,
-          "detections": [],
-          "hit": false,
-          "wrong": 0
-        },
-        {
-          "frame": "officeB_1793546275_rot225",
-          "present": false,
-          "unsure": false,
-          "detections": [],
-          "hit": false,
-          "wrong": 0
-        },
-        {
-          "frame": "officeB_1793546275_rot270",
-          "present": true,
-          "unsure": false,
-          "detections": [
-            {
-              "box_xyxy": [
-                173.7,
-                127.5,
-                224.7,
-                167.6
-              ],
-              "score": 0.922
-            }
-          ],
-          "hit": true,
-          "wrong": 0
-        },
-        {
-          "frame": "officeB_1793546275_rot315",
-          "present": true,
-          "unsure": false,
-          "detections": [
-            {
-              "box_xyxy": [
-                50.0,
-                128.3,
-                94.5,
-                162.1
-              ],
-              "score": 0.826
-            },
-            {
-              "box_xyxy": [
-                140.0,
-                72.9,
-                175.0,
-                241.0
-              ],
-              "score": 0.457
-            }
-          ],
-          "hit": true,
-          "wrong": 1
-        }
-      ]
-    },
     "yolov8n_graybox_v3": {
       "present_hit": 4,
       "absent_frames_with_detection": 0,
@@ -472,7 +170,7 @@
         },
         {
           "frame": "officeA_1793544975_rot000",
-          "present": false,
+          "present": true,
           "unsure": false,
           "detections": [],
           "hit": false,
@@ -546,7 +244,7 @@
         },
         {
           "frame": "officeB_1793546275_rot225",
-          "present": false,
+          "present": true,
           "unsure": false,
           "detections": [],
           "hit": false,
@@ -582,7 +280,7 @@
     },
     "yolov8n_graybox_v4": {
       "present_hit": 8,
-      "absent_frames_with_detection": 1,
+      "absent_frames_with_detection": 0,
       "wrong_boxes_total": 1,
       "per_frame": [
         {
@@ -755,7 +453,7 @@
         },
         {
           "frame": "officeA_1793544975_rot000",
-          "present": false,
+          "present": true,
           "unsure": false,
           "detections": [],
           "hit": false,
@@ -839,7 +537,7 @@
         },
         {
           "frame": "officeB_1793546275_rot225",
-          "present": false,
+          "present": true,
           "unsure": false,
           "detections": [
             {
@@ -894,9 +592,9 @@
       ]
     },
     "yolov8n_graybox_v5": {
-      "present_hit": 8,
-      "absent_frames_with_detection": 3,
-      "wrong_boxes_total": 4,
+      "present_hit": 10,
+      "absent_frames_with_detection": 1,
+      "wrong_boxes_total": 2,
       "per_frame": [
         {
           "frame": "hall1_1793593669_rot000",
@@ -1078,7 +776,7 @@
         },
         {
           "frame": "officeA_1793544975_rot000",
-          "present": false,
+          "present": true,
           "unsure": false,
           "detections": [
             {
@@ -1091,8 +789,8 @@
               "score": 0.589
             }
           ],
-          "hit": false,
-          "wrong": 1
+          "hit": true,
+          "wrong": 0
         },
         {
           "frame": "officeA_1793544975_rot045",
@@ -1172,7 +870,7 @@
         },
         {
           "frame": "officeB_1793546275_rot225",
-          "present": false,
+          "present": true,
           "unsure": false,
           "detections": [
             {
@@ -1185,8 +883,8 @@
               "score": 0.751
             }
           ],
-          "hit": false,
-          "wrong": 1
+          "hit": true,
+          "wrong": 0
         },
         {
           "frame": "officeB_1793546275_rot270",
@@ -1232,6 +930,662 @@
           ],
           "hit": true,
           "wrong": 1
+        }
+      ]
+    },
+    "yolov8n_graybox_v6": {
+      "present_hit": 10,
+      "absent_frames_with_detection": 1,
+      "wrong_boxes_total": 1,
+      "per_frame": [
+        {
+          "frame": "hall1_1793593669_rot000",
+          "present": true,
+          "unsure": false,
+          "detections": [
+            {
+              "box_xyxy": [
+                0.2,
+                124.4,
+                45.6,
+                162.2
+              ],
+              "score": 0.955
+            }
+          ],
+          "hit": true,
+          "wrong": 0
+        },
+        {
+          "frame": "hall1_1793593669_rot045",
+          "present": false,
+          "unsure": false,
+          "detections": [],
+          "hit": false,
+          "wrong": 0
+        },
+        {
+          "frame": "hall1_1793593669_rot090",
+          "present": false,
+          "unsure": false,
+          "detections": [],
+          "hit": false,
+          "wrong": 0
+        },
+        {
+          "frame": "hall1_1793593669_rot135",
+          "present": false,
+          "unsure": false,
+          "detections": [],
+          "hit": false,
+          "wrong": 0
+        },
+        {
+          "frame": "hall1_1793593669_rot180",
+          "present": false,
+          "unsure": false,
+          "detections": [],
+          "hit": false,
+          "wrong": 0
+        },
+        {
+          "frame": "hall1_1793593669_rot225",
+          "present": false,
+          "unsure": false,
+          "detections": [],
+          "hit": false,
+          "wrong": 0
+        },
+        {
+          "frame": "hall1_1793593669_rot270",
+          "present": false,
+          "unsure": false,
+          "detections": [],
+          "hit": false,
+          "wrong": 0
+        },
+        {
+          "frame": "hall1_1793593669_rot315",
+          "present": true,
+          "unsure": false,
+          "detections": [
+            {
+              "box_xyxy": [
+                133.0,
+                127.2,
+                183.6,
+                167.6
+              ],
+              "score": 0.96
+            }
+          ],
+          "hit": true,
+          "wrong": 0
+        },
+        {
+          "frame": "hall2_1793595212_rot000",
+          "present": false,
+          "unsure": false,
+          "detections": [],
+          "hit": false,
+          "wrong": 0
+        },
+        {
+          "frame": "hall2_1793595212_rot045",
+          "present": true,
+          "unsure": false,
+          "detections": [
+            {
+              "box_xyxy": [
+                174.3,
+                119.6,
+                236.7,
+                176.7
+              ],
+              "score": 0.963
+            }
+          ],
+          "hit": true,
+          "wrong": 0
+        },
+        {
+          "frame": "hall2_1793595212_rot090",
+          "present": true,
+          "unsure": false,
+          "detections": [
+            {
+              "box_xyxy": [
+                86.3,
+                124.1,
+                153.8,
+                173.9
+              ],
+              "score": 0.97
+            }
+          ],
+          "hit": true,
+          "wrong": 0
+        },
+        {
+          "frame": "hall2_1793595212_rot135",
+          "present": false,
+          "unsure": false,
+          "detections": [],
+          "hit": false,
+          "wrong": 0
+        },
+        {
+          "frame": "hall2_1793595212_rot180",
+          "present": false,
+          "unsure": false,
+          "detections": [
+            {
+              "box_xyxy": [
+                108.5,
+                127.5,
+                127.9,
+                142.0
+              ],
+              "score": 0.274
+            }
+          ],
+          "hit": false,
+          "wrong": 1
+        },
+        {
+          "frame": "hall2_1793595212_rot225",
+          "present": false,
+          "unsure": false,
+          "detections": [],
+          "hit": false,
+          "wrong": 0
+        },
+        {
+          "frame": "hall2_1793595212_rot270",
+          "present": false,
+          "unsure": false,
+          "detections": [],
+          "hit": false,
+          "wrong": 0
+        },
+        {
+          "frame": "hall2_1793595212_rot315",
+          "present": false,
+          "unsure": false,
+          "detections": [],
+          "hit": false,
+          "wrong": 0
+        },
+        {
+          "frame": "officeA_1793544975_rot000",
+          "present": true,
+          "unsure": false,
+          "detections": [
+            {
+              "box_xyxy": [
+                37.1,
+                126.5,
+                65.3,
+                159.7
+              ],
+              "score": 0.719
+            }
+          ],
+          "hit": true,
+          "wrong": 0
+        },
+        {
+          "frame": "officeA_1793544975_rot045",
+          "present": true,
+          "unsure": false,
+          "detections": [
+            {
+              "box_xyxy": [
+                165.9,
+                127.7,
+                210.7,
+                164.4
+              ],
+              "score": 0.934
+            }
+          ],
+          "hit": true,
+          "wrong": 0
+        },
+        {
+          "frame": "officeA_1793544975_rot090",
+          "present": true,
+          "unsure": false,
+          "detections": [
+            {
+              "box_xyxy": [
+                49.7,
+                128.5,
+                90.1,
+                161.2
+              ],
+              "score": 0.935
+            }
+          ],
+          "hit": true,
+          "wrong": 0
+        },
+        {
+          "frame": "officeB_1793546275_rot000",
+          "present": false,
+          "unsure": false,
+          "detections": [],
+          "hit": false,
+          "wrong": 0
+        },
+        {
+          "frame": "officeB_1793546275_rot045",
+          "present": false,
+          "unsure": false,
+          "detections": [],
+          "hit": false,
+          "wrong": 0
+        },
+        {
+          "frame": "officeB_1793546275_rot090",
+          "present": false,
+          "unsure": false,
+          "detections": [],
+          "hit": false,
+          "wrong": 0
+        },
+        {
+          "frame": "officeB_1793546275_rot135",
+          "present": false,
+          "unsure": false,
+          "detections": [],
+          "hit": false,
+          "wrong": 0
+        },
+        {
+          "frame": "officeB_1793546275_rot180",
+          "present": false,
+          "unsure": false,
+          "detections": [],
+          "hit": false,
+          "wrong": 0
+        },
+        {
+          "frame": "officeB_1793546275_rot225",
+          "present": true,
+          "unsure": false,
+          "detections": [
+            {
+              "box_xyxy": [
+                122.0,
+                127.7,
+                150.0,
+                163.6
+              ],
+              "score": 0.801
+            }
+          ],
+          "hit": true,
+          "wrong": 0
+        },
+        {
+          "frame": "officeB_1793546275_rot270",
+          "present": true,
+          "unsure": false,
+          "detections": [
+            {
+              "box_xyxy": [
+                173.7,
+                128.4,
+                223.7,
+                167.3
+              ],
+              "score": 0.964
+            }
+          ],
+          "hit": true,
+          "wrong": 0
+        },
+        {
+          "frame": "officeB_1793546275_rot315",
+          "present": true,
+          "unsure": false,
+          "detections": [
+            {
+              "box_xyxy": [
+                49.8,
+                130.0,
+                95.8,
+                161.9
+              ],
+              "score": 0.946
+            }
+          ],
+          "hit": true,
+          "wrong": 0
+        }
+      ]
+    },
+    "yolov8n_graybox_v7": {
+      "present_hit": 10,
+      "absent_frames_with_detection": 0,
+      "wrong_boxes_total": 0,
+      "per_frame": [
+        {
+          "frame": "hall1_1793593669_rot000",
+          "present": true,
+          "unsure": false,
+          "detections": [
+            {
+              "box_xyxy": [
+                0.3,
+                124.3,
+                45.9,
+                162.4
+              ],
+              "score": 0.958
+            }
+          ],
+          "hit": true,
+          "wrong": 0
+        },
+        {
+          "frame": "hall1_1793593669_rot045",
+          "present": false,
+          "unsure": false,
+          "detections": [],
+          "hit": false,
+          "wrong": 0
+        },
+        {
+          "frame": "hall1_1793593669_rot090",
+          "present": false,
+          "unsure": false,
+          "detections": [],
+          "hit": false,
+          "wrong": 0
+        },
+        {
+          "frame": "hall1_1793593669_rot135",
+          "present": false,
+          "unsure": false,
+          "detections": [],
+          "hit": false,
+          "wrong": 0
+        },
+        {
+          "frame": "hall1_1793593669_rot180",
+          "present": false,
+          "unsure": false,
+          "detections": [],
+          "hit": false,
+          "wrong": 0
+        },
+        {
+          "frame": "hall1_1793593669_rot225",
+          "present": false,
+          "unsure": false,
+          "detections": [],
+          "hit": false,
+          "wrong": 0
+        },
+        {
+          "frame": "hall1_1793593669_rot270",
+          "present": false,
+          "unsure": false,
+          "detections": [],
+          "hit": false,
+          "wrong": 0
+        },
+        {
+          "frame": "hall1_1793593669_rot315",
+          "present": true,
+          "unsure": false,
+          "detections": [
+            {
+              "box_xyxy": [
+                132.5,
+                127.3,
+                183.7,
+                167.1
+              ],
+              "score": 0.944
+            }
+          ],
+          "hit": true,
+          "wrong": 0
+        },
+        {
+          "frame": "hall2_1793595212_rot000",
+          "present": false,
+          "unsure": false,
+          "detections": [],
+          "hit": false,
+          "wrong": 0
+        },
+        {
+          "frame": "hall2_1793595212_rot045",
+          "present": true,
+          "unsure": false,
+          "detections": [
+            {
+              "box_xyxy": [
+                174.4,
+                120.5,
+                236.6,
+                176.3
+              ],
+              "score": 0.952
+            }
+          ],
+          "hit": true,
+          "wrong": 0
+        },
+        {
+          "frame": "hall2_1793595212_rot090",
+          "present": true,
+          "unsure": false,
+          "detections": [
+            {
+              "box_xyxy": [
+                86.1,
+                124.5,
+                153.8,
+                173.6
+              ],
+              "score": 0.974
+            }
+          ],
+          "hit": true,
+          "wrong": 0
+        },
+        {
+          "frame": "hall2_1793595212_rot135",
+          "present": false,
+          "unsure": false,
+          "detections": [],
+          "hit": false,
+          "wrong": 0
+        },
+        {
+          "frame": "hall2_1793595212_rot180",
+          "present": false,
+          "unsure": false,
+          "detections": [],
+          "hit": false,
+          "wrong": 0
+        },
+        {
+          "frame": "hall2_1793595212_rot225",
+          "present": false,
+          "unsure": false,
+          "detections": [],
+          "hit": false,
+          "wrong": 0
+        },
+        {
+          "frame": "hall2_1793595212_rot270",
+          "present": false,
+          "unsure": false,
+          "detections": [],
+          "hit": false,
+          "wrong": 0
+        },
+        {
+          "frame": "hall2_1793595212_rot315",
+          "present": false,
+          "unsure": false,
+          "detections": [],
+          "hit": false,
+          "wrong": 0
+        },
+        {
+          "frame": "officeA_1793544975_rot000",
+          "present": true,
+          "unsure": false,
+          "detections": [
+            {
+              "box_xyxy": [
+                36.8,
+                126.3,
+                65.3,
+                162.0
+              ],
+              "score": 0.574
+            }
+          ],
+          "hit": true,
+          "wrong": 0
+        },
+        {
+          "frame": "officeA_1793544975_rot045",
+          "present": true,
+          "unsure": false,
+          "detections": [
+            {
+              "box_xyxy": [
+                165.9,
+                127.8,
+                211.3,
+                164.4
+              ],
+              "score": 0.937
+            }
+          ],
+          "hit": true,
+          "wrong": 0
+        },
+        {
+          "frame": "officeA_1793544975_rot090",
+          "present": true,
+          "unsure": false,
+          "detections": [
+            {
+              "box_xyxy": [
+                49.4,
+                128.9,
+                90.1,
+                161.5
+              ],
+              "score": 0.943
+            }
+          ],
+          "hit": true,
+          "wrong": 0
+        },
+        {
+          "frame": "officeB_1793546275_rot000",
+          "present": false,
+          "unsure": false,
+          "detections": [],
+          "hit": false,
+          "wrong": 0
+        },
+        {
+          "frame": "officeB_1793546275_rot045",
+          "present": false,
+          "unsure": false,
+          "detections": [],
+          "hit": false,
+          "wrong": 0
+        },
+        {
+          "frame": "officeB_1793546275_rot090",
+          "present": false,
+          "unsure": false,
+          "detections": [],
+          "hit": false,
+          "wrong": 0
+        },
+        {
+          "frame": "officeB_1793546275_rot135",
+          "present": false,
+          "unsure": false,
+          "detections": [],
+          "hit": false,
+          "wrong": 0
+        },
+        {
+          "frame": "officeB_1793546275_rot180",
+          "present": false,
+          "unsure": false,
+          "detections": [],
+          "hit": false,
+          "wrong": 0
+        },
+        {
+          "frame": "officeB_1793546275_rot225",
+          "present": true,
+          "unsure": false,
+          "detections": [
+            {
+              "box_xyxy": [
+                121.8,
+                127.2,
+                150.3,
+                164.8
+              ],
+              "score": 0.689
+            }
+          ],
+          "hit": true,
+          "wrong": 0
+        },
+        {
+          "frame": "officeB_1793546275_rot270",
+          "present": true,
+          "unsure": false,
+          "detections": [
+            {
+              "box_xyxy": [
+                173.2,
+                128.1,
+                224.0,
+                167.3
+              ],
+              "score": 0.956
+            }
+          ],
+          "hit": true,
+          "wrong": 0
+        },
+        {
+          "frame": "officeB_1793546275_rot315",
+          "present": true,
+          "unsure": false,
+          "detections": [
+            {
+              "box_xyxy": [
+                49.6,
+                129.6,
+                95.6,
+                161.9
+              ],
+              "score": 0.953
+            }
+          ],
+          "hit": true,
+          "wrong": 0
         }
       ]
     }

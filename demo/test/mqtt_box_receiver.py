@@ -41,7 +41,7 @@ h_px는 테두리 crop(237×241) 좌표에서 잰 박스 높이(앞면 39cm)다.
 - 각도는 `rotation_deg`만 쓴다(`yaw_deg`는 판마다 기준점이 옮겨진다).
 
 실행:
-    python mqtt_box_receiver.py                              # 로봇 실연동 (기본 run = yolov8n_graybox_v5)
+    python mqtt_box_receiver.py                              # 로봇 실연동 (기본 run = yolov8n_graybox_v7)
     python mqtt_box_receiver.py --replay ..\\..\\box_meter      # 로봇 없이 폴더의 jpg를 한 판으로 재생
     python mqtt_box_receiver.py --run yolov8n_graybox_v2     # 다른 학습 결과로
 """
@@ -79,9 +79,11 @@ IMAGE_W = 464                 # 로봇 카메라 464×400 (CLAUDE.md)
 BOX_HEIGHT_CM = 39.0          # 회색 천 박스 앞면 높이 (RESULT.md)
 EDGE_PX = 2.0                 # crop 끝에서 이만큼 안이면 "잘렸다"로 본다 (fit_distance_gt.py와 같다)
 # 2026-11-02 v3 -> v5(gray_box_train/학습보고서_261102.md): 실연동 고정 세트 4/8 -> 8/8, 복도 2~3m 검출 0~3% -> 100%,
-# box_meter 14장 전부 검출(v3는 200cm·옆면 100cm 이상을 놓쳤다). 대신 세워 둔 검은 캐리어·사람 등·책상 다리 오탐이 생겼다
+# box_meter 14장 전부 검출(v3는 200cm·옆면 100cm 이상을 놓쳤다). 대신 사람 등·책상 다리 오탐이 생겼다
 # (박스 없는 장면 학습 필요). 이전 동작이 필요하면 --run yolov8n_graybox_v3.
-DEFAULT_RUN = "yolov8n_graybox_v5"
+# 2026-11-02 v5 -> v7(같은 보고서 8절): 박스 없는 연구실 영상 2개를 음성으로 더해 책상 다리·검은 백팩 오탐을 줄였다.
+# 실연동 고정 세트 박스 10/10 + 엉뚱한 검출 0(v5는 2), 2~3m 검출·거리 유지. 거리식 k 5266.8 / c 6.3(box_meter 평균 오차 3.0cm).
+DEFAULT_RUN = "yolov8n_graybox_v7"
 DEFAULT_CONF = 0.25           # 계수를 맞출 때 쓴 값
 # 2026-11-02 판단 근거(박스판단근거_가시화계획_261102.md 6절): 「왜 못 찾았나」를 남기려고 conf 아래 후보도
 # 이 값까지 내려 받아 score 상위 몇 개만 기록한다. 판정은 여전히 conf(0.25)로만 한다 -- 후보는 버린 근거일 뿐이다.

@@ -47,6 +47,12 @@
 !/gray_box_train/dataset_far/
 /gray_box_train/dataset_far/*
 !/gray_box_train/dataset_far/far_stats.json
+!/gray_box_train/dataset_neg/
+/gray_box_train/dataset_neg/*
+!/gray_box_train/dataset_neg/neg_stats.json
+!/gray_box_train/dataset_lab/
+/gray_box_train/dataset_lab/*
+!/gray_box_train/dataset_lab/lab_stats.json
 !/gray_box_train/live_test/
 /gray_box_train/live_test/*
 !/gray_box_train/live_test/gt.json

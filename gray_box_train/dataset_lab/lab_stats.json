@@ -1,0 +1,30 @@
+{
+  "source": "20261102_161617",
+  "frames": 3478,
+  "neg_range": [
+    0,
+    1840
+  ],
+  "pos_range": [
+    1990,
+    3477
+  ],
+  "mine_run": "yolov8n_graybox_v5",
+  "neg": {
+    "train": {
+      "hard": 97,
+      "easy": 697
+    },
+    "val": {
+      "hard": 9,
+      "easy": 169
+    }
+  },
+  "pos": {
+    "train": 281,
+    "val": 109
+  },
+  "pos_drop": {
+    "ground": 106
+  }
+}

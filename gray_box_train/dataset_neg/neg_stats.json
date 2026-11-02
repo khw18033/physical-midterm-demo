@@ -1,0 +1,19 @@
+{
+  "source": "20261102_154357",
+  "frames": 2156,
+  "mine_run": "yolov8n_graybox_v5",
+  "step": 2,
+  "val_blocks": [
+    3,
+    8
+  ],
+  "train": {
+    "hard": 85,
+    "easy": 651
+  },
+  "val": {
+    "hard": 0,
+    "easy": 148
+  },
+  "excluded_box_visible": 473
+}

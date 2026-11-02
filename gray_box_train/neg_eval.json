@@ -1,0 +1,20 @@
+{
+  "source": "20261102_154357",
+  "conf": 0.25,
+  "imgsz": 256,
+  "test_frames": 298,
+  "runs": {
+    "yolov8n_graybox_v5": {
+      "frames_with_detection": 0,
+      "rate": 0.0,
+      "max_score": null,
+      "hits": []
+    },
+    "yolov8n_graybox_v6": {
+      "frames_with_detection": 0,
+      "rate": 0.0,
+      "max_score": null,
+      "hits": []
+    }
+  }
+}
