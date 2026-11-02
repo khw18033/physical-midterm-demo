@@ -1,5 +1,58 @@
+# 화이트리스트 방식(2026-11-02): 저장소 최상단은 전부 무시하고, 커밋할 것만 아래에서 다시 연다.
+# 기준은 직전 커밋(6edc624)이 추적하던 것 + 그 뒤에 생긴 코드·문서다. 학습 데이터·평가/실행 산출물은 넣지 않는다.
+# 새 최상단 폴더/파일을 커밋하려면 여기에 `!/이름` 을 더한다(안 더하면 git status에도 안 보인다).
+/*
+
+# ── 최상단 파일: 설정·문서 ──
+!/.gitignore
+!/.gitattributes
+!/requirements-freeze.txt
+!/*.md
+
+# ── 실행용 exe 런처(소스는 launcher/, 다시 빌드: launcher\build.ps1). 실행명령_261101.md 0번이 쓴다 ──
+!/*.exe
+!/launcher/
+
+# ── 직전 커밋이 추적하던 폴더 ──
+!/datasets/
+!/demo/
+!/models/
+!/research/
+!/weights/
+/weights/*
+!/weights/clip/
+# weights/yolo26n.pt 등 코드가 안 쓰는 가중치는 넣지 않는다
+
+# ── 박스 거리 실측 사진 14장(파일명 = 실제 거리). fit_distance_gt.py 입력이자 replay 확인용 ──
+!/box_meter/
+
+# ── gray box 학습: 스크립트·결과 기록·수신기가 읽는 것만. 학습 데이터(dataset/, labels.jsonl)와 시트 그림은 뺀다 ──
+!/gray_box_train/
+/gray_box_train/*
+!/gray_box_train/*.py
+!/gray_box_train/*.md
+!/gray_box_train/*.json
+!/gray_box_train/runs/
+/gray_box_train/runs/*/*
+!/gray_box_train/runs/*/args.yaml
+!/gray_box_train/runs/*/results.csv
+!/gray_box_train/runs/*/weights/
+/gray_box_train/runs/*/weights/*
+# mqtt_box_receiver.BoxDetector가 읽는 가중치(last.pt는 뺀다). *.pt는 .gitattributes로 LFS다
+!/gray_box_train/runs/*/weights/best.pt
+
+# ── class_features.json `gray box` 항목이 근거로 인용하는 실험: 스크립트와 요약 JSON만(그림·프레임별 기록은 뺀다) ──
+!/box_tag_test_000004171/
+/box_tag_test_000004171/*
+!/box_tag_test_000004171/*.py
+!/box_tag_test_000004171/*.json
+!/gray_box_eval_20261026_211320/
+/gray_box_eval_20261026_211320/*
+!/gray_box_eval_20261026_211320/*.py
+!/gray_box_eval_20261026_211320/*.json
+
+# ── 화이트리스트 안에서도 빼는 것 ──
 __pycache__/
 *.pyc
-demo/test/try1/
-venv/
-src/
+# 실행 산출물: try1/·try_box/와 그 백업(try1_backup_*, try_box_backup_*)
+/demo/test/try*/
