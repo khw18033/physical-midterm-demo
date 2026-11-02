@@ -1,0 +1,92 @@
+{
+  "conf": 0.25,
+  "imgsz": 256,
+  "val_blocks": [
+    3,
+    8
+  ],
+  "runs": {
+    "yolov8n_graybox_v3": {
+      "distance_fit": {
+        "k": 5407.9,
+        "c_cm": 8.0
+      },
+      "folders": {
+        "box_2m": {
+          "frames": 306,
+          "detected": 8,
+          "rate": 0.026,
+          "h_px_median": 26.1,
+          "distance_cm_median": 199.0,
+          "distance_cm_p10_p90": [
+            175.1,
+            202.5
+          ],
+          "folder_cm": 200.0
+        },
+        "box_2.5m": {
+          "frames": 135,
+          "detected": 0,
+          "rate": 0.0,
+          "h_px_median": null,
+          "distance_cm_median": null,
+          "distance_cm_p10_p90": null,
+          "folder_cm": 250.0
+        },
+        "box_3m": {
+          "frames": 87,
+          "detected": 0,
+          "rate": 0.0,
+          "h_px_median": null,
+          "distance_cm_median": null,
+          "distance_cm_p10_p90": null,
+          "folder_cm": 300.0
+        }
+      }
+    },
+    "yolov8n_graybox_v4": {
+      "distance_fit": {
+        "k": 5402.7,
+        "c_cm": 8.0
+      },
+      "folders": {
+        "box_2m": {
+          "frames": 306,
+          "detected": 180,
+          "rate": 0.588,
+          "h_px_median": 25.1,
+          "distance_cm_median": 207.6,
+          "distance_cm_p10_p90": [
+            201.4,
+            216.7
+          ],
+          "folder_cm": 200.0
+        },
+        "box_2.5m": {
+          "frames": 135,
+          "detected": 23,
+          "rate": 0.17,
+          "h_px_median": 19.3,
+          "distance_cm_median": 272.5,
+          "distance_cm_p10_p90": [
+            261.7,
+            279.0
+          ],
+          "folder_cm": 250.0
+        },
+        "box_3m": {
+          "frames": 87,
+          "detected": 44,
+          "rate": 0.506,
+          "h_px_median": 14.9,
+          "distance_cm_median": 355.6,
+          "distance_cm_p10_p90": [
+            342.4,
+            361.4
+          ],
+          "folder_cm": 300.0
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,74 @@
+{
+  "ground": [
+    0.803,
+    135.7,
+    12.0
+  ],
+  "hue_range": null,
+  "h_range": [
+    8.0,
+    60.0
+  ],
+  "val_blocks": [
+    3,
+    8
+  ],
+  "folders": {
+    "box_2m": {
+      "frames": 1529,
+      "pos": {
+        "train": 1210,
+        "val": 306
+      },
+      "drop": 13,
+      "drop_reasons": {
+        "ground": 7,
+        "height": 5,
+        "aspect": 1
+      },
+      "no_gdino": 0,
+      "h_px_p5_p50_p95": [
+        24.7,
+        25.9,
+        27.1
+      ],
+      "outside_old_hue_100_160": 35
+    },
+    "box_2.5m": {
+      "frames": 673,
+      "pos": {
+        "train": 536,
+        "val": 135
+      },
+      "drop": 2,
+      "drop_reasons": {
+        "height": 2
+      },
+      "no_gdino": 0,
+      "h_px_p5_p50_p95": [
+        19.6,
+        20.8,
+        23.4
+      ],
+      "outside_old_hue_100_160": 6
+    },
+    "box_3m": {
+      "frames": 434,
+      "pos": {
+        "train": 340,
+        "val": 87
+      },
+      "drop": 7,
+      "drop_reasons": {
+        "height": 7
+      },
+      "no_gdino": 0,
+      "h_px_p5_p50_p95": [
+        16.0,
+        17.1,
+        22.0
+      ],
+      "outside_old_hue_100_160": 36
+    }
+  }
+}

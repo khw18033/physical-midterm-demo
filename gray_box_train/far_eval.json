@@ -1,0 +1,98 @@
+{
+  "conf": 0.25,
+  "imgsz": 256,
+  "val_blocks": [
+    3,
+    8
+  ],
+  "runs": {
+    "yolov8n_graybox_v4": {
+      "distance_fit": {
+        "k": 5402.7,
+        "c_cm": 8.0
+      },
+      "folders": {
+        "box_2m": {
+          "frames": 306,
+          "detected": 180,
+          "rate": 0.588,
+          "h_px_median": 25.1,
+          "distance_cm_median": 207.6,
+          "distance_cm_p10_p90": [
+            201.4,
+            216.7
+          ],
+          "folder_cm": 200.0
+        },
+        "box_2.5m": {
+          "frames": 135,
+          "detected": 23,
+          "rate": 0.17,
+          "h_px_median": 19.3,
+          "distance_cm_median": 272.5,
+          "distance_cm_p10_p90": [
+            261.7,
+            279.0
+          ],
+          "folder_cm": 250.0
+        },
+        "box_3m": {
+          "frames": 87,
+          "detected": 44,
+          "rate": 0.506,
+          "h_px_median": 14.9,
+          "distance_cm_median": 355.6,
+          "distance_cm_p10_p90": [
+            342.4,
+            361.4
+          ],
+          "folder_cm": 300.0
+        }
+      }
+    },
+    "yolov8n_graybox_v5": {
+      "distance_fit": {
+        "k": 5289.7,
+        "c_cm": 7.4
+      },
+      "folders": {
+        "box_2m": {
+          "frames": 306,
+          "detected": 306,
+          "rate": 1.0,
+          "h_px_median": 25.8,
+          "distance_cm_median": 197.8,
+          "distance_cm_p10_p90": [
+            189.2,
+            203.9
+          ],
+          "folder_cm": 200.0
+        },
+        "box_2.5m": {
+          "frames": 135,
+          "detected": 135,
+          "rate": 1.0,
+          "h_px_median": 20.6,
+          "distance_cm_median": 249.5,
+          "distance_cm_p10_p90": [
+            234.1,
+            255.8
+          ],
+          "folder_cm": 250.0
+        },
+        "box_3m": {
+          "frames": 87,
+          "detected": 87,
+          "rate": 1.0,
+          "h_px_median": 17.0,
+          "distance_cm_median": 303.5,
+          "distance_cm_p10_p90": [
+            300.4,
+            316.7
+          ],
+          "folder_cm": 300.0
+        }
+      }
+    }
+  }
+}

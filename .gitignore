@@ -40,6 +40,16 @@
 /gray_box_train/runs/*/weights/*
 # mqtt_box_receiver.BoxDetector가 읽는 가중치(last.pt는 뺀다). *.pt는 .gitattributes로 LFS다
 !/gray_box_train/runs/*/weights/best.pt
+# 2026-11-02 v4·v5: 증강·먼 거리 데이터셋과 실연동 시험 세트는 그림이라 빼고, 요약 결과만 남긴다
+!/gray_box_train/dataset_aug/
+/gray_box_train/dataset_aug/*
+!/gray_box_train/dataset_aug/augment_stats.json
+!/gray_box_train/dataset_far/
+/gray_box_train/dataset_far/*
+!/gray_box_train/dataset_far/far_stats.json
+!/gray_box_train/live_test/
+/gray_box_train/live_test/*
+!/gray_box_train/live_test/gt.json
 
 # ── class_features.json `gray box` 항목이 근거로 인용하는 실험: 스크립트와 요약 JSON만(그림·프레임별 기록은 뺀다) ──
 !/box_tag_test_000004171/

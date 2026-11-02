@@ -1,0 +1,16 @@
+{
+  "seed": 0,
+  "n_per_kind": 900,
+  "source_positives": 2915,
+  "backgrounds": 85,
+  "made": {
+    "occl": 900,
+    "light": 900,
+    "place": 772
+  },
+  "retries": {
+    "occl": 0,
+    "light": 124,
+    "place": 3728
+  }
+}

@@ -17,8 +17,10 @@ NAME = sys.argv[2] if len(sys.argv) > 2 else "yolov8n_graybox"
 # (build_dataset.py ⑤) 작은 박스를 본 적이 없어서다 -- 크기 변형 범위를 기본 0.5(0.5~1.5배)에서 넓혀
 # 같은 라벨로 작은 박스를 만들어 학습한다. box_meter 사진은 시험용으로만 남기고 학습에 넣지 않는다.
 SCALE = float(sys.argv[3]) if len(sys.argv) > 3 else 0.5
+# 2026-11-02 v4: 가려짐·조명·장소 오프라인 증강(augment_dataset.py)을 더한 dataset_aug/data.yaml을 넘긴다.
+DATA = HERE / (sys.argv[4] if len(sys.argv) > 4 else "dataset/data.yaml")
 
 model = YOLO(str(REPO / "research" / "oln_training" / "yolo_weights" / "yolov8n.pt"))
-model.train(data=str(HERE / "dataset" / "data.yaml"), imgsz=256, epochs=EPOCHS, batch=32, device=0,
+model.train(data=str(DATA), imgsz=256, epochs=EPOCHS, batch=32, device=0,
             workers=0, project=str(HERE / "runs"), name=NAME, exist_ok=True, seed=0,
             deterministic=True, plots=True, verbose=False, scale=SCALE)
