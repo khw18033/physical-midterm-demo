@@ -1,0 +1,278 @@
+{
+  "run": "yolov8n_graybox_v3",
+  "imgsz": 256,
+  "conf": 0.25,
+  "frames": 14,
+  "detected": 8,
+  "used": 8,
+  "model_A_pinhole": {
+    "formula": "d = k / h_px",
+    "k": 4878.0,
+    "implied_focal_px": 125.1,
+    "leave_one_distance_out": {
+      "mean_abs_cm": 7.2,
+      "max_abs_cm": 12.3,
+      "mean_abs_pct": 8.0
+    },
+    "lodo_detail": [
+      {
+        "gt_cm": 50.0,
+        "pred_cm": 53.6
+      },
+      {
+        "gt_cm": 50.0,
+        "pred_cm": 55.0
+      },
+      {
+        "gt_cm": 50.0,
+        "pred_cm": 54.9
+      },
+      {
+        "gt_cm": 50.0,
+        "pred_cm": 55.3
+      },
+      {
+        "gt_cm": 100.0,
+        "pred_cm": 97.0
+      },
+      {
+        "gt_cm": 150.0,
+        "pred_cm": 138.9
+      },
+      {
+        "gt_cm": 150.0,
+        "pred_cm": 137.9
+      },
+      {
+        "gt_cm": 150.0,
+        "pred_cm": 137.7
+      }
+    ]
+  },
+  "model_B_pinhole_offset": {
+    "formula": "d = k / h_px - c",
+    "k": 5407.9,
+    "c_cm": 8.0,
+    "implied_focal_px": 138.7,
+    "leave_one_distance_out": {
+      "mean_abs_cm": 0.5,
+      "max_abs_cm": 1.1,
+      "mean_abs_pct": 0.7
+    },
+    "lodo_detail": [
+      {
+        "gt_cm": 50.0,
+        "pred_cm": 48.9
+      },
+      {
+        "gt_cm": 50.0,
+        "pred_cm": 50.3
+      },
+      {
+        "gt_cm": 50.0,
+        "pred_cm": 50.3
+      },
+      {
+        "gt_cm": 50.0,
+        "pred_cm": 50.7
+      },
+      {
+        "gt_cm": 100.0,
+        "pred_cm": 100.0
+      },
+      {
+        "gt_cm": 150.0,
+        "pred_cm": 150.7
+      },
+      {
+        "gt_cm": 150.0,
+        "pred_cm": 149.6
+      },
+      {
+        "gt_cm": 150.0,
+        "pred_cm": 149.4
+      }
+    ]
+  },
+  "old_coef_vs_gt": {
+    "mean_abs_cm": 13.7,
+    "max_abs_cm": 27.6,
+    "mean_abs_pct": 12.0
+  },
+  "per_frame": [
+    {
+      "frame": "100cm1.jpg",
+      "gt_cm": 100.0,
+      "detected": true,
+      "score": 0.868,
+      "box_xyxy": [
+        47.5,
+        122.9,
+        118.3,
+        173.0
+      ],
+      "h_px": 50.08,
+      "r": 0.206,
+      "cut": false,
+      "pred_A_cm": 97.4,
+      "pred_B_cm": 100.0,
+      "pred_old_coef_cm": 84.8
+    },
+    {
+      "frame": "100cmside.jpg",
+      "gt_cm": 100.0,
+      "detected": false
+    },
+    {
+      "frame": "150cm1.jpg",
+      "gt_cm": 150.0,
+      "detected": true,
+      "score": 0.658,
+      "box_xyxy": [
+        59.4,
+        126.2,
+        107.3,
+        160.3
+      ],
+      "h_px": 34.06,
+      "r": 0.189,
+      "cut": false,
+      "pred_A_cm": 143.2,
+      "pred_B_cm": 150.8,
+      "pred_old_coef_cm": 123.5
+    },
+    {
+      "frame": "150cm2.jpg",
+      "gt_cm": 150.0,
+      "detected": true,
+      "score": 0.615,
+      "box_xyxy": [
+        59.4,
+        126.0,
+        107.3,
+        160.3
+      ],
+      "h_px": 34.29,
+      "r": 0.189,
+      "cut": false,
+      "pred_A_cm": 142.3,
+      "pred_B_cm": 149.7,
+      "pred_old_coef_cm": 122.7
+    },
+    {
+      "frame": "150cm3.jpg",
+      "gt_cm": 150.0,
+      "detected": true,
+      "score": 0.688,
+      "box_xyxy": [
+        59.3,
+        125.9,
+        107.3,
+        160.3
+      ],
+      "h_px": 34.35,
+      "r": 0.189,
+      "cut": false,
+      "pred_A_cm": 142.0,
+      "pred_B_cm": 149.5,
+      "pred_old_coef_cm": 122.4
+    },
+    {
+      "frame": "150cmside.jpg",
+      "gt_cm": 150.0,
+      "detected": false
+    },
+    {
+      "frame": "200cm1.jpg",
+      "gt_cm": 200.0,
+      "detected": false
+    },
+    {
+      "frame": "200cm2.jpg",
+      "gt_cm": 200.0,
+      "detected": false
+    },
+    {
+      "frame": "200cm3.jpg",
+      "gt_cm": 200.0,
+      "detected": false
+    },
+    {
+      "frame": "200cmside.jpg",
+      "gt_cm": 200.0,
+      "detected": false
+    },
+    {
+      "frame": "50cm1.jpg",
+      "gt_cm": 50.0,
+      "detected": true,
+      "score": 0.958,
+      "box_xyxy": [
+        56.5,
+        110.6,
+        182.3,
+        205.8
+      ],
+      "h_px": 95.17,
+      "r": 0.191,
+      "cut": false,
+      "pred_A_cm": 51.3,
+      "pred_B_cm": 48.8,
+      "pred_old_coef_cm": 44.2
+    },
+    {
+      "frame": "50cm2.jpg",
+      "gt_cm": 50.0,
+      "detected": true,
+      "score": 0.957,
+      "box_xyxy": [
+        12.0,
+        112.2,
+        141.7,
+        205.0
+      ],
+      "h_px": 92.8,
+      "r": 0.262,
+      "cut": false,
+      "pred_A_cm": 52.6,
+      "pred_B_cm": 50.3,
+      "pred_old_coef_cm": 47.6
+    },
+    {
+      "frame": "50cm3.jpg",
+      "gt_cm": 50.0,
+      "detected": true,
+      "score": 0.958,
+      "box_xyxy": [
+        12.0,
+        112.2,
+        141.8,
+        205.0
+      ],
+      "h_px": 92.88,
+      "r": 0.262,
+      "cut": false,
+      "pred_A_cm": 52.5,
+      "pred_B_cm": 50.2,
+      "pred_old_coef_cm": 47.5
+    },
+    {
+      "frame": "50cmside.jpg",
+      "gt_cm": 50.0,
+      "detected": true,
+      "score": 0.935,
+      "box_xyxy": [
+        55.2,
+        113.9,
+        109.4,
+        206.1
+      ],
+      "h_px": 92.22,
+      "r": 0.252,
+      "cut": false,
+      "pred_A_cm": 52.9,
+      "pred_B_cm": 50.7,
+      "pred_old_coef_cm": 47.5
+    }
+  ]
+}

@@ -12,6 +12,13 @@ HTTP 창구 8개. 문서의 핵심 전제 두 가지를 그대로 따른다.
 읽어 HTTP로 옮기는 얇은 어댑터라서 torch/cv2 없이 표준 라이브러리만 쓴다 -- ML 환경이
 없는 PC에서도(또는 파이프라인이 죽어도) 창구는 뜬다.
 
+**`target=box`만은 try_box/를 읽는다(2026-11-02).** 박스 편(「박스 앞까지 이동해」)은
+4-provider 파이프라인이 아니라 `mqtt_box_receiver.py`(학습한 gray box YOLO + 높이로 거리)가
+돌고, 그 산출물은 try_box/에 따로 쌓인다. 2026-11-01 실연동 판에서 수신기가 90도에서 박스를
+찾았는데도 이 창구가 try1/만 봐서 `"frames": []`를 줬다 -- 관제 웹 화면이 빈 채로 각도마다
+15초씩 기다렸다. 그래서 box만 같은 응답 모양으로 try_box/에서 만들어 준다(아래 「박스 편」 절).
+door/pedestal 쪽 동작은 그대로다.
+
 **점진적으로 는다.** 관제 웹은 한 각도가 끝날 때마다 배열이 하나씩 느는 것을 기대하고
 (문서 §1①), class_finder_service가 프레임을 끝낼 때마다 try1/<frame>/<class>/evidence.json을
 쓰므로, 매 요청 때 디스크를 다시 훑는 것만으로 그 모양이 된다. 캐시하지 않는 이유다.
@@ -66,6 +73,24 @@ GATE_NAME_MAP = {
     "aspect_ratio": "aspect_ratio_gate",
     "hue": "hue_gate",  # 2026-09-15 door 강화(crop 픽셀 색상 중앙값)
 }
+
+# ── 박스 편(2026-11-02) ──────────────────────────────────────────────
+# mqtt_box_receiver.RUN_DIR와 같은 폴더. 한쪽만 바꾸면 화면이 다시 빈다.
+BOX_TARGET = "box"
+BOX_RUN_DIR = OUT_ROOT / "try_box"
+BOX_SUMMARY_NAME = "scan_summary.json"
+# 문서 ⑤ `kind` -> try_box/<stem>/ 아래 파일 후보. 크롭은 2026-11-02부터 수신기가 found 각도에만
+# 쓴다 -- 없으면(못 찾은 각도·지난 판) 지어내지 않고 404다. rpn_overlay 등은 박스 편에 없다(404).
+BOX_FRAME_IMAGE_KINDS = {
+    "original": ("original.jpg",),
+    "target_overlay": ("overlay.jpg",),
+    "target_crop": ("crop.jpg", "target_crop.jpg"),
+}
+# navigate_to_target_service.STANDOFF_CM_BY_CLASS["box"] / ROBOT_FORWARD_M_MIN·MAX와 같은 값.
+# 이 서버는 torch 없이 떠야 해서 그 파일을 import하지 않고 값만 옮겨 둔다 -- 바꿀 때 양쪽 다.
+BOX_STANDOFF_CM = 20.0
+ROBOT_FORWARD_M_MIN = 0.05
+ROBOT_FORWARD_M_MAX = 10.0
 
 # 클래스명으로 경로를 조립하므로 경로 탈출(../)과 이상한 문자를 먼저 막는다.
 SAFE_NAME = re.compile(r"^[A-Za-z0-9_.-]+$")
@@ -252,6 +277,239 @@ def resolve_image(kind: str, target: str, frame: str) -> Path | None:
     return path if path.is_file() else None
 
 
+# ────────────── 박스 편: try_box/(mqtt_box_receiver 산출물) -> 문서 §1 모양 ──────────────
+#
+# 수신기 산출 형식은 그대로 두고 여기서 맞춘다(2026-11-02):
+#   try_box/<frame_stem>/evidence.json   {frame, rotation_deg, found, detections[{box_xyxy, score,
+#                                         distance_cm, h_px, reason, bearing{bearing_deg,...}, gates{...}}],
+#                                         rejected_candidates[...], ...}   (gates·rejected_candidates는 2026-11-02~)
+#   try_box/<frame_stem>/original.jpg · overlay.jpg · crop.jpg(found일 때, 2026-11-02~)
+#   try_box/scan_summary.json            판이 끝나야 생긴다 {accepted, problems, best_overall, ...}
+#   try_box/navigation/evidence.json     판 끝의 경로 근거(box_path_from_summary 결과, 2026-11-02~)
+# 새 스캔이 시작되면 수신기(_clear_previous_run)가 이 폴더를 비운다 -- 관제 웹은 「각도 수가
+# 줄어드는 순간」을 새 판의 시작으로 보므로, 여기서 지난 판을 따로 거르거나 캐시하지 않는다.
+
+def _box_detections(evidence: dict) -> list[dict]:
+    """대표 = YOLO score가 가장 높은 것. 수신기가 이미 그 순서로 쓰지만 순서에 기대지 않는다."""
+    return sorted(evidence.get("detections") or [], key=lambda d: -(d.get("score") or 0.0))
+
+
+def build_box_results() -> dict:
+    """① `GET /detect/results?target=box` -- 프레임 evidence.json이 생기는 즉시 한 칸.
+
+    scan_summary.json은 판이 끝나야 생기므로 기다리지 않는다. 문 편과 달리 거리·방위가
+    프레임 처리와 동시에 나오므로(박스 높이·박스 중심 오프셋) 덧입힐 요약이 없다.
+    `in_valid_calibration_range`는 거리가 있을 때만 true -- 박스가 화면 끝에 닿아
+    거리가 null이면 false로 둬서 관제 웹이 그 칸을 거리로 그리지 않게 한다."""
+    frames = []
+    if BOX_RUN_DIR.is_dir():
+        for frame_dir in sorted(BOX_RUN_DIR.iterdir()):
+            if not frame_dir.is_dir() or frame_dir.name == NAV_DIR_NAME:
+                continue  # navigation/에도 evidence.json(경로 근거)이 있다 -- 프레임이 아니다
+            evidence = _read_json(frame_dir / "evidence.json")
+            if evidence is None or "frame" not in evidence:
+                continue  # incoming/ 등
+            detections = _box_detections(evidence)
+            entry = {
+                "frame": evidence["frame"],
+                "rotation_deg": evidence["rotation_deg"],
+                "found": bool(detections),
+            }
+            if detections:
+                best = detections[0]
+                distance_cm = best.get("distance_cm")
+                entry["final_score"] = best.get("score")
+                entry["instance_count"] = len(detections)
+                entry["absolute_bearing_deg"] = (best.get("bearing") or {}).get("bearing_deg")
+                entry["distance_cm"] = distance_cm
+                entry["in_valid_calibration_range"] = distance_cm is not None
+                if distance_cm is None and best.get("reason"):
+                    entry["distance_reason"] = best["reason"]  # 문서에 없는 추가 필드
+                entry["instances"] = detections
+            elif "rejected_candidates" in evidence:
+                # 못 찾은 칸의 이유: conf 아래로 버린 후보 중 최고 score. null = CANDIDATE_CONF 이상 후보조차 없었다.
+                # 키 자체가 없는 지난 형식의 판에는 넣지 않는다(없던 값을 지어내지 않는다).
+                rejected = evidence["rejected_candidates"]
+                entry["best_rejected_score"] = rejected[0]["score"] if rejected else None
+                entry["decision_threshold"] = (evidence.get("detector") or {}).get("conf")
+            frames.append(entry)
+    frames.sort(key=lambda f: f["rotation_deg"])
+    return {"target_class": BOX_TARGET, "frames": frames}
+
+
+def build_box_evidence(frame: str):
+    """② 박스 편 근거. 박스엔 특징 비교가 없어 `feature_similarities`는 항상 빈 객체다(YOLO 점수를
+    특징처럼 넣지 않는다). `mandatory_gates`는 수신기가 남긴 대표 검출의 `gates`를 이름 그대로 싣는다
+    (score_gate · height_gate · calibration_range, 각 `required`/`passed`/값/식/`words`). 수신기가 gates를
+    안 남긴 지난 형식의 판이면 빈 객체 -- 관제 웹이 「관문 근거 미수신」으로 적는다. 키는 어느 쪽이든 둔다."""
+    evidence = _read_json(BOX_RUN_DIR / _frame_stem(frame) / "evidence.json")
+    if evidence is None or "frame" not in evidence:
+        return None  # frame=navigation.jpg 처럼 프레임이 아닌 폴더
+    detections = _box_detections(evidence)
+    if not detections:
+        return None  # 문 편과 같이 「못 찾은 각도」는 404
+    best = detections[0]
+    return {
+        "frame": evidence["frame"],
+        "rotation_deg": evidence["rotation_deg"],
+        "box_xyxy": best.get("box_xyxy"),  # 테두리 crop(237×241) 좌표 그대로 -- 웹이 변환한다
+        "final_score": best.get("score"),
+        "feature_similarities": {},
+        "mandatory_gates": best.get("gates") or {},
+        # ── 아래는 문서에 없는 추가 필드(근거 추적용) ──
+        "rejected_candidates": evidence.get("rejected_candidates"),  # 지난 형식의 판이면 null
+        "detector": evidence.get("detector"),
+        "distance_cm": best.get("distance_cm"),
+        "distance_fit": evidence.get("distance_fit"),
+        "distance_calculation": ({"formula": best["formula"], "substituted": best["substituted"]}
+                                 if best.get("formula") else None),
+        "h_px": best.get("h_px"),
+        "reason": best.get("reason"),
+        "bearing": best.get("bearing"),
+        "inference_ms": evidence.get("inference_ms"),
+        "instance_count": len(detections),
+    }
+
+
+def build_box_features() -> dict:
+    """④ 박스 편은 비교하는 특징이 없다. features_sent.json이 없어도 404로 두지 않는다 --
+    관제 웹이 「올 때까지」 묻는 창구라 404면 영영 기다린다."""
+    features = _read_json(BOX_RUN_DIR / "features_sent.json")
+    if features and BOX_TARGET in features:
+        return {BOX_TARGET: features[BOX_TARGET], "_all_searched_classes": list(features)}
+    return {BOX_TARGET: {"target_class": BOX_TARGET, "requested_by_command": True,
+                         "is_localization_landmark": False, "features_compared": []},
+            "_all_searched_classes": [BOX_TARGET]}
+
+
+def build_box_path():
+    """③ 박스 편 경로. 판이 끝나기 전(scan_summary 없음)은 (None, 이유) = 404.
+
+    2026-11-02부터 수신기가 판 끝에 `try_box/navigation/evidence.json`을 남긴다(같은 함수
+    box_path_from_summary로 계산). 그 파일이 이 판(mission_id 같음)의 것이면 그대로 내고, 없으면 -- 그 전
+    형식으로 남은 지난 판 -- 여기서 계산해 낸다. 어느 쪽이든 값은 같다."""
+    summary = _read_json(BOX_RUN_DIR / BOX_SUMMARY_NAME)
+    if summary is None:
+        return None, "경로 산출 전 -- 여덟 각도 스캔이 끝나 scan_summary.json이 생겨야 나온다"
+    saved = _read_json(BOX_RUN_DIR / NAV_DIR_NAME / "evidence.json")
+    if saved is not None and saved.get("mission_id") == summary.get("mission_id"):
+        return saved, None
+    computed = box_path_from_summary(summary)
+    computed["path_evidence_saved"] = False  # 근거 파일 없이 이 창구가 계산한 것(지난 형식의 판)
+    return computed, None
+
+
+def box_path_from_summary(summary: dict) -> dict:
+    """박스 편 경로 계산 -- **도면 없이 박스 관측만으로**(navigate_to_target_service._door_relative_path와
+    같은 식·같은 모양). 관제 웹은 `path_mode: "map"`을 거부하므로 `door_relative`로 낸다.
+    mqtt_box_receiver가 판 끝에 이 함수로 navigation/evidence.json을 쓴다(표준 라이브러리만 쓰는 이유).
+
+      회전   turn_amount_signed = ((bearing + 180) mod 360) − 180   (스캔 시작 방향 기준, 오른쪽 +)
+      직진   forward_distance_cm = distance_cm − standoff_cm(box)
+
+    대표 각도는 수신기가 정한 scan_summary.best_overall(가장 높은 score)을 따른다.
+    경로를 못 내면 ok:false + reason(창구는 404가 아니라 200) -- 「못 구하면 정직하게 실패」 원칙이고,
+    404면 웹이 계속 기다린다."""
+
+    def fail(reason: str) -> dict:
+        return {"target_class": BOX_TARGET, "ok": False, "path_mode": None, "reason": reason,
+                "mission_id": summary.get("mission_id"), "scan_accepted": summary.get("accepted"),
+                "scan_problems": summary.get("problems") or [],
+                "best_overall": summary.get("best_overall"),
+                "path_overlay_available": False, "path_overlay_kind": None}
+
+    if not summary.get("accepted"):
+        problems = " / ".join(summary.get("problems") or []) or "사유 미기록"
+        return fail(f"판이 온전하지 않아 경로를 내지 않는다 -- {problems}")
+    top = summary.get("best_overall")
+    if not top or not top.get("best"):
+        return fail(summary.get("reason") or "어느 각도에서도 박스를 찾지 못했다 -- 갈 방향이 없다")
+    best = top["best"]
+    distance = best.get("distance_cm")
+    if distance is None:
+        return fail(f"회전 {top['rotation_deg']:g}도에서 박스를 찾았지만 거리를 못 구했다 -- "
+                    f"{best.get('reason') or '사유 미기록'}. 방향은 알지만 얼마나 갈지 모른다")
+    bearing_ev = best.get("bearing") or {}
+    bearing = bearing_ev.get("bearing_deg")
+    if bearing is None:
+        return fail(f"회전 {top['rotation_deg']:g}도 박스의 방위가 기록돼 있지 않다")
+
+    turn_amount_signed = (bearing + 180.0) % 360.0 - 180.0
+    turn_direction = "왼쪽(반시계)" if turn_amount_signed < 0 else "오른쪽(시계)"
+    turn_amount_deg = abs(turn_amount_signed)
+    standoff_cm = BOX_STANDOFF_CM
+    forward_distance_cm = distance - standoff_cm
+    forward_distance_m = forward_distance_cm / 100.0
+    distance_in_range = ROBOT_FORWARD_M_MIN <= forward_distance_m <= ROBOT_FORWARD_M_MAX
+    robot_command = {
+        "turn": {"deg": round(turn_amount_signed, 1)},
+        "move_forward": {"distance_m": round(forward_distance_m, 3)},
+        "distance_m_in_range": distance_in_range,
+        "accepted_range_m": [ROBOT_FORWARD_M_MIN, ROBOT_FORWARD_M_MAX],
+        "note": "turn.deg는 오른쪽이 +(왼쪽이 음수), 스캔 시작 방향 기준. "
+                "move_forward.distance_m에는 standoff가 이미 반영돼 있다 -- 또 빼지 말 것.",
+    }
+    if not distance_in_range:
+        robot_command["warning"] = (f"전진 거리 {forward_distance_m:.3f}m가 로봇이 받는 범위"
+                                    f"({ROBOT_FORWARD_M_MIN}~{ROBOT_FORWARD_M_MAX}m)를 벗어난다 -- 그대로 보내면 안 된다")
+
+    path_calculation = {
+        "step1_box_bearing": {
+            "formula": bearing_ev.get("formula", "bearing = rotation_deg + atan((cx − W/2) / f)"),
+            "substituted": bearing_ev.get("substituted", f"bearing = {bearing:.1f}"),
+        },
+        "step2_turn_amount": {
+            "formula": "turn_amount_signed = ((box_bearing_deg + 180) mod 360) - 180",
+            "substituted": f"(({bearing:.1f} + 180) mod 360) - 180 = {turn_amount_signed:.1f} ({turn_direction})",
+        },
+        "step3_box_distance": {
+            "formula": best.get("formula", "distance_cm = k / h_px − c"),
+            "substituted": best.get("substituted", f"{distance:.1f}"),
+        },
+        "step4_forward_distance": {
+            "formula": "forward_distance_cm = box_distance_cm - standoff_cm(box)",
+            "substituted": f"{distance:.1f} - {standoff_cm:.1f} = {forward_distance_cm:.1f}",
+        },
+    }
+    return {
+        "target_class": BOX_TARGET,
+        "ok": True,
+        "path_mode": "door_relative",
+        "path_mode_words": "도면 없이 박스 관측(방위·겉보기 높이)만으로 산출",
+        "localization_method": None,
+        "mission_id": summary.get("mission_id"),
+        "path_overlay_available": False,
+        "path_overlay_kind": None,
+        "target_resolution": {"target_class": BOX_TARGET, "position_cm": None, "source": "box_relative",
+                              "detail": f"회전 {top['rotation_deg']:g}도 프레임({top['frame']})의 박스 관측 "
+                                        f"(score {best.get('score')}) -- 도면 좌표 없이 로봇 기준 방위·거리로만 산출"},
+        "robot_position_cm": None,
+        "current_heading_map_deg": None,
+        "target_position_cm": [],
+        "turn_instruction": f"{turn_direction}으로 {turn_amount_deg:.1f}도 회전",
+        "turn_deg": round(turn_amount_signed, 1),
+        "distance_to_target_cm": round(distance, 1),
+        "standoff_cm": standoff_cm,
+        "forward_distance_cm": round(forward_distance_cm, 1),
+        "forward_distance_m": round(forward_distance_m, 3),
+        "robot_command": robot_command,
+        "goal_cm": None,
+        "path_calculation": path_calculation,
+        "bearing_note": bearing_ev.get("note"),
+        "distance_fit": summary.get("distance_fit"),
+    }
+
+
+def resolve_box_image(kind: str, frame: str) -> Path | None:
+    """⑤ 박스 편 그림. 못 찾은 각도라도 original.jpg는 반드시 있다(수신기가 항상 쓴다) --
+    관제 웹은 각도마다 그 그림이 뜬 것을 보고서야 로봇에게 다음 회전을 허락한다."""
+    frame_dir = BOX_RUN_DIR / _frame_stem(frame)
+    for filename in BOX_FRAME_IMAGE_KINDS.get(kind, ()):
+        if (frame_dir / filename).is_file():
+            return frame_dir / filename
+    return None
+
+
 # ────────────────────────────── HTTP 핸들러 ──────────────────────────────
 
 class DetectAPIHandler(BaseHTTPRequestHandler):
@@ -317,7 +575,8 @@ class DetectAPIHandler(BaseHTTPRequestHandler):
                 return
 
         if route == "/health":                                     # ⑥
-            self._send_json({"ok": True, "run_dir": str(RUN_DIR), "run_dir_exists": RUN_DIR.is_dir()})
+            self._send_json({"ok": True, "run_dir": str(RUN_DIR), "run_dir_exists": RUN_DIR.is_dir(),
+                             "box_run_dir": str(BOX_RUN_DIR), "box_run_dir_exists": BOX_RUN_DIR.is_dir()})
             return
 
         if route == "/detect/localization":                        # ⑦ (target 없음)
@@ -341,6 +600,10 @@ class DetectAPIHandler(BaseHTTPRequestHandler):
                 self._send_json({"error": "bad_request", "reason": "target 파라미터가 필요하다"},
                                 status=400)
                 return
+
+        if target == BOX_TARGET and route.startswith("/detect/"):
+            self._handle_box(route, param)
+            return
 
         if route == "/detect/results":                             # ①
             self._send_json(build_results(target))
@@ -410,24 +673,68 @@ class DetectAPIHandler(BaseHTTPRequestHandler):
                                     "/detect/features", "/detect/frame", "/detect/path_overlay"]},
                         status=404)
 
+    def _handle_box(self, route: str, param) -> None:
+        """`target=box` 창구 -- try_box/를 읽는다(위 「박스 편」 절). 도면·위치 추정·경로 그림은
+        박스 편에 없으므로 path_overlay는 404다(localization/map은 target이 없어 여기 안 온다)."""
+        if route in ("/detect/evidence", "/detect/frame") and not param("frame"):
+            self._send_json({"error": "bad_request", "reason": "frame 파라미터가 필요하다"}, status=400)
+            return
+
+        if route == "/detect/results":                             # ①
+            self._send_json(build_box_results())
+        elif route == "/detect/evidence":                          # ②
+            frame = param("frame")
+            evidence = build_box_evidence(frame)
+            if evidence is None:
+                self._send_not_yet(f"{frame}에서 'box'를 찾지 못했거나 아직 처리 전")
+            else:
+                self._send_json(evidence)
+        elif route == "/detect/path":                              # ③
+            nav, reason = build_box_path()
+            self._send_json(nav) if nav else self._send_not_yet(reason)
+        elif route == "/detect/features":                          # ④
+            self._send_json(build_box_features())
+        elif route == "/detect/frame":                             # ⑤
+            frame, kind = param("frame"), param("kind", "original")
+            if kind not in FRAME_IMAGE_KINDS:
+                self._send_json({"error": "bad_request",
+                                 "reason": f"kind는 {list(FRAME_IMAGE_KINDS)} 중 하나여야 한다"},
+                                status=400)
+                return
+            path = resolve_box_image(kind, frame)
+            if path is None:
+                self._send_not_yet(f"{frame}의 '{kind}' 그림이 없다(박스 편은 original·target_overlay만 "
+                                   f"만든다 -- target_crop은 크롭이 저장돼 있을 때만, rpn_overlay는 없음)")
+            else:
+                self._send_file(path, "image/jpeg")
+        elif route == "/detect/path_overlay":
+            self._send_not_yet("박스 편은 도면을 쓰지 않아 경로 그림이 없다")
+        else:
+            self._send_json({"error": "not_found", "reason": f"알 수 없는 경로: {route}"}, status=404)
+
     def log_message(self, fmt, *args):  # 기본 로그는 stderr 한 줄 형식이라 그대로 쓰되 접두사만
         print(f"[detect_api] {self.address_string()} {fmt % args}")
 
 
 def main() -> None:
-    global RUN_DIR
+    global RUN_DIR, BOX_RUN_DIR
     parser = argparse.ArgumentParser(description="관제 웹용 탐지 결과 HTTP 창구(읽기 전용)")
     parser.add_argument("--port", type=int, default=8000)
     parser.add_argument("--bind", default="0.0.0.0",
                         help="기본은 모든 인터페이스. 테일넷에서만 열려면 `tailscale ip -4` 값을 준다")
     parser.add_argument("--run-dir", default=None,
                         help=f"파이프라인 산출 폴더(기본: {RUN_DIR})")
+    parser.add_argument("--box-run-dir", default=None,
+                        help=f"박스 수신기(mqtt_box_receiver) 산출 폴더 -- target=box가 읽는다(기본: {BOX_RUN_DIR})")
     args = parser.parse_args()
     if args.run_dir:
         RUN_DIR = Path(args.run_dir).resolve()
+    if args.box_run_dir:
+        BOX_RUN_DIR = Path(args.box_run_dir).resolve()
 
     server = ThreadingHTTPServer((args.bind, args.port), DetectAPIHandler)
     print(f"[detect_api] listening on http://{args.bind}:{args.port}  (run_dir={RUN_DIR})")
+    print(f"[detect_api] target=box -> box_run_dir={BOX_RUN_DIR} (존재={BOX_RUN_DIR.is_dir()})")
     print(f"[detect_api] run_dir 존재={RUN_DIR.is_dir()} -- 관제 웹에는 이 PC의 "
           f"MagicDNS 이름 + :{args.port} 를 준다")
     try:

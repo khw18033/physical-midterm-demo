@@ -1,0 +1,570 @@
+{
+  "frame": "000004171.jpg",
+  "target_sim_threshold": 0.22,
+  "tags": {
+    "box": {
+      "found": true,
+      "instances": [
+        {
+          "box_xyxy": [
+            0.1,
+            67.4,
+            176.0,
+            228.4
+          ],
+          "final_score": 0.8859,
+          "supporting_sources": [
+            "dictionary",
+            "grounding_dino",
+            "yolo_world"
+          ]
+        }
+      ],
+      "raw_provider_outputs": {
+        "dictionary": [
+          {
+            "box_xyxy": [
+              0.0,
+              0.0,
+              237.0,
+              240.82
+            ],
+            "score": 0.2648,
+            "label": "a box's rectangular body"
+          }
+        ],
+        "grounding_dino": [
+          {
+            "box_xyxy": [
+              53.31,
+              55.37,
+              90.63,
+              110.99
+            ],
+            "score": 0.6844,
+            "label": "door"
+          },
+          {
+            "box_xyxy": [
+              0.04,
+              107.13,
+              188.81,
+              240.94
+            ],
+            "score": 0.3697,
+            "label": "pedestal box"
+          },
+          {
+            "box_xyxy": [
+              112.63,
+              30.13,
+              236.98,
+              174.46
+            ],
+            "score": 0.2301,
+            "label": "pedestal"
+          },
+          {
+            "box_xyxy": [
+              112.6,
+              29.46,
+              236.95,
+              240.26
+            ],
+            "score": 0.1786,
+            "label": "pedestal"
+          },
+          {
+            "box_xyxy": [
+              0.04,
+              64.35,
+              39.94,
+              172.55
+            ],
+            "score": 0.1617,
+            "label": "pedestal box"
+          }
+        ],
+        "yolo_world": [
+          {
+            "box_xyxy": [
+              0.74,
+              107.99,
+              188.4,
+              241.0
+            ],
+            "score": 0.0897,
+            "label": "box"
+          }
+        ]
+      }
+    },
+    "gray box": {
+      "found": true,
+      "instances": [
+        {
+          "box_xyxy": [
+            0.0,
+            76.5,
+            202.8,
+            240.9
+          ],
+          "final_score": 0.8954,
+          "supporting_sources": [
+            "dictionary",
+            "grounding_dino"
+          ]
+        }
+      ],
+      "raw_provider_outputs": {
+        "dictionary": [
+          {
+            "box_xyxy": [
+              0.0,
+              0.0,
+              237.0,
+              240.82
+            ],
+            "score": 0.255,
+            "label": "a gray box's rectangular body"
+          }
+        ],
+        "grounding_dino": [
+          {
+            "box_xyxy": [
+              0.06,
+              107.01,
+              189.13,
+              240.95
+            ],
+            "score": 0.6404,
+            "label": "pedestal gray box"
+          },
+          {
+            "box_xyxy": [
+              53.12,
+              55.2,
+              90.82,
+              111.0
+            ],
+            "score": 0.7379,
+            "label": "door"
+          },
+          {
+            "box_xyxy": [
+              112.64,
+              29.42,
+              236.92,
+              175.93
+            ],
+            "score": 0.1925,
+            "label": "pedestal"
+          },
+          {
+            "box_xyxy": [
+              112.56,
+              28.79,
+              236.86,
+              240.47
+            ],
+            "score": 0.1859,
+            "label": "pedestal"
+          },
+          {
+            "box_xyxy": [
+              0.19,
+              106.8,
+              188.96,
+              240.92
+            ],
+            "score": 0.166,
+            "label": "pedestal"
+          },
+          {
+            "box_xyxy": [
+              -0.03,
+              107.09,
+              236.97,
+              240.98
+            ],
+            "score": 0.1516,
+            "label": "pedestal"
+          }
+        ],
+        "yolo_world": []
+      }
+    },
+    "storage box": {
+      "found": true,
+      "instances": [
+        {
+          "box_xyxy": [
+            0.0,
+            65.6,
+            133.2,
+            191.6
+          ],
+          "final_score": 1.1323,
+          "supporting_sources": [
+            "dictionary",
+            "grounding_dino"
+          ]
+        }
+      ],
+      "raw_provider_outputs": {
+        "dictionary": [
+          {
+            "box_xyxy": [
+              0.0,
+              0.0,
+              237.0,
+              240.82
+            ],
+            "score": 0.2592,
+            "label": "a storage box's lid on top"
+          }
+        ],
+        "grounding_dino": [
+          {
+            "box_xyxy": [
+              53.35,
+              55.39,
+              90.59,
+              111.0
+            ],
+            "score": 0.6962,
+            "label": "door"
+          },
+          {
+            "box_xyxy": [
+              0.03,
+              107.14,
+              188.8,
+              240.95
+            ],
+            "score": 0.3745,
+            "label": "pedestal storage box"
+          },
+          {
+            "box_xyxy": [
+              0.0,
+              76.49,
+              32.64,
+              103.04
+            ],
+            "score": 0.1641,
+            "label": "storage box"
+          },
+          {
+            "box_xyxy": [
+              0.03,
+              64.55,
+              39.47,
+              111.52
+            ],
+            "score": 0.1699,
+            "label": "storage box"
+          },
+          {
+            "box_xyxy": [
+              112.63,
+              30.24,
+              236.98,
+              173.65
+            ],
+            "score": 0.2423,
+            "label": "pedestal"
+          },
+          {
+            "box_xyxy": [
+              112.64,
+              29.4,
+              236.94,
+              240.32
+            ],
+            "score": 0.1829,
+            "label": "pedestal"
+          },
+          {
+            "box_xyxy": [
+              0.05,
+              64.39,
+              39.95,
+              172.67
+            ],
+            "score": 0.1646,
+            "label": "pedestal storage box"
+          }
+        ],
+        "yolo_world": []
+      }
+    },
+    "cardboard box": {
+      "found": true,
+      "instances": [
+        {
+          "box_xyxy": [
+            0.1,
+            76.8,
+            202.6,
+            240.9
+          ],
+          "final_score": 0.9319,
+          "supporting_sources": [
+            "dictionary",
+            "grounding_dino",
+            "yolo_world"
+          ]
+        }
+      ],
+      "raw_provider_outputs": {
+        "dictionary": [
+          {
+            "box_xyxy": [
+              0.0,
+              0.0,
+              237.0,
+              240.82
+            ],
+            "score": 0.2632,
+            "label": "a cardboard box's rectangular body"
+          }
+        ],
+        "grounding_dino": [
+          {
+            "box_xyxy": [
+              53.11,
+              55.2,
+              90.75,
+              110.93
+            ],
+            "score": 0.7402,
+            "label": "door"
+          },
+          {
+            "box_xyxy": [
+              0.02,
+              106.87,
+              189.11,
+              240.93
+            ],
+            "score": 0.5582,
+            "label": "pedestal cardboard box"
+          },
+          {
+            "box_xyxy": [
+              112.52,
+              29.37,
+              236.93,
+              175.46
+            ],
+            "score": 0.2125,
+            "label": "pedestal"
+          },
+          {
+            "box_xyxy": [
+              112.49,
+              28.59,
+              236.88,
+              240.46
+            ],
+            "score": 0.1968,
+            "label": "pedestal"
+          },
+          {
+            "box_xyxy": [
+              0.11,
+              106.8,
+              188.93,
+              240.91
+            ],
+            "score": 0.1754,
+            "label": "pedestal"
+          }
+        ],
+        "yolo_world": [
+          {
+            "box_xyxy": [
+              0.55,
+              108.12,
+              188.46,
+              241.0
+            ],
+            "score": 0.1105,
+            "label": "cardboard box"
+          }
+        ]
+      }
+    },
+    "luggage": {
+      "found": true,
+      "instances": [
+        {
+          "box_xyxy": [
+            0.0,
+            71.6,
+            177.9,
+            230.0
+          ],
+          "final_score": 0.9555,
+          "supporting_sources": [
+            "dictionary",
+            "grounding_dino"
+          ]
+        }
+      ],
+      "raw_provider_outputs": {
+        "dictionary": [
+          {
+            "box_xyxy": [
+              0.0,
+              0.0,
+              237.0,
+              240.82
+            ],
+            "score": 0.2551,
+            "label": "a luggage's rectangular hard shell"
+          }
+        ],
+        "grounding_dino": [
+          {
+            "box_xyxy": [
+              53.22,
+              55.33,
+              90.71,
+              111.04
+            ],
+            "score": 0.7451,
+            "label": "door"
+          },
+          {
+            "box_xyxy": [
+              -0.0,
+              107.09,
+              188.75,
+              240.97
+            ],
+            "score": 0.5478,
+            "label": "pedestal luggage"
+          },
+          {
+            "box_xyxy": [
+              112.4,
+              29.38,
+              236.94,
+              240.54
+            ],
+            "score": 0.2156,
+            "label": "pedestal"
+          },
+          {
+            "box_xyxy": [
+              0.05,
+              64.2,
+              39.98,
+              172.77
+            ],
+            "score": 0.1526,
+            "label": "pedestal luggage"
+          },
+          {
+            "box_xyxy": [
+              112.62,
+              30.21,
+              236.95,
+              175.3
+            ],
+            "score": 0.2027,
+            "label": "pedestal"
+          }
+        ],
+        "yolo_world": []
+      }
+    },
+    "suitcase": {
+      "found": true,
+      "instances": [
+        {
+          "box_xyxy": [
+            0.0,
+            69.8,
+            171.1,
+            227.0
+          ],
+          "final_score": 0.9715,
+          "supporting_sources": [
+            "dictionary",
+            "grounding_dino"
+          ]
+        }
+      ],
+      "raw_provider_outputs": {
+        "dictionary": [
+          {
+            "box_xyxy": [
+              0.0,
+              0.0,
+              237.0,
+              240.82
+            ],
+            "score": 0.2585,
+            "label": "a suitcase's rectangular hard shell"
+          }
+        ],
+        "grounding_dino": [
+          {
+            "box_xyxy": [
+              53.22,
+              55.33,
+              90.7,
+              111.05
+            ],
+            "score": 0.745,
+            "label": "door"
+          },
+          {
+            "box_xyxy": [
+              -0.01,
+              107.09,
+              188.72,
+              240.97
+            ],
+            "score": 0.514,
+            "label": "pedestal suitcase"
+          },
+          {
+            "box_xyxy": [
+              112.4,
+              29.31,
+              236.91,
+              240.6
+            ],
+            "score": 0.2135,
+            "label": "pedestal"
+          },
+          {
+            "box_xyxy": [
+              0.05,
+              64.25,
+              39.95,
+              172.76
+            ],
+            "score": 0.199,
+            "label": "pedestal suitcase"
+          },
+          {
+            "box_xyxy": [
+              112.62,
+              30.23,
+              236.96,
+              175.01
+            ],
+            "score": 0.2022,
+            "label": "pedestal"
+          }
+        ],
+        "yolo_world": []
+      }
+    }
+  }
+}

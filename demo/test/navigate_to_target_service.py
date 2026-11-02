@@ -112,7 +112,14 @@ LANDMARK_MAP_POSITIONS_CM = {
 # 목적지 정지 거리: 타겟 클래스별로 다르게 둔다(사용자 지시 "목적지는 타겟
 # 클래스가 문이라면 문 80cm 앞이 목적지로"). 다른 클래스는 아직 정해진 값이
 # 없어 기존 30cm를 기본값으로 유지.
-STANDOFF_CM_BY_CLASS = {"door": 100.0}
+# 2026-11-02 box 50cm: 박스 거리식(gray_box_train/RESULT.md 4절, k/h − c)이 실측으로 검증된 가장
+# 가까운 거리가 50cm다(box_meter/ 50cm 4장, leave-one-out 최대 오차 1.1cm). 그보다 가까운 거리는
+# 실측이 없고, 박스가 커질수록 crop 위/아래 끝에 닿아 높이를 못 잰다(2026-11-01 판 90도: h 93.7px,
+# 위 끝에 닿아 n/a). 50cm에 서면 도착 뒤 다시 봐도 검증된 범위 안에서 거리를 잴 수 있다. 이 경로는
+# navigate가 아니라 detect_api_server.build_box_path가 쓴다(BOX_STANDOFF_CM -- 값을 같이 바꿀 것).
+# 2026-11-02 box 50 -> 20cm(사용자 지시 "박스는 문보다 조금 더 가까이 가도 된다"). 전진 거리는 스캔 때
+# 잰 거리로 이미 정해지므로 이동엔 지장이 없다. 다만 도착 뒤 다시 재면 검증 범위(50cm~) 밖이다.
+STANDOFF_CM_BY_CLASS = {"door": 100.0, "box": 20.0}
 STANDOFF_CM_DEFAULT = 30.0
 
 # 로봇 `move_forward { distance_m }` 이 받는 범위(detection-protocol_0914.md §4).

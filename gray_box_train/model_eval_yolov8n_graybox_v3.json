@@ -1,0 +1,32 @@
+{
+  "run": "yolov8n_graybox_v3",
+  "conf": 0.25,
+  "other_scene_heldout": {
+    "sessions": [
+      "161113_MSN-260909-01",
+      "161822_MSN-260909-01",
+      "164242_MSN-260909-01",
+      "164923_MSN-260909-01",
+      "165313_MSN-260909-01",
+      "170008_MSN-260909-01",
+      "170547_MSN-260909-01",
+      "171015_MSN-260909-01"
+    ],
+    "frames": 69,
+    "frames_with_detection": 2
+  },
+  "dropped": {
+    "frames": 63,
+    "frames_with_detection": 34
+  },
+  "this_video_unique_frames": {
+    "frames": 3493,
+    "frames_with_detection": 3464,
+    "frames_with_multiple_detections": 4,
+    "iou_vs_refined_label": {
+      "median": 0.982,
+      "p5": 0.955,
+      "rate_ge_0.5": 1.0
+    }
+  }
+}

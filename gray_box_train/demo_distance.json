@@ -1,0 +1,514 @@
+[
+  {
+    "frame": "000000001.jpg",
+    "detections": [
+      {
+        "box_xyxy": [
+          0.0,
+          119.3,
+          61.8,
+          198.5
+        ],
+        "score": 0.97,
+        "distance_cm": 64.5,
+        "reason": null
+      }
+    ]
+  },
+  {
+    "frame": "000000148.jpg",
+    "detections": [
+      {
+        "box_xyxy": [
+          0.0,
+          119.4,
+          61.9,
+          198.5
+        ],
+        "score": 0.97,
+        "distance_cm": 64.6,
+        "reason": null
+      }
+    ]
+  },
+  {
+    "frame": "000000295.jpg",
+    "detections": [
+      {
+        "box_xyxy": [
+          0.0,
+          119.4,
+          61.9,
+          198.5
+        ],
+        "score": 0.969,
+        "distance_cm": 64.6,
+        "reason": null
+      }
+    ]
+  },
+  {
+    "frame": "000000443.jpg",
+    "detections": [
+      {
+        "box_xyxy": [
+          0.0,
+          119.4,
+          61.8,
+          198.5
+        ],
+        "score": 0.97,
+        "distance_cm": 64.5,
+        "reason": null
+      }
+    ]
+  },
+  {
+    "frame": "000000590.jpg",
+    "detections": [
+      {
+        "box_xyxy": [
+          0.1,
+          121.7,
+          86.8,
+          203.8
+        ],
+        "score": 0.973,
+        "distance_cm": 59.9,
+        "reason": null
+      }
+    ]
+  },
+  {
+    "frame": "000000738.jpg",
+    "detections": [
+      {
+        "box_xyxy": [
+          75.5,
+          112.9,
+          191.7,
+          217.7
+        ],
+        "score": 0.974,
+        "distance_cm": 41.3,
+        "reason": null
+      }
+    ]
+  },
+  {
+    "frame": "000000885.jpg",
+    "detections": [
+      {
+        "box_xyxy": [
+          79.0,
+          118.2,
+          203.0,
+          212.5
+        ],
+        "score": 0.974,
+        "distance_cm": 46.3,
+        "reason": null
+      }
+    ]
+  },
+  {
+    "frame": "000001033.jpg",
+    "detections": [
+      {
+        "box_xyxy": [
+          0.0,
+          115.4,
+          52.9,
+          221.8
+        ],
+        "score": 0.964,
+        "distance_cm": 50.1,
+        "reason": null
+      }
+    ]
+  },
+  {
+    "frame": "000001180.jpg",
+    "detections": [
+      {
+        "box_xyxy": [
+          105.4,
+          111.8,
+          237.0,
+          220.6
+        ],
+        "score": 0.969,
+        "distance_cm": 42.7,
+        "reason": null
+      }
+    ]
+  },
+  {
+    "frame": "000001328.jpg",
+    "detections": [
+      {
+        "box_xyxy": [
+          0.0,
+          112.9,
+          122.4,
+          240.6
+        ],
+        "score": 0.969,
+        "distance_cm": null,
+        "reason": "박스가 화면 위/아래 끝에 닿아 높이를 잴 수 없음"
+      }
+    ]
+  },
+  {
+    "frame": "000001475.jpg",
+    "detections": [
+      {
+        "box_xyxy": [
+          12.2,
+          111.3,
+          119.3,
+          231.0
+        ],
+        "score": 0.971,
+        "distance_cm": 39.4,
+        "reason": null
+      }
+    ]
+  },
+  {
+    "frame": "000001622.jpg",
+    "detections": [
+      {
+        "box_xyxy": [
+          11.6,
+          111.1,
+          119.4,
+          231.3
+        ],
+        "score": 0.971,
+        "distance_cm": 39.2,
+        "reason": null
+      }
+    ]
+  },
+  {
+    "frame": "000001770.jpg",
+    "detections": [
+      {
+        "box_xyxy": [
+          11.0,
+          110.9,
+          119.3,
+          233.1
+        ],
+        "score": 0.971,
+        "distance_cm": 38.7,
+        "reason": null
+      }
+    ]
+  },
+  {
+    "frame": "000001917.jpg",
+    "detections": [
+      {
+        "box_xyxy": [
+          10.4,
+          110.9,
+          119.5,
+          232.7
+        ],
+        "score": 0.971,
+        "distance_cm": 38.8,
+        "reason": null
+      }
+    ]
+  },
+  {
+    "frame": "000002065.jpg",
+    "detections": [
+      {
+        "box_xyxy": [
+          0.2,
+          111.3,
+          104.4,
+          240.8
+        ],
+        "score": 0.965,
+        "distance_cm": null,
+        "reason": "박스가 화면 위/아래 끝에 닿아 높이를 잴 수 없음"
+      }
+    ]
+  },
+  {
+    "frame": "000002212.jpg",
+    "detections": [
+      {
+        "box_xyxy": [
+          0.3,
+          110.1,
+          39.7,
+          241.0
+        ],
+        "score": 0.938,
+        "distance_cm": null,
+        "reason": "박스가 화면 위/아래 끝에 닿아 높이를 잴 수 없음"
+      }
+    ]
+  },
+  {
+    "frame": "000002360.jpg",
+    "detections": [
+      {
+        "box_xyxy": [
+          0.0,
+          93.6,
+          196.9,
+          241.0
+        ],
+        "score": 0.972,
+        "distance_cm": null,
+        "reason": "박스가 화면 위/아래 끝에 닿아 높이를 잴 수 없음"
+      }
+    ]
+  },
+  {
+    "frame": "000002507.jpg",
+    "detections": [
+      {
+        "box_xyxy": [
+          0.0,
+          116.0,
+          29.9,
+          229.9
+        ],
+        "score": 0.952,
+        "distance_cm": 49.7,
+        "reason": null
+      }
+    ]
+  },
+  {
+    "frame": "000002655.jpg",
+    "detections": [
+      {
+        "box_xyxy": [
+          99.7,
+          102.2,
+          236.6,
+          240.8
+        ],
+        "score": 0.975,
+        "distance_cm": null,
+        "reason": "박스가 화면 위/아래 끝에 닿아 높이를 잴 수 없음"
+      }
+    ]
+  },
+  {
+    "frame": "000002802.jpg",
+    "detections": [
+      {
+        "box_xyxy": [
+          27.1,
+          111.5,
+          175.8,
+          240.8
+        ],
+        "score": 0.97,
+        "distance_cm": null,
+        "reason": "박스가 화면 위/아래 끝에 닿아 높이를 잴 수 없음"
+      }
+    ]
+  },
+  {
+    "frame": "000002950.jpg",
+    "detections": [
+      {
+        "box_xyxy": [
+          197.2,
+          113.9,
+          236.6,
+          223.4
+        ],
+        "score": 0.951,
+        "distance_cm": 50.2,
+        "reason": null
+      }
+    ]
+  },
+  {
+    "frame": "000003097.jpg",
+    "detections": [
+      {
+        "box_xyxy": [
+          199.9,
+          114.6,
+          236.7,
+          223.1
+        ],
+        "score": 0.945,
+        "distance_cm": 51.0,
+        "reason": null
+      }
+    ]
+  },
+  {
+    "frame": "000003244.jpg",
+    "detections": [
+      {
+        "box_xyxy": [
+          5.5,
+          109.2,
+          153.4,
+          241.0
+        ],
+        "score": 0.971,
+        "distance_cm": null,
+        "reason": "박스가 화면 위/아래 끝에 닿아 높이를 잴 수 없음"
+      }
+    ]
+  },
+  {
+    "frame": "000003392.jpg",
+    "detections": [
+      {
+        "box_xyxy": [
+          6.8,
+          104.2,
+          156.5,
+          240.7
+        ],
+        "score": 0.969,
+        "distance_cm": null,
+        "reason": "박스가 화면 위/아래 끝에 닿아 높이를 잴 수 없음"
+      }
+    ]
+  },
+  {
+    "frame": "000003539.jpg",
+    "detections": [
+      {
+        "box_xyxy": [
+          6.9,
+          104.2,
+          156.6,
+          240.6
+        ],
+        "score": 0.969,
+        "distance_cm": null,
+        "reason": "박스가 화면 위/아래 끝에 닿아 높이를 잴 수 없음"
+      }
+    ]
+  },
+  {
+    "frame": "000003687.jpg",
+    "detections": [
+      {
+        "box_xyxy": [
+          6.8,
+          104.1,
+          156.6,
+          240.6
+        ],
+        "score": 0.969,
+        "distance_cm": null,
+        "reason": "박스가 화면 위/아래 끝에 닿아 높이를 잴 수 없음"
+      }
+    ]
+  },
+  {
+    "frame": "000003834.jpg",
+    "detections": [
+      {
+        "box_xyxy": [
+          6.8,
+          104.0,
+          156.5,
+          240.6
+        ],
+        "score": 0.97,
+        "distance_cm": null,
+        "reason": "박스가 화면 위/아래 끝에 닿아 높이를 잴 수 없음"
+      }
+    ]
+  },
+  {
+    "frame": "000003982.jpg",
+    "detections": [
+      {
+        "box_xyxy": [
+          6.9,
+          104.0,
+          156.6,
+          240.6
+        ],
+        "score": 0.969,
+        "distance_cm": null,
+        "reason": "박스가 화면 위/아래 끝에 닿아 높이를 잴 수 없음"
+      }
+    ]
+  },
+  {
+    "frame": "000004129.jpg",
+    "detections": [
+      {
+        "box_xyxy": [
+          7.0,
+          104.0,
+          156.6,
+          240.7
+        ],
+        "score": 0.969,
+        "distance_cm": null,
+        "reason": "박스가 화면 위/아래 끝에 닿아 높이를 잴 수 없음"
+      }
+    ]
+  },
+  {
+    "frame": "000004277.jpg",
+    "detections": [
+      {
+        "box_xyxy": [
+          7.0,
+          104.0,
+          156.7,
+          240.6
+        ],
+        "score": 0.969,
+        "distance_cm": null,
+        "reason": "박스가 화면 위/아래 끝에 닿아 높이를 잴 수 없음"
+      }
+    ]
+  },
+  {
+    "frame": "000004424.jpg",
+    "detections": [
+      {
+        "box_xyxy": [
+          7.1,
+          104.1,
+          156.6,
+          240.7
+        ],
+        "score": 0.969,
+        "distance_cm": null,
+        "reason": "박스가 화면 위/아래 끝에 닿아 높이를 잴 수 없음"
+      }
+    ]
+  },
+  {
+    "frame": "000004572.jpg",
+    "detections": [
+      {
+        "box_xyxy": [
+          6.9,
+          104.0,
+          156.7,
+          240.7
+        ],
+        "score": 0.969,
+        "distance_cm": null,
+        "reason": "박스가 화면 위/아래 끝에 닿아 높이를 잴 수 없음"
+      }
+    ]
+  }
+]

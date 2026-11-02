@@ -1,0 +1,70 @@
+{
+  "box_size_cm": {
+    "width": 59.3,
+    "depth": 21.0,
+    "height": 39.0
+  },
+  "formula": "distance_cm = k / h_px * (1 + a * r^2)",
+  "reference": "UniDepthV2 + calibrate_depth_to_cm (사용자 실측 3차 보정식) -- 실측 거리 아님",
+  "skipped": {
+    "not_clean_label": 549,
+    "touches_top_or_bottom": 766,
+    "unidepth_out_of_range": 0
+  },
+  "label_width_cm_physically_possible_rate": 0.823,
+  "label_width_cm_quantiles(p5,p50,p95)": [
+    13.2,
+    34.3,
+    49.8
+  ],
+  "pinhole_only": {
+    "k": 4968.3,
+    "a": 0.0,
+    "implied_focal_px": 127.4,
+    "train": {
+      "frames": 1762,
+      "median_abs_pct_err": 12.4,
+      "p90_abs_pct_err": 33.5
+    },
+    "val": {
+      "frames": 416,
+      "median_abs_pct_err": 29.0,
+      "p90_abs_pct_err": 37.6
+    }
+  },
+  "with_radial_term": {
+    "k": 3981.4,
+    "a": 1.5798,
+    "implied_focal_px": 102.1,
+    "train": {
+      "frames": 1762,
+      "median_abs_pct_err": 15.5,
+      "p90_abs_pct_err": 31.6
+    },
+    "val": {
+      "frames": 416,
+      "median_abs_pct_err": 22.3,
+      "p90_abs_pct_err": 31.0
+    }
+  },
+  "unidepth_fx_orig_px": {
+    "median": 189.4,
+    "p10": 171.3,
+    "p90": 227.5
+  },
+  "reference_distance_cm_range": [
+    26.6,
+    77.5
+  ],
+  "adjacent_frame_jitter_pct": {
+    "pairs": 2132,
+    "unidepth": {
+      "median": 1.35,
+      "p90": 6.42
+    },
+    "size_based": {
+      "median": 0.23,
+      "p90": 1.23
+    }
+  }
+}

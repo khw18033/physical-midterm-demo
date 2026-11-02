@@ -119,5 +119,20 @@
     "curated_2026-09-11_result": "재실측(8프레임 재실행, 오버레이 재확인): 5건의 오탐 중 3건(frame_000001 조명, frame_000039 단상, frame_000113 벽걸이물체)이 실제 사람으로 정정됨(각각 머리, 몸통, 신발 영역으로 이동). 2건(frame_000057 창문, frame_000076 바닥 케이블)은 여전히 오탐 -- 이 둘은 위 rejected_gates에서 확인했듯 참조이미지로도 실제 사람 부분크롭과 구분이 안 될 만큼 시각적으로 유사해서 텍스트 특징 교체만으로는 못 풀었다. 기존에 맞았던 frame_000020/000095는 계속 정상(020) 또는 박스 위치가 다소 바뀜(095, 발->다리 쪽 근처로 이동, 사람 위인지 의자 다리인지 애매) -- 순회귀는 아니지만 완전한 회귀 검증은 아직 못 했다. 전체적으로 5/7 오탐 -> 2/7 오탐(+095 애매 1건)으로 개선.",
     "rejected_gates_2026-09-11": "1) 종횡비: 진짜 사람 박스가 프레임마다 다리만(세로로 긺, 2.44) 발만(가로로 넓음, 0.26) 등 크롭 부위가 달라 door처럼 단일 최소 종횡비로 못 거른다. 2) 참조이미지(datasets/person_reference.jpg, frame_000001 crop): 오탐 중 하나(frame_000057 창문, ref_sim=0.8409)가 실제 사람의 부분 크롭(frame_000095 발, ref_sim=0.7359)보다 오히려 더 높게 나와 안정적 분리 실패 -- door/pedestal은 매번 같은 물리 개체라 참조이미지가 잘 통했지만 person은 포즈·의상·크롭 범위 변동이 너무 커서 단일 참조 이미지로는 부족하다고 판단.",
     "known_limitation": "여러 사람이 한 프레임에 있어도(frame_000076, 2명) 현재 파이프라인은 프레임당 최고 점수 박스 1개만 남기므로 1명만 검출된다 -- class_finder_service.py의 '클래스당 최선 박스 1개' 설계 자체의 한계이며 텍스트 특징 교체로 해결되는 문제가 아니다. 다중 인스턴스 지원은 별도 아키텍처 변경(통과 후보 리스트 + NMS)이 필요."
+  },
+  "gray box": {
+    "features": [
+      "flat top surface",
+      "rectangular body",
+      "straight edges",
+      "gray color",
+      "soft fabric surface"
+    ],
+    "distractors_used_in_prompt": "pedestal, chair, desk",
+    "curated_2026-10-27": "사용자 지시('문 탐지를 이 gray box 탐지로 바꾼다'): 시연 장소 바닥에 놓인 회색 천 박스(옆면에 글자 양각) 1개를 탐지 대상으로 등록한다. 사람이 직접 작성한 1차안(LLM 호출 없음)이고 게이트는 아직 없다 -- 색·모양·채도 게이트도, door의 confirm_pair_iou_min도 걸지 않았다. 'gray color'는 features에만 두어 색 게이트가 자동으로 켜지지 않게 했다(reference_image_features 안의 'color' 문구만 색 게이트를 켠다). 태그 선정 근거: 2026-10-27 000004171.jpg 한 장에서 box/gray box/storage box/cardboard box/luggage/suitcase 6개를 비교했을 때 GroundingDINO가 6개 모두 이 박스를 거의 같은 위치로 잡았고 점수는 gray box가 0.64로 가장 높았다(cardboard 0.56, luggage 0.55, suitcase 0.51, box·storage box 0.37). 근거: box_tag_test_000004171/summary.json",
+    "target_sim_threshold": 0.22,
+    "target_sim_threshold_rationale": "잠정치(미검증): pedestal(0.20)처럼 무채색 물체는 짧은 텍스트와 약하게만 맞을 수 있어 전역 0.26보다 낮게 잡았다. 2026-10-27 000004171.jpg에서는 이 값으로 박스만 감싸는 후보가 하나도 통과하지 못했고 사진 전체 크기의 후보(target_sim 0.255)만 통과했다 -- 그 큰 후보가 GroundingDINO 박스를 containment로 포함해 '2개 동의'로 확정되는 문제가 있어, 다중 프레임 평가 결과를 보고 다시 정한다.",
+    "eval_2026-10-27": "20261026_211320(같은 박스를 여러 각도에서 찍은 로봇 프레임 4572장) 20장 간격·sha1 중복 제외 194장, 이 등록 그대로. 확정 193/194장이지만 정답 박스가 없어 GroundingDINO 최고점 박스(contact sheet 육안 확인 결과 거의 모든 장면에서 박스에 딱 맞음)와 비교하면: 대표 인스턴스(instances[0])가 IoU>=0.5인 장 133/194(69%), 박스와 무관한 확정 인스턴스(IoU<0.1) 93개가 73장에 붙음(사람·칸막이·책상·캐비닛). provider 반응률: 사전(CLIP) 194/194(그중 사진 80% 미만 크기 후보 130장), GroundingDINO 194/194(점수 중앙값 0.41, 0.17~0.69), YOLO-World 17/194(8.8%). door의 confirm_pair_iou_min(0.42)을 걸면 확정이 100/194로 줄어 게이트 추가만으로는 못 푼다 -- 이 상태로는 랜드마크(door 대체)로 쓸 수 없다. 근거: gray_box_eval_20261026_211320/summary.json, contact_sheet_1~2.jpg",
+    "trained_detector_2026-10-27": "이 사전(CLIP) 항목 대신 전용 YOLOv8n을 학습했다(gray_box_train/runs/yolov8n_graybox_v2/weights/best.pt): 다른 장소 시험 69장 오탐 0, 이 영상 3493장 중 3464장 검출. 아직 파이프라인에 연결하지 않았다. 근거·한계: gray_box_train/RESULT.md"
   }
 }
