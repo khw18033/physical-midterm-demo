@@ -6,94 +6,6 @@
     8
   ],
   "runs": {
-    "yolov8n_graybox_v5": {
-      "distance_fit": {
-        "k": 5289.7,
-        "c_cm": 7.4
-      },
-      "folders": {
-        "box_2m": {
-          "frames": 306,
-          "detected": 306,
-          "rate": 1.0,
-          "h_px_median": 25.8,
-          "distance_cm_median": 197.8,
-          "distance_cm_p10_p90": [
-            189.2,
-            203.9
-          ],
-          "folder_cm": 200.0
-        },
-        "box_2.5m": {
-          "frames": 135,
-          "detected": 135,
-          "rate": 1.0,
-          "h_px_median": 20.6,
-          "distance_cm_median": 249.5,
-          "distance_cm_p10_p90": [
-            234.1,
-            255.8
-          ],
-          "folder_cm": 250.0
-        },
-        "box_3m": {
-          "frames": 87,
-          "detected": 87,
-          "rate": 1.0,
-          "h_px_median": 17.0,
-          "distance_cm_median": 303.5,
-          "distance_cm_p10_p90": [
-            300.4,
-            316.7
-          ],
-          "folder_cm": 300.0
-        }
-      }
-    },
-    "yolov8n_graybox_v6": {
-      "distance_fit": {
-        "k": 5345.8,
-        "c_cm": 8.0
-      },
-      "folders": {
-        "box_2m": {
-          "frames": 306,
-          "detected": 306,
-          "rate": 1.0,
-          "h_px_median": 25.9,
-          "distance_cm_median": 198.5,
-          "distance_cm_p10_p90": [
-            190.4,
-            205.1
-          ],
-          "folder_cm": 200.0
-        },
-        "box_2.5m": {
-          "frames": 135,
-          "detected": 135,
-          "rate": 1.0,
-          "h_px_median": 20.5,
-          "distance_cm_median": 253.3,
-          "distance_cm_p10_p90": [
-            233.6,
-            258.3
-          ],
-          "folder_cm": 250.0
-        },
-        "box_3m": {
-          "frames": 87,
-          "detected": 87,
-          "rate": 1.0,
-          "h_px_median": 17.0,
-          "distance_cm_median": 306.3,
-          "distance_cm_p10_p90": [
-            302.3,
-            320.3
-          ],
-          "folder_cm": 300.0
-        }
-      }
-    },
     "yolov8n_graybox_v7": {
       "distance_fit": {
         "k": 5266.8,
@@ -133,6 +45,50 @@
           "distance_cm_p10_p90": [
             298.8,
             311.0
+          ],
+          "folder_cm": 300.0
+        }
+      }
+    },
+    "yolov8n_graybox_v8": {
+      "distance_fit": {
+        "k": 5278.8,
+        "c_cm": 6.4
+      },
+      "folders": {
+        "box_2m": {
+          "frames": 306,
+          "detected": 306,
+          "rate": 1.0,
+          "h_px_median": 25.8,
+          "distance_cm_median": 198.0,
+          "distance_cm_p10_p90": [
+            189.2,
+            204.3
+          ],
+          "folder_cm": 200.0
+        },
+        "box_2.5m": {
+          "frames": 135,
+          "detected": 135,
+          "rate": 1.0,
+          "h_px_median": 20.3,
+          "distance_cm_median": 253.0,
+          "distance_cm_p10_p90": [
+            231.2,
+            258.0
+          ],
+          "folder_cm": 250.0
+        },
+        "box_3m": {
+          "frames": 87,
+          "detected": 87,
+          "rate": 1.0,
+          "h_px_median": 17.1,
+          "distance_cm_median": 301.6,
+          "distance_cm_p10_p90": [
+            298.7,
+            313.4
           ],
           "folder_cm": 300.0
         }

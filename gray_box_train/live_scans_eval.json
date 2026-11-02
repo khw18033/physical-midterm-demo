@@ -1588,6 +1588,329 @@
           "wrong": 0
         }
       ]
+    },
+    "yolov8n_graybox_v8": {
+      "present_hit": 10,
+      "absent_frames_with_detection": 0,
+      "wrong_boxes_total": 0,
+      "per_frame": [
+        {
+          "frame": "hall1_1793593669_rot000",
+          "present": true,
+          "unsure": false,
+          "detections": [
+            {
+              "box_xyxy": [
+                0.0,
+                124.3,
+                45.8,
+                162.3
+              ],
+              "score": 0.961
+            }
+          ],
+          "hit": true,
+          "wrong": 0
+        },
+        {
+          "frame": "hall1_1793593669_rot045",
+          "present": false,
+          "unsure": false,
+          "detections": [],
+          "hit": false,
+          "wrong": 0
+        },
+        {
+          "frame": "hall1_1793593669_rot090",
+          "present": false,
+          "unsure": false,
+          "detections": [],
+          "hit": false,
+          "wrong": 0
+        },
+        {
+          "frame": "hall1_1793593669_rot135",
+          "present": false,
+          "unsure": false,
+          "detections": [],
+          "hit": false,
+          "wrong": 0
+        },
+        {
+          "frame": "hall1_1793593669_rot180",
+          "present": false,
+          "unsure": false,
+          "detections": [],
+          "hit": false,
+          "wrong": 0
+        },
+        {
+          "frame": "hall1_1793593669_rot225",
+          "present": false,
+          "unsure": false,
+          "detections": [],
+          "hit": false,
+          "wrong": 0
+        },
+        {
+          "frame": "hall1_1793593669_rot270",
+          "present": false,
+          "unsure": false,
+          "detections": [],
+          "hit": false,
+          "wrong": 0
+        },
+        {
+          "frame": "hall1_1793593669_rot315",
+          "present": true,
+          "unsure": false,
+          "detections": [
+            {
+              "box_xyxy": [
+                133.1,
+                127.0,
+                183.9,
+                167.1
+              ],
+              "score": 0.958
+            }
+          ],
+          "hit": true,
+          "wrong": 0
+        },
+        {
+          "frame": "hall2_1793595212_rot000",
+          "present": false,
+          "unsure": false,
+          "detections": [],
+          "hit": false,
+          "wrong": 0
+        },
+        {
+          "frame": "hall2_1793595212_rot045",
+          "present": true,
+          "unsure": false,
+          "detections": [
+            {
+              "box_xyxy": [
+                174.5,
+                119.6,
+                236.5,
+                176.3
+              ],
+              "score": 0.958
+            }
+          ],
+          "hit": true,
+          "wrong": 0
+        },
+        {
+          "frame": "hall2_1793595212_rot090",
+          "present": true,
+          "unsure": false,
+          "detections": [
+            {
+              "box_xyxy": [
+                86.2,
+                124.4,
+                154.0,
+                174.1
+              ],
+              "score": 0.958
+            }
+          ],
+          "hit": true,
+          "wrong": 0
+        },
+        {
+          "frame": "hall2_1793595212_rot135",
+          "present": false,
+          "unsure": false,
+          "detections": [],
+          "hit": false,
+          "wrong": 0
+        },
+        {
+          "frame": "hall2_1793595212_rot180",
+          "present": false,
+          "unsure": false,
+          "detections": [],
+          "hit": false,
+          "wrong": 0
+        },
+        {
+          "frame": "hall2_1793595212_rot225",
+          "present": false,
+          "unsure": false,
+          "detections": [],
+          "hit": false,
+          "wrong": 0
+        },
+        {
+          "frame": "hall2_1793595212_rot270",
+          "present": false,
+          "unsure": false,
+          "detections": [],
+          "hit": false,
+          "wrong": 0
+        },
+        {
+          "frame": "hall2_1793595212_rot315",
+          "present": false,
+          "unsure": false,
+          "detections": [],
+          "hit": false,
+          "wrong": 0
+        },
+        {
+          "frame": "officeA_1793544975_rot000",
+          "present": true,
+          "unsure": false,
+          "detections": [
+            {
+              "box_xyxy": [
+                37.4,
+                126.4,
+                65.0,
+                161.3
+              ],
+              "score": 0.358
+            }
+          ],
+          "hit": true,
+          "wrong": 0
+        },
+        {
+          "frame": "officeA_1793544975_rot045",
+          "present": true,
+          "unsure": false,
+          "detections": [
+            {
+              "box_xyxy": [
+                165.8,
+                128.2,
+                211.6,
+                164.3
+              ],
+              "score": 0.914
+            }
+          ],
+          "hit": true,
+          "wrong": 0
+        },
+        {
+          "frame": "officeA_1793544975_rot090",
+          "present": true,
+          "unsure": false,
+          "detections": [
+            {
+              "box_xyxy": [
+                49.5,
+                129.2,
+                90.3,
+                161.5
+              ],
+              "score": 0.921
+            }
+          ],
+          "hit": true,
+          "wrong": 0
+        },
+        {
+          "frame": "officeB_1793546275_rot000",
+          "present": false,
+          "unsure": false,
+          "detections": [],
+          "hit": false,
+          "wrong": 0
+        },
+        {
+          "frame": "officeB_1793546275_rot045",
+          "present": false,
+          "unsure": false,
+          "detections": [],
+          "hit": false,
+          "wrong": 0
+        },
+        {
+          "frame": "officeB_1793546275_rot090",
+          "present": false,
+          "unsure": false,
+          "detections": [],
+          "hit": false,
+          "wrong": 0
+        },
+        {
+          "frame": "officeB_1793546275_rot135",
+          "present": false,
+          "unsure": false,
+          "detections": [],
+          "hit": false,
+          "wrong": 0
+        },
+        {
+          "frame": "officeB_1793546275_rot180",
+          "present": false,
+          "unsure": false,
+          "detections": [],
+          "hit": false,
+          "wrong": 0
+        },
+        {
+          "frame": "officeB_1793546275_rot225",
+          "present": true,
+          "unsure": false,
+          "detections": [
+            {
+              "box_xyxy": [
+                121.4,
+                128.2,
+                149.7,
+                164.6
+              ],
+              "score": 0.76
+            }
+          ],
+          "hit": true,
+          "wrong": 0
+        },
+        {
+          "frame": "officeB_1793546275_rot270",
+          "present": true,
+          "unsure": false,
+          "detections": [
+            {
+              "box_xyxy": [
+                173.2,
+                128.9,
+                224.0,
+                167.7
+              ],
+              "score": 0.957
+            }
+          ],
+          "hit": true,
+          "wrong": 0
+        },
+        {
+          "frame": "officeB_1793546275_rot315",
+          "present": true,
+          "unsure": false,
+          "detections": [
+            {
+              "box_xyxy": [
+                49.7,
+                130.2,
+                96.1,
+                162.1
+              ],
+              "score": 0.94
+            }
+          ],
+          "hit": true,
+          "wrong": 0
+        }
+      ]
     }
   }
 }

@@ -1,0 +1,15 @@
+{
+  "backgrounds": 1615,
+  "sources": {
+    "near": 2915,
+    "far": 2086,
+    "lab_pos": 281
+  },
+  "made": {
+    "place2": 1500,
+    "venue": 1000
+  },
+  "fail": {
+    "place2": 1816
+  }
+}

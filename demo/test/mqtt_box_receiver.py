@@ -26,10 +26,13 @@ h_px는 테두리 crop(237×241) 좌표에서 잰 박스 높이(앞면 39cm)다.
 거리를 내지 않고 사유를 적는다(navigate_to_target_service의 "못 구하면 정직하게 실패" 원칙).
 
 판단 근거 (2026-11-02, 박스판단근거_가시화계획_261102.md -- 관제 웹이 문 편처럼 「왜」를 그리게):
-- 검출마다 `gates`: score_gate(박스 판정, score ≥ conf) · height_gate(높이를 잴 수 있나) ·
-  calibration_range(거리가 실측 검증 범위 안인가, 참고). 각 관문에 값·식·대입·화면 문장(`words`).
+- 검출마다 `gates`: score_gate(박스 판정, score ≥ conf) · ground_gate(박스 판정, 바닥에 놓인 박스의 아랫변 위치인가,
+  2026-11-02~) · height_gate(높이를 잴 수 있나) · calibration_range(거리가 실측 검증 범위 안인가, 참고).
+  각 관문에 값·식·대입·화면 문장(`words`).
 - 프레임마다 `rejected_candidates`: conf 아래로 버린 후보(CANDIDATE_CONF 이상, 상위 MAX_REJECTED개) -- 못 찾은 이유.
-- 그림: overlay.jpg에 버린 후보(점선)와 관문 판정 띠, found면 crop.jpg(대표 박스).
+- 프레임마다 `rejected_by_gates`(2026-11-02~): score는 넘었지만 required 관문(지금은 ground_gate)에 떨어져 버린 검출,
+  `gates` 전부와 함께. rejected_candidates와 섞지 않는다 -- 그쪽은 「conf 아래」라는 뜻으로 API·웹이 이미 쓴다.
+- 그림: overlay.jpg에 버린 후보(회색 점선)·관문에 떨어진 검출(빨간 점선)과 관문 판정 띠, found면 crop.jpg(대표 박스).
 - 판 끝에 `navigation/evidence.json`: 경로 근거(detect_api_server.box_path_from_summary와 같은 계산).
 
 방위각은 참고값이다: rotation_deg + atan((박스 중심x − 화면 중심x) / f), f = k / 39(계수에 함의된
@@ -41,7 +44,7 @@ h_px는 테두리 crop(237×241) 좌표에서 잰 박스 높이(앞면 39cm)다.
 - 각도는 `rotation_deg`만 쓴다(`yaw_deg`는 판마다 기준점이 옮겨진다).
 
 실행:
-    python mqtt_box_receiver.py                              # 로봇 실연동 (기본 run = yolov8n_graybox_v7)
+    python mqtt_box_receiver.py                              # 로봇 실연동 (기본 run = yolov8n_graybox_v8)
     python mqtt_box_receiver.py --replay ..\\..\\box_meter      # 로봇 없이 폴더의 jpg를 한 판으로 재생
     python mqtt_box_receiver.py --run yolov8n_graybox_v2     # 다른 학습 결과로
 """
@@ -83,7 +86,9 @@ EDGE_PX = 2.0                 # crop 끝에서 이만큼 안이면 "잘렸다"�
 # (박스 없는 장면 학습 필요). 이전 동작이 필요하면 --run yolov8n_graybox_v3.
 # 2026-11-02 v5 -> v7(같은 보고서 8절): 박스 없는 연구실 영상 2개를 음성으로 더해 책상 다리·검은 백팩 오탐을 줄였다.
 # 실연동 고정 세트 박스 10/10 + 엉뚱한 검출 0(v5는 2), 2~3m 검출·거리 유지. 거리식 k 5266.8 / c 6.3(box_meter 평균 오차 3.0cm).
-DEFAULT_RUN = "yolov8n_graybox_v7"
+# 2026-11-02 v7 -> v8(같은 보고서 9절): 다른 배경에 붙인 박스(먼 박스 포함)·장소 색감 증강 2,500장 추가. 실연동 10/10·오탐 0 유지,
+# crop 가장자리 박스 검출 279 -> 308/348, box_meter 오차 평균 3.0 -> 2.4cm(최대 10.4 -> 7.5), 색감 변환 오탐 3 -> 0/85.
+DEFAULT_RUN = "yolov8n_graybox_v8"
 DEFAULT_CONF = 0.25           # 계수를 맞출 때 쓴 값
 # 2026-11-02 판단 근거(박스판단근거_가시화계획_261102.md 6절): 「왜 못 찾았나」를 남기려고 conf 아래 후보도
 # 이 값까지 내려 받아 score 상위 몇 개만 기록한다. 판정은 여전히 conf(0.25)로만 한다 -- 후보는 버린 근거일 뿐이다.
@@ -91,6 +96,12 @@ DEFAULT_CONF = 0.25           # 계수를 맞출 때 쓴 값
 # 실로봇 두 판 11장으로 전후 detections가 같은 것을 확인).
 CANDIDATE_CONF = 0.05
 MAX_REJECTED = 3
+# 2026-11-02 바닥 관계(gray_box_train/학습보고서_261102.md 5절): 이 카메라 높이에서 바닥에 놓인 박스는 겉보기 높이 h_px에 따라
+# 아랫변 y2가 정해진다. 학습 라벨 2,915개로 맞춘 y2 = A·h + B(잔차 5~95% −3.5~4.5px). v5 검출의 잔차는 진짜 박스에서
+# box_meter −4.8~−1.4, 원래 영상 −4.1~7.3, 2.5m·3m −5.9~1.3, 2m −11.7~0.5(1~99%)이고 오탐은 사람 등 −66, 책상 상판 −117,
+# 공중 물체 −131px였다 -> 허용 ±12px. 로봇 자세(머리 숙임)가 바뀌면 B가 움직이므로 실측 사진이 바뀌면 다시 잰다.
+# 책상 다리·백팩처럼 바닥에 선 오탐은 이 관문으로 못 거른다(학습으로 막는다 -- v6·v7).
+GROUND_A, GROUND_B, GROUND_TOL_PX = 0.803, 135.7, 12.0
 
 
 # ────────────────────────── 검출기 + 거리 ──────────────────────────
@@ -157,8 +168,10 @@ class BoxDetector:
     def gates(self, box: list[float], score: float, distance: dict) -> dict:
         """검출 하나의 판정 근거(2026-11-02, 박스판단근거_가시화계획_261102.md 2-1).
 
-        새 판정을 더하지 않는다 -- 이 파일이 이미 하는 비교 셋을 값·식·대입과 함께 적을 뿐이다.
+        처음엔 기존 비교만 적었고, 2026-11-02 바닥 관계(ground_gate)를 판정에 더했다.
           score_gate         (required)  박스라는 판정 자체: score ≥ conf
+          ground_gate        (required)  바닥에 놓인 박스의 아랫변인가: |y2 − (A·h + B)| ≤ tol. 아랫변이 crop 아래 끝에
+                                         닿으면 판정할 수 없어 applicable=false·통과로 두고 words에 그렇게 적는다
           height_gate        (조건)      높이를 잴 수 있나: 박스가 crop 위/아래 끝 EDGE_PX 안에 닿지 않았나
           calibration_range  (조건·참고) 잰 거리가 거리식의 실측 검증 범위 안인가 -- 밖이어도 거리는 쓴다(6절 2)
         `required: false`는 「박스냐」가 아니라 「거리를 믿어도 되냐」의 조건이라는 뜻이다. `words`는 관제 웹이
@@ -175,6 +188,26 @@ class BoxDetector:
             },
         }
         cut_top, cut_bottom = y1 <= EDGE_PX, y2 >= crop_h - EDGE_PX
+        expected_y2 = GROUND_A * h_px + GROUND_B
+        residual = y2 - expected_y2
+        if cut_bottom:
+            ground = {"applicable": False, "passed": True,
+                      "words": "아랫변이 화면 아래 끝에 닿아 바닥 관계를 볼 수 없음 → 판정 보류(통과로 둠)"}
+        else:
+            ok = abs(residual) <= GROUND_TOL_PX
+            ground = {"applicable": True, "passed": ok,
+                      "words": (f"바닥 위 박스 위치(아랫변 {y2:.0f}px, 기대 {expected_y2:.0f}±{GROUND_TOL_PX:g})" if ok else
+                                f"바닥에 놓인 박스 위치가 아님(아랫변 {y2:.0f}px, 기대 {expected_y2:.0f}±{GROUND_TOL_PX:g}, "
+                                f"{'위로' if residual < 0 else '아래로'} {abs(residual):.0f}px 벗어남)")}
+        gates["ground_gate"] = {
+            "required": True, **ground, "y2": round(y2, 1), "h_px": round(h_px, 2),
+            "expected_y2": round(expected_y2, 1), "residual_px": round(residual, 1), "tol_px": GROUND_TOL_PX,
+            "a": GROUND_A, "b": GROUND_B,
+            "formula": "passed = |y2 − (a·h_px + b)| ≤ tol  (아랫변이 crop 아래 끝이면 판정 보류)",
+            "substituted": (f"y2 {y2:.1f} = crop 아래 끝 → 판정 보류" if cut_bottom else
+                            f"|{y2:.1f} − ({GROUND_A:g}·{h_px:.1f} + {GROUND_B:g})| = {abs(residual):.1f} "
+                            f"{'≤' if abs(residual) <= GROUND_TOL_PX else '>'} {GROUND_TOL_PX:g}"),
+        }
         if cut_top or cut_bottom:
             where = "위·아래" if cut_top and cut_bottom else ("위" if cut_top else "아래")
             height_words = f"높이 측정 불가 — 박스가 화면 {where} 끝에 닿음"
@@ -212,7 +245,7 @@ class BoxDetector:
         result = self.model.predict(crop, imgsz=self.imgsz, conf=CANDIDATE_CONF, verbose=False)[0]
         elapsed_ms = (time.perf_counter() - t0) * 1000
 
-        detections, rejected = [], []
+        detections, rejected, rejected_by_gates = [], [], []
         for b in sorted(result.boxes, key=lambda b: -float(b.conf[0])):
             box = [float(v) for v in b.xyxy[0].tolist()]
             score = float(b.conf[0])
@@ -226,12 +259,19 @@ class BoxDetector:
             det.update(self.distance(box))
             det["bearing"] = self.bearing(box, rotation_deg)
             det["gates"] = self.gates(box, score, det)
+            failed = [name for name, g in det["gates"].items() if g.get("required") and not g["passed"]]
+            if failed:
+                det["failed_gates"] = failed
+                det["words"] = " · ".join(det["gates"][name]["words"] for name in failed) + " → 버림"
+                rejected_by_gates.append(det)
+                continue
             detections.append(det)
 
         out_dir = RUN_DIR / frame_path.stem
         out_dir.mkdir(parents=True, exist_ok=True)
         cv2.imwrite(str(out_dir / "original.jpg"), image)
-        cv2.imwrite(str(out_dir / "overlay.jpg"), self._overlay(crop, detections, rejected, rotation_deg))
+        cv2.imwrite(str(out_dir / "overlay.jpg"),
+                    self._overlay(crop, detections, rejected, rejected_by_gates, rotation_deg))
         if detections:
             # 관제 웹 확대 화면의 target_crop -- 대표 박스를 테두리 crop에서 그대로 잘라 둔다(가공 없음).
             bx1, by1, bx2, by2 = detections[0]["box_xyxy"]
@@ -244,6 +284,8 @@ class BoxDetector:
                     "detections": detections,
                     # 판정(conf) 아래로 버린 후보, score 내림차순 최대 MAX_REJECTED개. 비어 있으면 CANDIDATE_CONF 이상인 것조차 없었다.
                     "rejected_candidates": rejected,
+                    # score는 conf 이상이지만 required 관문(ground_gate)에 떨어진 검출 -- gates 전부를 함께 남긴다.
+                    "rejected_by_gates": rejected_by_gates,
                     "inference_ms": round(elapsed_ms, 1),
                     "detector": {"run": self.run, "conf": self.conf, "candidate_conf": CANDIDATE_CONF,
                                  "max_rejected": MAX_REJECTED, "crop_box": list(BORDER_CROP_BOX)},
@@ -252,7 +294,7 @@ class BoxDetector:
                                                encoding="utf-8")
         return evidence
 
-    def _overlay(self, crop, detections, rejected, rotation_deg):
+    def _overlay(self, crop, detections, rejected, rejected_by_gates, rotation_deg):
         """근거를 그린 그림(2026-11-02). 그림 위에는 박스·후보만 그리고, 판정 근거 문장은 아래 띠에 적어
         장면을 가리지 않는다. cv2.putText는 한글을 못 그려서 띠 문장은 영어다(같은 값이 evidence.json에 한글로 있다)."""
         scale = 2
@@ -261,6 +303,11 @@ class BoxDetector:
             x1, y1, x2, y2 = [int(v * scale) for v in cand["box_xyxy"]]
             _dashed_rect(vis, (x1, y1), (x2, y2), (150, 150, 150))
             cv2.putText(vis, f"x {cand['score']:.2f}", (x1 + 3, min(vis.shape[0] - 4, y2 - 5)), 0, 0.45, (170, 170, 170), 1)
+        for det in rejected_by_gates:  # 관문에 떨어진 검출: 빨간 점선
+            x1, y1, x2, y2 = [int(v * scale) for v in det["box_xyxy"]]
+            _dashed_rect(vis, (x1, y1), (x2, y2), (0, 0, 255))
+            cv2.putText(vis, f"x {det['score']:.2f} ground", (x1 + 3, min(vis.shape[0] - 4, y2 - 5)), 0, 0.45,
+                        (0, 0, 255), 1)
         for i, det in enumerate(detections):
             x1, y1, x2, y2 = [int(v * scale) for v in det["box_xyxy"]]
             color = (0, 220, 255) if i == 0 else (160, 160, 160)
@@ -281,6 +328,9 @@ class BoxDetector:
             g = best["gates"]
             mark = lambda gate: "[OK]" if gate["passed"] else "[X] "
             lines.append(f"{mark(g['score_gate'])} score {best['score']:.3f} >= {self.conf:g}")
+            gg = g["ground_gate"]
+            lines.append(f"{mark(gg)} ground |y2 {gg['y2']:.0f} - exp {gg['expected_y2']:.0f}| = {abs(gg['residual_px']):.0f} <= {GROUND_TOL_PX:g}"
+                         if gg["applicable"] else "[OK] ground n/a (bottom at crop edge)")
             hg = g["height_gate"]
             lines.append(f"{mark(hg)} height {hg['h_px']:.1f}px  y {hg['y1']:.1f}~{hg['y2']:.1f} in ({EDGE_PX:g}, {hg['crop_h'] - EDGE_PX:g})")
             if "calibration_range" in g:
@@ -291,6 +341,10 @@ class BoxDetector:
             else:
                 lines.append("d = n/a (box touches crop edge)")
             lines.append(f"bearing {best['bearing']['bearing_deg']:.1f} deg (ref)")
+        elif rejected_by_gates:
+            gg = rejected_by_gates[0]["gates"]["ground_gate"]
+            lines.append(f"[X]  {rejected_by_gates[0]['score']:.2f} rejected: ground |y2 {gg['y2']:.0f} - exp "
+                         f"{gg['expected_y2']:.0f}| = {abs(gg['residual_px']):.0f} > {GROUND_TOL_PX:g}")
         elif rejected:
             lines.append(f"no box >= {self.conf:g}  (best candidate {rejected[0]['score']:.2f})")
         else:

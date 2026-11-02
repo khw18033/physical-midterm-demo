@@ -282,7 +282,8 @@ def resolve_image(kind: str, target: str, frame: str) -> Path | None:
 # 수신기 산출 형식은 그대로 두고 여기서 맞춘다(2026-11-02):
 #   try_box/<frame_stem>/evidence.json   {frame, rotation_deg, found, detections[{box_xyxy, score,
 #                                         distance_cm, h_px, reason, bearing{bearing_deg,...}, gates{...}}],
-#                                         rejected_candidates[...], ...}   (gates·rejected_candidates는 2026-11-02~)
+#                                         rejected_candidates[...], rejected_by_gates[...], ...}
+#                                         (gates·rejected_candidates는 2026-11-02~, ground_gate·rejected_by_gates는 같은 날 오후~)
 #   try_box/<frame_stem>/original.jpg · overlay.jpg · crop.jpg(found일 때, 2026-11-02~)
 #   try_box/scan_summary.json            판이 끝나야 생긴다 {accepted, problems, best_overall, ...}
 #   try_box/navigation/evidence.json     판 끝의 경로 근거(box_path_from_summary 결과, 2026-11-02~)
@@ -332,6 +333,11 @@ def build_box_results() -> dict:
                 rejected = evidence["rejected_candidates"]
                 entry["best_rejected_score"] = rejected[0]["score"] if rejected else None
                 entry["decision_threshold"] = (evidence.get("detector") or {}).get("conf")
+            if not detections and evidence.get("rejected_by_gates"):
+                # 2026-11-02~: score는 넘었지만 required 관문(ground_gate)에 떨어져 버린 검출 -- 못 찾은 이유가 점수가 아니다.
+                gate_rejected = evidence["rejected_by_gates"]
+                entry["gate_rejected"] = [{"score": d.get("score"), "failed_gates": d.get("failed_gates"),
+                                           "words": d.get("words")} for d in gate_rejected]
             frames.append(entry)
     frames.sort(key=lambda f: f["rotation_deg"])
     return {"target_class": BOX_TARGET, "frames": frames}
@@ -340,7 +346,7 @@ def build_box_results() -> dict:
 def build_box_evidence(frame: str):
     """② 박스 편 근거. 박스엔 특징 비교가 없어 `feature_similarities`는 항상 빈 객체다(YOLO 점수를
     특징처럼 넣지 않는다). `mandatory_gates`는 수신기가 남긴 대표 검출의 `gates`를 이름 그대로 싣는다
-    (score_gate · height_gate · calibration_range, 각 `required`/`passed`/값/식/`words`). 수신기가 gates를
+    (score_gate · ground_gate · height_gate · calibration_range, 각 `required`/`passed`/값/식/`words`). 수신기가 gates를
     안 남긴 지난 형식의 판이면 빈 객체 -- 관제 웹이 「관문 근거 미수신」으로 적는다. 키는 어느 쪽이든 둔다."""
     evidence = _read_json(BOX_RUN_DIR / _frame_stem(frame) / "evidence.json")
     if evidence is None or "frame" not in evidence:
@@ -358,6 +364,7 @@ def build_box_evidence(frame: str):
         "mandatory_gates": best.get("gates") or {},
         # ── 아래는 문서에 없는 추가 필드(근거 추적용) ──
         "rejected_candidates": evidence.get("rejected_candidates"),  # 지난 형식의 판이면 null
+        "rejected_by_gates": evidence.get("rejected_by_gates"),  # 2026-11-02~, 지난 형식의 판이면 null
         "detector": evidence.get("detector"),
         "distance_cm": best.get("distance_cm"),
         "distance_fit": evidence.get("distance_fit"),

@@ -53,6 +53,9 @@
 !/gray_box_train/dataset_lab/
 /gray_box_train/dataset_lab/*
 !/gray_box_train/dataset_lab/lab_stats.json
+!/gray_box_train/dataset_aug2/
+/gray_box_train/dataset_aug2/*
+!/gray_box_train/dataset_aug2/augment2_stats.json
 !/gray_box_train/live_test/
 /gray_box_train/live_test/*
 !/gray_box_train/live_test/gt.json
