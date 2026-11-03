@@ -88,7 +88,8 @@ BOX_FRAME_IMAGE_KINDS = {
 }
 # navigate_to_target_service.STANDOFF_CM_BY_CLASS["box"] / ROBOT_FORWARD_M_MIN·MAX와 같은 값.
 # 이 서버는 torch 없이 떠야 해서 그 파일을 import하지 않고 값만 옮겨 둔다 -- 바꿀 때 양쪽 다.
-BOX_STANDOFF_CM = 20.0
+# 2026-11-03 20 -> 10cm -> 0cm(사용자 지시: 10cm로 해도 실제로는 박스 앞 약 30cm에 섰다). 렌즈 ~ 박스 앞면 기준
+BOX_STANDOFF_CM = 0.0
 ROBOT_FORWARD_M_MIN = 0.05
 ROBOT_FORWARD_M_MAX = 10.0
 

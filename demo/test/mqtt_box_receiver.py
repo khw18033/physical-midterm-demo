@@ -44,7 +44,7 @@ h_px는 테두리 crop(237×241) 좌표에서 잰 박스 높이(앞면 39cm)다.
 - 각도는 `rotation_deg`만 쓴다(`yaw_deg`는 판마다 기준점이 옮겨진다).
 
 실행:
-    python mqtt_box_receiver.py                              # 로봇 실연동 (기본 run = yolov8n_graybox_v8)
+    python mqtt_box_receiver.py                              # 로봇 실연동 (기본 run = yolov8n_graybox_v9)
     python mqtt_box_receiver.py --replay ..\\..\\box_meter      # 로봇 없이 폴더의 jpg를 한 판으로 재생
     python mqtt_box_receiver.py --run yolov8n_graybox_v2     # 다른 학습 결과로
 """
@@ -88,7 +88,10 @@ EDGE_PX = 2.0                 # crop 끝에서 이만큼 안이면 "잘렸다"�
 # 실연동 고정 세트 박스 10/10 + 엉뚱한 검출 0(v5는 2), 2~3m 검출·거리 유지. 거리식 k 5266.8 / c 6.3(box_meter 평균 오차 3.0cm).
 # 2026-11-02 v7 -> v8(같은 보고서 9절): 다른 배경에 붙인 박스(먼 박스 포함)·장소 색감 증강 2,500장 추가. 실연동 10/10·오탐 0 유지,
 # crop 가장자리 박스 검출 279 -> 308/348, box_meter 오차 평균 3.0 -> 2.4cm(최대 10.4 -> 7.5), 색감 변환 오탐 3 -> 0/85.
-DEFAULT_RUN = "yolov8n_graybox_v8"
+# 2026-11-03 v8 -> v9(같은 보고서 10·11절): 복도 왕복 영상(sidebox 2/2.5/3m)을 더 학습. 실내 시험은 v8과 비슷했지만, 하얗게
+# 날아간 야외 옥상(2026-11-03 임무 4건)에서 박스(높이 14~20px, 계산 거리 2.6~3.7m)를 v8은 1/8, v9는 7/8 잡았다. 대신 연구실 검은 백팩
+# 0.40 같은 오탐이 조금 늘었다(경로는 가장 높은 점수 방향이라 진짜 박스가 보이면 영향 없음). 이전 동작은 --run yolov8n_graybox_v8.
+DEFAULT_RUN = "yolov8n_graybox_v9"
 DEFAULT_CONF = 0.25           # 계수를 맞출 때 쓴 값
 # 2026-11-02 판단 근거(박스판단근거_가시화계획_261102.md 6절): 「왜 못 찾았나」를 남기려고 conf 아래 후보도
 # 이 값까지 내려 받아 score 상위 몇 개만 기록한다. 판정은 여전히 conf(0.25)로만 한다 -- 후보는 버린 근거일 뿐이다.

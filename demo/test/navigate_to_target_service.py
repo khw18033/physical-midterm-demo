@@ -119,7 +119,9 @@ LANDMARK_MAP_POSITIONS_CM = {
 # navigate가 아니라 detect_api_server.build_box_path가 쓴다(BOX_STANDOFF_CM -- 값을 같이 바꿀 것).
 # 2026-11-02 box 50 -> 20cm(사용자 지시 "박스는 문보다 조금 더 가까이 가도 된다"). 전진 거리는 스캔 때
 # 잰 거리로 이미 정해지므로 이동엔 지장이 없다. 다만 도착 뒤 다시 재면 검증 범위(50cm~) 밖이다.
-STANDOFF_CM_BY_CLASS = {"door": 100.0, "box": 20.0}
+# 2026-11-03 box 20 -> 10cm -> 0cm(사용자 지시: 10cm로 해도 실제로는 박스 앞 약 30cm에 섰다 -- 전진이 계산보다
+# 짧거나 거리가 짧게 잡히는 몫이 있다). 거리식은 「카메라 렌즈 ~ 박스 앞면」 기준이다.
+STANDOFF_CM_BY_CLASS = {"door": 100.0, "box": 0.0}
 STANDOFF_CM_DEFAULT = 30.0
 
 # 로봇 `move_forward { distance_m }` 이 받는 범위(detection-protocol_0914.md §4).
