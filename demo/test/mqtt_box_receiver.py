@@ -128,6 +128,9 @@ class BoxDetector:
         # 거리식이 실측으로 검증된 범위 = 계수를 맞춘 사진의 실제 거리 최소~최대(상수로 적지 않는다 -- run마다 다르다).
         gt = [row["gt_cm"] for row in model_b.get("lodo_detail") or []]
         self.validated_cm = [min(gt), max(gt)] if gt else None
+        # 2026-11-02 밤: v8까지는 box_meter(50~200cm)만 맞춤 점이라 2·2.5·3m 영상으로 학습했는데도 3m가 「범위 밖」이었다(사용자 지적).
+        # 같은 날 fit_distance_gt.py가 줄자로 잰 먼 거리 영상(box_*·sidebox_*)을 맞춤 점으로 넣도록 바꾸고 v8·v9를 다시 맞춰
+        # 이 범위가 50~300cm가 됐다(v8 k 5278.8/c 6.4 -> 5221.6/5.3, 학습보고서 10절).
         self.fit_source = {
             "file": str(fit_path.relative_to(REPO_ROOT)).replace("\\", "/"),
             "formula": model_b["formula"], "k": self.k, "c_cm": self.c, "imgsz": self.imgsz,
@@ -141,7 +144,7 @@ class BoxDetector:
         h = BORDER_CROP_BOX[3] - BORDER_CROP_BOX[1]
         self.model.predict(np.zeros((h, w, 3), np.uint8), imgsz=self.imgsz, conf=self.conf, verbose=False)
         print(f"[box] 검출기 준비: {run} (imgsz {self.imgsz}, conf {conf}) "
-              f"거리 d = {self.k:.1f} / h_px − {self.c:.1f}")
+              f"거리 d = {self.k:.1f} / h_px − {self.c:.1f}, 실측 검증 범위 {self.validated_cm} cm")
 
     def distance(self, box: list[float]) -> dict:
         x1, y1, x2, y2 = box

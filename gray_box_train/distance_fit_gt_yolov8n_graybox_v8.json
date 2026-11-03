@@ -2,30 +2,30 @@
   "run": "yolov8n_graybox_v8",
   "imgsz": 256,
   "conf": 0.25,
-  "frames": 14,
-  "detected": 14,
-  "used": 14,
+  "frames": 20,
+  "detected": 20,
+  "used": 20,
   "model_A_pinhole": {
     "formula": "d = k / h_px",
-    "k": 4948.8,
-    "implied_focal_px": 126.9,
+    "k": 4991.2,
+    "implied_focal_px": 128.0,
     "leave_one_distance_out": {
-      "mean_abs_cm": 5.6,
-      "max_abs_cm": 12.4,
-      "mean_abs_pct": 5.0
+      "mean_abs_cm": 5.4,
+      "max_abs_cm": 13.5,
+      "mean_abs_pct": 4.0
     },
     "lodo_detail": [
       {
         "gt_cm": 50.0,
-        "pred_cm": 53.4
+        "pred_cm": 53.5
       },
       {
         "gt_cm": 50.0,
-        "pred_cm": 54.7
+        "pred_cm": 54.8
       },
       {
         "gt_cm": 50.0,
-        "pred_cm": 54.9
+        "pred_cm": 55.0
       },
       {
         "gt_cm": 50.0,
@@ -33,72 +33,96 @@
       },
       {
         "gt_cm": 100.0,
-        "pred_cm": 97.3
+        "pred_cm": 98.3
       },
       {
         "gt_cm": 100.0,
-        "pred_cm": 100.0
+        "pred_cm": 101.0
       },
       {
         "gt_cm": 150.0,
-        "pred_cm": 144.5
+        "pred_cm": 146.4
       },
       {
         "gt_cm": 150.0,
-        "pred_cm": 144.6
+        "pred_cm": 146.5
       },
       {
         "gt_cm": 150.0,
-        "pred_cm": 144.1
+        "pred_cm": 146.0
       },
       {
         "gt_cm": 150.0,
-        "pred_cm": 152.1
+        "pred_cm": 154.2
       },
       {
         "gt_cm": 200.0,
-        "pred_cm": 187.6
+        "pred_cm": 189.9
       },
       {
         "gt_cm": 200.0,
-        "pred_cm": 187.8
+        "pred_cm": 190.1
       },
       {
         "gt_cm": 200.0,
-        "pred_cm": 189.3
+        "pred_cm": 191.6
       },
       {
         "gt_cm": 200.0,
-        "pred_cm": 196.0
+        "pred_cm": 198.3
+      },
+      {
+        "gt_cm": 200.0,
+        "pred_cm": 190.0
+      },
+      {
+        "gt_cm": 200.0,
+        "pred_cm": 197.2
+      },
+      {
+        "gt_cm": 250.0,
+        "pred_cm": 247.7
+      },
+      {
+        "gt_cm": 250.0,
+        "pred_cm": 252.3
+      },
+      {
+        "gt_cm": 300.0,
+        "pred_cm": 288.8
+      },
+      {
+        "gt_cm": 300.0,
+        "pred_cm": 286.5
       }
     ]
   },
   "model_B_pinhole_offset": {
     "formula": "d = k / h_px - c",
-    "k": 5278.8,
-    "c_cm": 6.4,
-    "implied_focal_px": 135.4,
+    "k": 5221.6,
+    "c_cm": 5.3,
+    "implied_focal_px": 133.9,
     "leave_one_distance_out": {
-      "mean_abs_cm": 2.4,
-      "max_abs_cm": 7.5,
-      "mean_abs_pct": 1.9
+      "mean_abs_cm": 3.7,
+      "max_abs_cm": 10.7,
+      "mean_abs_pct": 2.4
     },
     "lodo_detail": [
       {
         "gt_cm": 50.0,
-        "pred_cm": 50.1
+        "pred_cm": 50.9
       },
       {
         "gt_cm": 50.0,
-        "pred_cm": 51.5
+        "pred_cm": 52.3
       },
       {
         "gt_cm": 50.0,
-        "pred_cm": 51.7
+        "pred_cm": 52.5
       },
       {
         "gt_cm": 50.0,
-        "pred_cm": 51.4
+        "pred_cm": 52.2
       },
       {
         "gt_cm": 100.0,
@@ -110,42 +134,75 @@
       },
       {
         "gt_cm": 150.0,
-        "pred_cm": 149.3
+        "pred_cm": 148.3
       },
       {
         "gt_cm": 150.0,
-        "pred_cm": 149.4
+        "pred_cm": 148.4
       },
       {
         "gt_cm": 150.0,
-        "pred_cm": 148.8
+        "pred_cm": 147.9
       },
       {
         "gt_cm": 150.0,
-        "pred_cm": 157.5
+        "pred_cm": 156.4
       },
       {
         "gt_cm": 200.0,
-        "pred_cm": 195.6
+        "pred_cm": 194.8
       },
       {
         "gt_cm": 200.0,
-        "pred_cm": 195.8
+        "pred_cm": 195.1
       },
       {
         "gt_cm": 200.0,
-        "pred_cm": 197.4
+        "pred_cm": 196.6
       },
       {
         "gt_cm": 200.0,
-        "pred_cm": 204.6
+        "pred_cm": 203.8
+      },
+      {
+        "gt_cm": 200.0,
+        "pred_cm": 195.0
+      },
+      {
+        "gt_cm": 200.0,
+        "pred_cm": 202.5
+      },
+      {
+        "gt_cm": 250.0,
+        "pred_cm": 255.8
+      },
+      {
+        "gt_cm": 250.0,
+        "pred_cm": 260.7
+      },
+      {
+        "gt_cm": 300.0,
+        "pred_cm": 296.1
+      },
+      {
+        "gt_cm": 300.0,
+        "pred_cm": 293.7
       }
     ]
   },
+  "points": {
+    "box_meter_photos": 14,
+    "video_medians": 6,
+    "video_center_px": 25.0,
+    "video_val_blocks": [
+      3,
+      8
+    ]
+  },
   "old_coef_vs_gt": {
-    "mean_abs_cm": 21.0,
-    "max_abs_cm": 39.4,
-    "mean_abs_pct": 14.2
+    "mean_abs_cm": 30.0,
+    "max_abs_cm": 66.2,
+    "mean_abs_pct": 16.0
   },
   "per_frame": [
     {
@@ -162,7 +219,7 @@
       "h_px": 50.76,
       "r": 0.205,
       "cut": false,
-      "pred_A_cm": 97.5,
+      "pred_A_cm": 98.3,
       "pred_B_cm": 97.6,
       "pred_old_coef_cm": 83.6
     },
@@ -180,8 +237,8 @@
       "h_px": 49.41,
       "r": 0.196,
       "cut": false,
-      "pred_A_cm": 100.2,
-      "pred_B_cm": 100.5,
+      "pred_A_cm": 101.0,
+      "pred_B_cm": 100.4,
       "pred_old_coef_cm": 85.5
     },
     {
@@ -198,8 +255,8 @@
       "h_px": 34.01,
       "r": 0.19,
       "cut": false,
-      "pred_A_cm": 145.5,
-      "pred_B_cm": 148.8,
+      "pred_A_cm": 146.8,
+      "pred_B_cm": 148.2,
       "pred_old_coef_cm": 123.7
     },
     {
@@ -216,8 +273,8 @@
       "h_px": 33.98,
       "r": 0.19,
       "cut": false,
-      "pred_A_cm": 145.6,
-      "pred_B_cm": 149.0,
+      "pred_A_cm": 146.9,
+      "pred_B_cm": 148.4,
       "pred_old_coef_cm": 123.9
     },
     {
@@ -234,8 +291,8 @@
       "h_px": 34.1,
       "r": 0.189,
       "cut": false,
-      "pred_A_cm": 145.1,
-      "pred_B_cm": 148.4,
+      "pred_A_cm": 146.4,
+      "pred_B_cm": 147.8,
       "pred_old_coef_cm": 123.3
     },
     {
@@ -252,8 +309,8 @@
       "h_px": 32.3,
       "r": 0.174,
       "cut": false,
-      "pred_A_cm": 153.2,
-      "pred_B_cm": 157.0,
+      "pred_A_cm": 154.5,
+      "pred_B_cm": 156.4,
       "pred_old_coef_cm": 129.2
     },
     {
@@ -270,8 +327,8 @@
       "h_px": 26.0,
       "r": 0.176,
       "cut": false,
-      "pred_A_cm": 190.3,
-      "pred_B_cm": 196.6,
+      "pred_A_cm": 192.0,
+      "pred_B_cm": 195.5,
       "pred_old_coef_cm": 160.6
     },
     {
@@ -288,8 +345,8 @@
       "h_px": 25.97,
       "r": 0.176,
       "cut": false,
-      "pred_A_cm": 190.6,
-      "pred_B_cm": 196.9,
+      "pred_A_cm": 192.2,
+      "pred_B_cm": 195.8,
       "pred_old_coef_cm": 160.8
     },
     {
@@ -306,8 +363,8 @@
       "h_px": 25.77,
       "r": 0.176,
       "cut": false,
-      "pred_A_cm": 192.0,
-      "pred_B_cm": 198.5,
+      "pred_A_cm": 193.7,
+      "pred_B_cm": 197.3,
       "pred_old_coef_cm": 162.1
     },
     {
@@ -324,8 +381,8 @@
       "h_px": 24.89,
       "r": 0.162,
       "cut": false,
-      "pred_A_cm": 198.8,
-      "pred_B_cm": 205.7,
+      "pred_A_cm": 200.5,
+      "pred_B_cm": 204.5,
       "pred_old_coef_cm": 166.6
     },
     {
@@ -342,8 +399,8 @@
       "h_px": 94.98,
       "r": 0.192,
       "cut": false,
-      "pred_A_cm": 52.1,
-      "pred_B_cm": 49.2,
+      "pred_A_cm": 52.5,
+      "pred_B_cm": 49.7,
       "pred_old_coef_cm": 44.4
     },
     {
@@ -360,8 +417,8 @@
       "h_px": 92.62,
       "r": 0.263,
       "cut": false,
-      "pred_A_cm": 53.4,
-      "pred_B_cm": 50.6,
+      "pred_A_cm": 53.9,
+      "pred_B_cm": 51.1,
       "pred_old_coef_cm": 47.7
     },
     {
@@ -378,8 +435,8 @@
       "h_px": 92.37,
       "r": 0.263,
       "cut": false,
-      "pred_A_cm": 53.6,
-      "pred_B_cm": 50.8,
+      "pred_A_cm": 54.0,
+      "pred_B_cm": 51.2,
       "pred_old_coef_cm": 47.8
     },
     {
@@ -396,9 +453,117 @@
       "h_px": 92.92,
       "r": 0.252,
       "cut": false,
-      "pred_A_cm": 53.3,
-      "pred_B_cm": 50.4,
+      "pred_A_cm": 53.7,
+      "pred_B_cm": 50.9,
       "pred_old_coef_cm": 47.1
+    },
+    {
+      "frame": "box_2m (가운데 72프레임 h_px 중앙값)",
+      "gt_cm": 200.0,
+      "detected": true,
+      "kind": "video_median",
+      "frames_used": 72,
+      "blocks": "val",
+      "h_px": 25.98,
+      "h_px_p10_p90": [
+        25.24,
+        26.95
+      ],
+      "r": 0.126,
+      "cut": false,
+      "pred_A_cm": 192.1,
+      "pred_B_cm": 195.7,
+      "pred_old_coef_cm": 157.1
+    },
+    {
+      "frame": "box_2.5m (가운데 95프레임 h_px 중앙값)",
+      "gt_cm": 250.0,
+      "detected": true,
+      "kind": "video_median",
+      "frames_used": 95,
+      "blocks": "val",
+      "h_px": 20.15,
+      "h_px_p10_p90": [
+        19.94,
+        21.62
+      ],
+      "r": 0.099,
+      "cut": false,
+      "pred_A_cm": 247.7,
+      "pred_B_cm": 253.8,
+      "pred_old_coef_cm": 200.6
+    },
+    {
+      "frame": "box_3m (가운데 52프레임 h_px 중앙값)",
+      "gt_cm": 300.0,
+      "detected": true,
+      "kind": "video_median",
+      "frames_used": 52,
+      "blocks": "val",
+      "h_px": 17.21,
+      "h_px_p10_p90": [
+        17.08,
+        17.33
+      ],
+      "r": 0.089,
+      "cut": false,
+      "pred_A_cm": 290.0,
+      "pred_B_cm": 298.1,
+      "pred_old_coef_cm": 234.2
+    },
+    {
+      "frame": "sidebox_2m (가운데 108프레임 h_px 중앙값)",
+      "gt_cm": 200.0,
+      "detected": true,
+      "kind": "video_median",
+      "frames_used": 108,
+      "blocks": "all",
+      "h_px": 25.04,
+      "h_px_p10_p90": [
+        24.47,
+        25.77
+      ],
+      "r": 0.126,
+      "cut": false,
+      "pred_A_cm": 199.3,
+      "pred_B_cm": 203.2,
+      "pred_old_coef_cm": 163.0
+    },
+    {
+      "frame": "sidebox_2.5m (가운데 249프레임 h_px 중앙값)",
+      "gt_cm": 250.0,
+      "detected": true,
+      "kind": "video_median",
+      "frames_used": 249,
+      "blocks": "all",
+      "h_px": 19.78,
+      "h_px_p10_p90": [
+        18.81,
+        20.38
+      ],
+      "r": 0.113,
+      "cut": false,
+      "pred_A_cm": 252.3,
+      "pred_B_cm": 258.7,
+      "pred_old_coef_cm": 205.3
+    },
+    {
+      "frame": "sidebox_3m (가운데 200프레임 h_px 중앙값)",
+      "gt_cm": 300.0,
+      "detected": true,
+      "kind": "video_median",
+      "frames_used": 200,
+      "blocks": "all",
+      "h_px": 17.35,
+      "h_px_p10_p90": [
+        17.13,
+        17.95
+      ],
+      "r": 0.109,
+      "cut": false,
+      "pred_A_cm": 287.7,
+      "pred_B_cm": 295.7,
+      "pred_old_coef_cm": 233.8
     }
   ]
 }

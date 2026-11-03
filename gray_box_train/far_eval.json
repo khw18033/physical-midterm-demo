@@ -6,50 +6,6 @@
     8
   ],
   "runs": {
-    "yolov8n_graybox_v7": {
-      "distance_fit": {
-        "k": 5266.8,
-        "c_cm": 6.3
-      },
-      "folders": {
-        "box_2m": {
-          "frames": 306,
-          "detected": 306,
-          "rate": 1.0,
-          "h_px_median": 25.8,
-          "distance_cm_median": 198.0,
-          "distance_cm_p10_p90": [
-            190.1,
-            203.7
-          ],
-          "folder_cm": 200.0
-        },
-        "box_2.5m": {
-          "frames": 135,
-          "detected": 135,
-          "rate": 1.0,
-          "h_px_median": 20.6,
-          "distance_cm_median": 249.3,
-          "distance_cm_p10_p90": [
-            234.2,
-            255.9
-          ],
-          "folder_cm": 250.0
-        },
-        "box_3m": {
-          "frames": 87,
-          "detected": 87,
-          "rate": 1.0,
-          "h_px_median": 17.0,
-          "distance_cm_median": 303.9,
-          "distance_cm_p10_p90": [
-            298.8,
-            311.0
-          ],
-          "folder_cm": 300.0
-        }
-      }
-    },
     "yolov8n_graybox_v8": {
       "distance_fit": {
         "k": 5278.8,
@@ -89,6 +45,122 @@
           "distance_cm_p10_p90": [
             298.7,
             313.4
+          ],
+          "folder_cm": 300.0
+        },
+        "sidebox_2m": {
+          "frames": 182,
+          "detected": 168,
+          "rate": 0.923,
+          "h_px_median": 22.4,
+          "distance_cm_median": 228.8,
+          "distance_cm_p10_p90": [
+            208.6,
+            234.1
+          ],
+          "folder_cm": 200.0
+        },
+        "sidebox_2.5m": {
+          "frames": 224,
+          "detected": 216,
+          "rate": 0.964,
+          "h_px_median": 18.8,
+          "distance_cm_median": 274.5,
+          "distance_cm_p10_p90": [
+            254.9,
+            277.5
+          ],
+          "folder_cm": 250.0
+        },
+        "sidebox_3m": {
+          "frames": 179,
+          "detected": 179,
+          "rate": 1.0,
+          "h_px_median": 16.6,
+          "distance_cm_median": 311.8,
+          "distance_cm_p10_p90": [
+            305.1,
+            323.4
+          ],
+          "folder_cm": 300.0
+        }
+      }
+    },
+    "yolov8n_graybox_v9": {
+      "distance_fit": {
+        "k": 5275.0,
+        "c_cm": 6.3
+      },
+      "folders": {
+        "box_2m": {
+          "frames": 306,
+          "detected": 306,
+          "rate": 1.0,
+          "h_px_median": 25.9,
+          "distance_cm_median": 197.8,
+          "distance_cm_p10_p90": [
+            189.5,
+            203.0
+          ],
+          "folder_cm": 200.0
+        },
+        "box_2.5m": {
+          "frames": 135,
+          "detected": 135,
+          "rate": 1.0,
+          "h_px_median": 20.7,
+          "distance_cm_median": 248.8,
+          "distance_cm_p10_p90": [
+            231.6,
+            253.5
+          ],
+          "folder_cm": 250.0
+        },
+        "box_3m": {
+          "frames": 87,
+          "detected": 87,
+          "rate": 1.0,
+          "h_px_median": 17.0,
+          "distance_cm_median": 303.2,
+          "distance_cm_p10_p90": [
+            300.4,
+            316.7
+          ],
+          "folder_cm": 300.0
+        },
+        "sidebox_2m": {
+          "frames": 182,
+          "detected": 171,
+          "rate": 0.94,
+          "h_px_median": 22.4,
+          "distance_cm_median": 228.8,
+          "distance_cm_p10_p90": [
+            210.3,
+            239.7
+          ],
+          "folder_cm": 200.0
+        },
+        "sidebox_2.5m": {
+          "frames": 224,
+          "detected": 220,
+          "rate": 0.982,
+          "h_px_median": 18.7,
+          "distance_cm_median": 275.3,
+          "distance_cm_p10_p90": [
+            256.5,
+            277.8
+          ],
+          "folder_cm": 250.0
+        },
+        "sidebox_3m": {
+          "frames": 179,
+          "detected": 179,
+          "rate": 1.0,
+          "h_px_median": 16.3,
+          "distance_cm_median": 316.5,
+          "distance_cm_p10_p90": [
+            310.0,
+            330.4
           ],
           "folder_cm": 300.0
         }

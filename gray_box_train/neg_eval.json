@@ -4,17 +4,24 @@
   "imgsz": 256,
   "test_frames": 298,
   "runs": {
-    "yolov8n_graybox_v5": {
+    "yolov8n_graybox_v8": {
       "frames_with_detection": 0,
       "rate": 0.0,
       "max_score": null,
       "hits": []
     },
-    "yolov8n_graybox_v6": {
-      "frames_with_detection": 0,
-      "rate": 0.0,
-      "max_score": null,
-      "hits": []
+    "yolov8n_graybox_v9": {
+      "frames_with_detection": 1,
+      "rate": 0.003,
+      "max_score": 0.324,
+      "hits": [
+        {
+          "frame": "000000777.jpg",
+          "scores": [
+            0.324
+          ]
+        }
+      ]
     }
   }
 }

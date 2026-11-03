@@ -69,6 +69,58 @@
         22.0
       ],
       "outside_old_hue_100_160": 36
+    },
+    "sidebox_2m": {
+      "frames": 912,
+      "pos": {
+        "train": 729,
+        "val": 171
+      },
+      "drop": 12,
+      "drop_reasons": {
+        "height": 12
+      },
+      "no_gdino": 0,
+      "h_px_p5_p50_p95": [
+        21.3,
+        24.3,
+        26.1
+      ],
+      "outside_old_hue_100_160": 380
+    },
+    "sidebox_2.5m": {
+      "frames": 1120,
+      "pos": {
+        "train": 896,
+        "val": 223
+      },
+      "drop": 1,
+      "drop_reasons": {
+        "height": 1
+      },
+      "no_gdino": 0,
+      "h_px_p5_p50_p95": [
+        16.8,
+        18.8,
+        20.9
+      ],
+      "outside_old_hue_100_160": 755
+    },
+    "sidebox_3m": {
+      "frames": 896,
+      "pos": {
+        "train": 717,
+        "val": 179
+      },
+      "drop": 0,
+      "drop_reasons": {},
+      "no_gdino": 0,
+      "h_px_p5_p50_p95": [
+        15.3,
+        16.6,
+        17.9
+      ],
+      "outside_old_hue_100_160": 825
     }
   }
 }

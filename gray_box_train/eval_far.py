@@ -18,7 +18,8 @@ from ultralytics import YOLO
 
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parent
-FOLDERS = {"box_2m": 200.0, "box_2.5m": 250.0, "box_3m": 300.0}
+FOLDERS = {"box_2m": 200.0, "box_2.5m": 250.0, "box_3m": 300.0,
+           "sidebox_2m": 200.0, "sidebox_2.5m": 250.0, "sidebox_3m": 300.0}  # 2026-11-02 밤~
 CROP = (114, 80, 351, 321)
 CONF, IMGSZ = 0.25, 256
 N_BLOCKS, VAL_BLOCKS = 10, {3, 8}

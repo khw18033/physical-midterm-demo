@@ -23,7 +23,8 @@ import numpy as np
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parent
 OUT = HERE / "dataset_far"
-FOLDERS = ["box_2m", "box_2.5m", "box_3m"]
+# 2026-11-02 밤 v9: sidebox_*(박스 정면 거리를 두고 로봇을 옆으로 왕복 -- 박스가 화면 왼쪽·오른쪽 가장자리를 오간다)를 더한다
+FOLDERS = ["box_2m", "box_2.5m", "box_3m", "sidebox_2m", "sidebox_2.5m", "sidebox_3m"]
 CROP = (114, 80, 351, 321)
 W, H = CROP[2] - CROP[0], CROP[3] - CROP[1]
 BOX_W_CM, BOX_D_CM, BOX_H_CM = 59.3, 21.0, 39.0
