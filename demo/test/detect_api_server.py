@@ -335,7 +335,7 @@ def build_box_results() -> dict:
                 entry["best_rejected_score"] = rejected[0]["score"] if rejected else None
                 entry["decision_threshold"] = (evidence.get("detector") or {}).get("conf")
             if not detections and evidence.get("rejected_by_gates"):
-                # 2026-11-02~: score는 넘었지만 required 관문(ground_gate)에 떨어져 버린 검출 -- 못 찾은 이유가 점수가 아니다.
+                # 2026-11-02~: score는 넘었지만 required 관문(ground_gate·2026-11-03~ shape_gate)에 떨어져 버린 검출 -- 못 찾은 이유가 점수가 아니다.
                 gate_rejected = evidence["rejected_by_gates"]
                 entry["gate_rejected"] = [{"score": d.get("score"), "failed_gates": d.get("failed_gates"),
                                            "words": d.get("words")} for d in gate_rejected]
@@ -347,7 +347,7 @@ def build_box_results() -> dict:
 def build_box_evidence(frame: str):
     """② 박스 편 근거. 박스엔 특징 비교가 없어 `feature_similarities`는 항상 빈 객체다(YOLO 점수를
     특징처럼 넣지 않는다). `mandatory_gates`는 수신기가 남긴 대표 검출의 `gates`를 이름 그대로 싣는다
-    (score_gate · ground_gate · height_gate · calibration_range, 각 `required`/`passed`/값/식/`words`). 수신기가 gates를
+    (score_gate · ground_gate · shape_gate · height_gate · calibration_range, 각 `required`/`passed`/값/식/`words`). 수신기가 gates를
     안 남긴 지난 형식의 판이면 빈 객체 -- 관제 웹이 「관문 근거 미수신」으로 적는다. 키는 어느 쪽이든 둔다."""
     evidence = _read_json(BOX_RUN_DIR / _frame_stem(frame) / "evidence.json")
     if evidence is None or "frame" not in evidence:

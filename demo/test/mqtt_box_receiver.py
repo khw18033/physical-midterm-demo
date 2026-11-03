@@ -105,6 +105,13 @@ MAX_REJECTED = 3
 # 공중 물체 −131px였다 -> 허용 ±12px. 로봇 자세(머리 숙임)가 바뀌면 B가 움직이므로 실측 사진이 바뀌면 다시 잰다.
 # 책상 다리·백팩처럼 바닥에 선 오탐은 이 관문으로 못 거른다(학습으로 막는다 -- v6·v7).
 GROUND_A, GROUND_B, GROUND_TOL_PX = 0.803, 135.7, 12.0
+# 2026-11-03 모양 관문(shape_gate): 실연동 판 270°에서 crop 왼쪽 끝 검은 가방(너비 17 × 높이 114px, 폭/높이 0.15)이 0.46점으로
+# 박스가 됐다. 박스는 앞면 59.3×39cm(1.52), 좁은 옆면만 보여도 21/39 = 0.54라, 화면 안에 다 들어온 박스는 이보다 가늘 수 없다.
+# 학습 라벨에서 끝에 안 닿은 박스의 폭/높이는 최소 0.44(증강), 실제 영상 0.49 -> ASPECT_MIN 0.40.
+# 끝에 잘린 박스는 학습 라벨에도 0.09까지 있다(연구실 영상에서 박스를 카메라 좌우 끝에 둔 장면) -- 가방과 모양이 같아 검출기로는 못
+# 가른다. 그래서 끝에 걸친 가는 조각은 박스든 아니든 버린다: crop이 보는 가로 약 80°가 회전 간격 45°보다 넓어 끝에 걸친 박스는
+# 옆 각도 사진에 온전히 들어오고, 조각의 중심은 박스 중심이 아니라 방위도 틀린다. 0.35 = 옆면(0.54)의 약 2/3가 보이는 정도.
+ASPECT_MIN, ASPECT_MIN_EDGE_CUT = 0.40, 0.35
 
 
 # ────────────────────────── 검출기 + 거리 ──────────────────────────
@@ -178,6 +185,7 @@ class BoxDetector:
           score_gate         (required)  박스라는 판정 자체: score ≥ conf
           ground_gate        (required)  바닥에 놓인 박스의 아랫변인가: |y2 − (A·h + B)| ≤ tol. 아랫변이 crop 아래 끝에
                                          닿으면 판정할 수 없어 applicable=false·통과로 두고 words에 그렇게 적는다
+          shape_gate         (required)  박스 모양인가: w/h ≥ ASPECT_MIN(좌우 끝에 걸치면 ASPECT_MIN_EDGE_CUT) -- 2026-11-03
           height_gate        (조건)      높이를 잴 수 있나: 박스가 crop 위/아래 끝 EDGE_PX 안에 닿지 않았나
           calibration_range  (조건·참고) 잰 거리가 거리식의 실측 검증 범위 안인가 -- 밖이어도 거리는 쓴다(6절 2)
         `required: false`는 「박스냐」가 아니라 「거리를 믿어도 되냐」의 조건이라는 뜻이다. `words`는 관제 웹이
@@ -213,6 +221,26 @@ class BoxDetector:
             "substituted": (f"y2 {y2:.1f} = crop 아래 끝 → 판정 보류" if cut_bottom else
                             f"|{y2:.1f} − ({GROUND_A:g}·{h_px:.1f} + {GROUND_B:g})| = {abs(residual):.1f} "
                             f"{'≤' if abs(residual) <= GROUND_TOL_PX else '>'} {GROUND_TOL_PX:g}"),
+        }
+        crop_w = BORDER_CROP_BOX[2] - BORDER_CROP_BOX[0]
+        w_px = box[2] - box[0]
+        aspect = w_px / h_px if h_px > 0 else 0.0
+        cut_lr = box[0] <= EDGE_PX or box[2] >= crop_w - EDGE_PX
+        aspect_min = ASPECT_MIN_EDGE_CUT if cut_lr else ASPECT_MIN
+        shape_ok = aspect >= aspect_min
+        if shape_ok:
+            shape_words = f"박스 모양(폭/높이 {aspect:.2f} ≥ {aspect_min:g})"
+        elif cut_lr:
+            shape_words = (f"화면 {'왼' if box[0] <= EDGE_PX else '오른'}쪽 끝에 걸친 가는 조각(폭/높이 {aspect:.2f} < {aspect_min:g}) "
+                           f"— 박스라면 옆 각도 사진에 온전히 보인다")
+        else:
+            shape_words = f"박스로 보기엔 너무 가늚(폭/높이 {aspect:.2f} < {aspect_min:g}, 옆면만 보여도 0.54)"
+        gates["shape_gate"] = {
+            "required": True, "passed": shape_ok, "w_px": round(w_px, 2), "h_px": round(h_px, 2),
+            "aspect": round(aspect, 3), "edge_cut_lr": cut_lr, "aspect_min": aspect_min,
+            "formula": "passed = w_px / h_px ≥ aspect_min  (좌우 끝에 걸치면 aspect_min_edge_cut)",
+            "substituted": f"{w_px:.1f} / {h_px:.1f} = {aspect:.2f} {'≥' if shape_ok else '<'} {aspect_min:g}",
+            "words": shape_words,
         }
         if cut_top or cut_bottom:
             where = "위·아래" if cut_top and cut_bottom else ("위" if cut_top else "아래")
@@ -290,7 +318,7 @@ class BoxDetector:
                     "detections": detections,
                     # 판정(conf) 아래로 버린 후보, score 내림차순 최대 MAX_REJECTED개. 비어 있으면 CANDIDATE_CONF 이상인 것조차 없었다.
                     "rejected_candidates": rejected,
-                    # score는 conf 이상이지만 required 관문(ground_gate)에 떨어진 검출 -- gates 전부를 함께 남긴다.
+                    # score는 conf 이상이지만 required 관문(ground_gate·shape_gate)에 떨어진 검출 -- gates 전부를 함께 남긴다.
                     "rejected_by_gates": rejected_by_gates,
                     "inference_ms": round(elapsed_ms, 1),
                     "detector": {"run": self.run, "conf": self.conf, "candidate_conf": CANDIDATE_CONF,
@@ -312,7 +340,8 @@ class BoxDetector:
         for det in rejected_by_gates:  # 관문에 떨어진 검출: 빨간 점선
             x1, y1, x2, y2 = [int(v * scale) for v in det["box_xyxy"]]
             _dashed_rect(vis, (x1, y1), (x2, y2), (0, 0, 255))
-            cv2.putText(vis, f"x {det['score']:.2f} ground", (x1 + 3, min(vis.shape[0] - 4, y2 - 5)), 0, 0.45,
+            why = "/".join(n.replace("_gate", "") for n in det.get("failed_gates", []))
+            cv2.putText(vis, f"x {det['score']:.2f} {why}", (x1 + 3, min(vis.shape[0] - 4, y2 - 5)), 0, 0.45,
                         (0, 0, 255), 1)
         for i, det in enumerate(detections):
             x1, y1, x2, y2 = [int(v * scale) for v in det["box_xyxy"]]
@@ -337,6 +366,9 @@ class BoxDetector:
             gg = g["ground_gate"]
             lines.append(f"{mark(gg)} ground |y2 {gg['y2']:.0f} - exp {gg['expected_y2']:.0f}| = {abs(gg['residual_px']):.0f} <= {GROUND_TOL_PX:g}"
                          if gg["applicable"] else "[OK] ground n/a (bottom at crop edge)")
+            sg = g["shape_gate"]
+            lines.append(f"{mark(sg)} shape w/h {sg['aspect']:.2f} >= {sg['aspect_min']:g}"
+                         + (" (edge cut)" if sg["edge_cut_lr"] else ""))
             hg = g["height_gate"]
             lines.append(f"{mark(hg)} height {hg['h_px']:.1f}px  y {hg['y1']:.1f}~{hg['y2']:.1f} in ({EDGE_PX:g}, {hg['crop_h'] - EDGE_PX:g})")
             if "calibration_range" in g:
@@ -348,9 +380,14 @@ class BoxDetector:
                 lines.append("d = n/a (box touches crop edge)")
             lines.append(f"bearing {best['bearing']['bearing_deg']:.1f} deg (ref)")
         elif rejected_by_gates:
-            gg = rejected_by_gates[0]["gates"]["ground_gate"]
-            lines.append(f"[X]  {rejected_by_gates[0]['score']:.2f} rejected: ground |y2 {gg['y2']:.0f} - exp "
-                         f"{gg['expected_y2']:.0f}| = {abs(gg['residual_px']):.0f} > {GROUND_TOL_PX:g}")
+            rj = rejected_by_gates[0]
+            gg, sg = rj["gates"]["ground_gate"], rj["gates"]["shape_gate"]
+            if not gg["passed"]:
+                lines.append(f"[X]  {rj['score']:.2f} rejected: ground |y2 {gg['y2']:.0f} - exp "
+                             f"{gg['expected_y2']:.0f}| = {abs(gg['residual_px']):.0f} > {GROUND_TOL_PX:g}")
+            if not sg["passed"]:
+                lines.append(f"[X]  {rj['score']:.2f} rejected: shape w/h {sg['aspect']:.2f} < {sg['aspect_min']:g}"
+                             + (" (thin sliver at edge)" if sg["edge_cut_lr"] else ""))
         elif rejected:
             lines.append(f"no box >= {self.conf:g}  (best candidate {rejected[0]['score']:.2f})")
         else:
