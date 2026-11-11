@@ -177,6 +177,12 @@ class Telem:
         self.allowed = None      # set 이면 그 밖의 모드가 오면 ModeLost
         self.lost_mode = None
         self._tasks = []
+        # ── 착륙 감시 로그 전용 (판정·제어에는 쓰지 않는다) ──
+        self.landed = self.armed = None   # LAND 시작 뒤에만 구독한다
+        self.lw = None                    # LandWatch. LAND 항목이 시작되면 만든다
+        self._lw_land_idx = self._lw_total = None
+        self._lw_below = self._lw_off = False
+        self._lw_last = {}                # 속성별 마지막 수신 시각(monotonic)
 
     async def start(self, timeout):
         t = self.drone.telemetry
@@ -201,6 +207,58 @@ class Telem:
             setattr(self, attr, v)
             if attr == "mode" and self.allowed is not None and v not in self.allowed and self.lost_mode is None:
                 self.lost_mode = v
+            self._lw_feed(attr, v)
+
+    # ── 착륙 감시 로그: LAND 항목이 시작된 뒤부터만 [착륙감시] 줄을 찍는다 ──
+    # 읽기·로그만 한다. 어떤 예외도 _pump 밖으로 내보내지 않으며, MAVLink 명령을 보내지 않는다.
+
+    def lw_prepare(self, plan):
+        """LAND 항목 번호와 항목 수를 기억한다. 출력 없음."""
+        try:
+            self._lw_land_idx = plan.roles.index(("land", 0))
+            self._lw_total = len(plan.items)
+        except Exception as e:
+            self._lw_off = True
+            _lw_log(f"[착륙감시] 준비 실패 {e!r} — 감시하지 않는다 (비행 제어와 무관)")
+
+    def _lw_feed(self, attr, v):
+        try:
+            self._lw_last[attr] = time.monotonic()
+            if self._lw_land_idx is None or self._lw_off:
+                return
+            if self.lw is None:
+                if attr != "prog":
+                    return
+                if v.current < self._lw_land_idx:
+                    self._lw_below = True      # 이번 미션 진행을 본 뒤에만 시작 (이전 미션의 묵은 값 무시)
+                    return
+                if not self._lw_below:
+                    return
+                self.lw = LandWatch(self, self._lw_land_idx, self._lw_total)
+                t = self.drone.telemetry
+                self._tasks += [asyncio.create_task(self._lw_pump(t.landed_state(), "landed")),
+                                asyncio.create_task(self._lw_pump(t.armed(), "armed"))]
+                return
+            self.lw.on(attr)
+        except Exception as e:
+            self._lw_off = True
+            _lw_log(f"[착륙감시] 내부 오류 {e!r} — 감시를 끈다 (비행 제어와 무관)")
+
+    async def _lw_pump(self, stream, attr):
+        """감시 전용 추가 구독. 끊겨도 한 줄만 남기고 조용히 끝난다."""
+        try:
+            async for v in stream:
+                setattr(self, attr, v)
+                self._lw_feed(attr, v)
+        except Exception as e:
+            _lw_log(f"[착륙감시] {attr} 수신 끊김 {e!r}")
+
+    def lw_summary(self):
+        try:
+            if self.lw is not None:
+                self.lw.summary()
+        except Exception as e:
+            _lw_log(f"[착륙감시] 요약 실패 {e!r}")
 
     def stop(self):
         for t in self._tasks:
@@ -218,6 +276,112 @@ class Telem:
 
     def current(self):
         return -1 if self.prog is None else self.prog.current
+
+
+def _lw_log(s):
+    """log() 가 실패해도 예외를 내지 않는다."""
+    try:
+        log(s)
+    except Exception:
+        pass
+
+
+def _lw_nm(v):
+    if v is None or isinstance(v, bool):
+        return str(v)
+    return getattr(v, "name", str(v))
+
+
+class LandWatch:
+    """LAND 항목 시작부터 스크립트 종료까지 착지 관련 값을 기록한다 (로그 전용).
+    값이 바뀔 때마다 한 줄, 2초마다 상태 한 줄, 끝에 요약 한 줄. 시각 t 는 감시 시작부터의 초."""
+
+    KEYS = ("prog", "in_air", "landed", "armed", "mode")
+
+    def __init__(self, tm, land_idx, total):
+        self.tm, self.land_idx, self.total = tm, land_idx, total
+        self.t0 = time.monotonic()
+        self.last_tick = self.t0
+        self.snap = self._snap()
+        self.ov_since = None                 # cur=LAND 이면서 in_air=False 가 시작된 시각
+        self.ov_sum, self.ov_n = 0.0, 0
+        self.t_leave = self.leave_to = None  # cur 가 LAND 를 떠난 시각·값
+        self.t_air_false = self.t_ground = self.t_disarm = None
+        self._update_events()
+        now = time.monotonic()
+        age = " ".join(f"{k}={now - tm._lw_last[k]:.1f}s" if k in tm._lw_last else f"{k}=없음"
+                       for k in ("pos", "vel", "mode", "hdg", "in_air", "prog"))
+        dead = sum(1 for t in tm._tasks if t.done())
+        _lw_log(f"[착륙감시] 시작 land_idx={land_idx} total={total} {self._fmt()} {self._kin()} "
+                f"| 마지막수신 {age} | 끝난수신태스크={dead}")
+
+    def _t(self):
+        return time.monotonic() - self.t0
+
+    def _snap(self):
+        p = self.tm.prog
+        return {"prog": None if p is None else (p.current, p.total), "in_air": self.tm.in_air,
+                "landed": self.tm.landed, "armed": self.tm.armed, "mode": self.tm.mode}
+
+    def _fmt(self):
+        s = self.snap
+        cur = "None" if s["prog"] is None else f"{s['prog'][0]}/{s['prog'][1]}"
+        return (f"cur={cur} in_air={_lw_nm(s['in_air'])} landed={_lw_nm(s['landed'])} "
+                f"armed={_lw_nm(s['armed'])} mode={_lw_nm(s['mode'])}")
+
+    def _kin(self):
+        pos, vel = self.tm.pos, self.tm.vel
+        alt = "None" if pos is None else f"{pos.relative_altitude_m:.2f}"
+        vz = "None" if vel is None else f"{vel.down_m_s:+.2f}"
+        return f"alt={alt} vz={vz}"
+
+    def _update_events(self):
+        now, t = time.monotonic(), self._t()
+        s = self.snap
+        cur = None if s["prog"] is None else s["prog"][0]
+        if self.t_leave is None and cur is not None and cur != self.land_idx:
+            self.t_leave, self.leave_to = t, cur
+        if self.t_air_false is None and s["in_air"] is False:
+            self.t_air_false = t
+        if self.t_ground is None and _lw_nm(s["landed"]) == "ON_GROUND":
+            self.t_ground = t
+        if self.t_disarm is None and s["armed"] is False:
+            self.t_disarm = t
+        cond = cur == self.land_idx and s["in_air"] is False
+        if cond and self.ov_since is None:
+            self.ov_since, self.ov_n = now, self.ov_n + 1
+        elif not cond and self.ov_since is not None:
+            self.ov_sum += now - self.ov_since
+            self.ov_since = None
+
+    def on(self, attr):
+        if attr in self.KEYS:
+            new = self._snap()
+            diff = [k for k in self.KEYS if new[k] != self.snap[k]]
+            if diff:
+                old, self.snap = self.snap, new
+                self._update_events()
+                ch = ", ".join(f"{k} {_lw_nm(old[k]) if k != 'prog' else old[k]}→"
+                               f"{_lw_nm(new[k]) if k != 'prog' else new[k]}" for k in diff)
+                _lw_log(f"[착륙감시] 변화 t=+{self._t():.3f}s {ch} | {self._fmt()}")
+        elif attr == "pos" and time.monotonic() - self.last_tick >= 2.0:
+            self.last_tick = time.monotonic()
+            _lw_log(f"[착륙감시] 상태 t=+{self._t():.1f}s {self._fmt()} {self._kin()}")
+
+    def summary(self):
+        ov = self.ov_sum + (time.monotonic() - self.ov_since if self.ov_since is not None else 0.0)
+
+        def ev(name, t):
+            if t is None:
+                return f"{name} 없음"
+            rel = "" if self.t_leave is None or name.startswith("cur") else f"(cur 이탈 기준 {t - self.t_leave:+.3f}s)"
+            return f"{name} t=+{t:.3f}{rel}"
+
+        leave = "cur 이탈 없음" if self.t_leave is None else f"cur {self.land_idx}→{self.leave_to} t=+{self.t_leave:.3f}"
+        _lw_log(f"[착륙감시] 요약 판정창(cur={self.land_idx}∧in_air=False) 겹침={ov:.3f}s/{self.ov_n}회 | {leave} | "
+                f"{ev('in_air→False', self.t_air_false)} | {ev('landed→ON_GROUND', self.t_ground)} | "
+                f"{ev('armed→False', self.t_disarm)} | 감시 {self._t():.1f}s"
+                f"{' (감시 도중 꺼짐)' if self.tm._lw_off else ''} | 끝 {self._fmt()}")
 
 
 class Line:
@@ -758,6 +922,7 @@ async def fly(drone, tm, args):
             while tm.mode != FlightMode.MISSION:
                 await asyncio.sleep(0.1)
         tm.allowed = {FlightMode.MISSION}
+        tm.lw_prepare(plan)          # 착륙 감시 로그 준비 (출력·제어 없음)
         passes = await monitor(drone, tm, plan, line, args)
     except asyncio.CancelledError:
         # Ctrl+C·SIGTERM — 사람이 멈추라고 했다.
@@ -783,6 +948,7 @@ async def fly(drone, tm, args):
         return 1
     finally:
         cap_off()
+        tm.lw_summary()              # LAND 를 시작했을 때만 [착륙감시] 요약 한 줄
         tm.allowed = None
         for p in passes:
             log(f"PASS {p.n} start={p.t_start} end={p.t_end}")
