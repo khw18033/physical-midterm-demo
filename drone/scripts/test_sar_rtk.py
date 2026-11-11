@@ -788,13 +788,17 @@ async def monitor(drone, tm, plan, line, args):
     deadline = time.monotonic() + estimate_s(args) * 2 + 60
     last_log = 0.0
     last_cur = None
+    land_idx = plan.roles.index(("land", 0))
+    seen_below = False   # 이번 미션에서 LAND 앞 항목을 본 뒤에만 착륙 판정 (이전 미션의 묵은 진행 번호 무시)
     rotate = args.pattern == "rotate"
     while True:
         cur = tm.current()
         kind, n = plan.roles[cur] if 0 <= cur < len(plan.roles) else ("?", 0)
+        if 0 <= cur < land_idx:
+            seen_below = True
 
         # 착륙 완료 — 모드 확인보다 먼저 본다(착지 뒤 PX4 가 모드를 바꿀 수 있다)
-        if kind == "land" and tm.in_air is False:
+        if seen_below and cur >= 0 and plan.roles[min(cur, len(plan.roles) - 1)][0] == "land" and tm.in_air is False:
             log("[확인] 착륙 완료 ✔")
             break
         tm.check()
