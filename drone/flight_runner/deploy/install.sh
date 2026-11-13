@@ -7,7 +7,7 @@
 #   ./install.sh --install --dry-run  # 할 일만 보여 준다
 #
 # 바꾸는 것: loginctl enable-linger physical · /etc/flight-runner.env · /etc/systemd/system/drone-node.service.d/60-flight-runner.conf
-# 바꾸지 않는 것: HW 의 drone-node.service · ~/hw 코드 · test_sar_rtk.py · emergency_land.py
+# 바꾸지 않는 것: HW 의 drone-node.service · ~/drone/hw_pi 코드 · test_sar_rtk.py · emergency_land.py
 set -euo pipefail
 
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -18,6 +18,7 @@ DROPIN="$DROPIN_DIR/60-flight-runner.conf"
 SAR_DROPIN="$DROPIN_DIR/50-sar.conf"
 ENV_FILE=/etc/flight-runner.env
 OUT_DIR="$HOME_DIR/cansar_logs/runner"
+HW_PI="$HOME_DIR/drone/hw_pi"   # 노드 공통 틀 — drone-node.service 의 WorkingDirectory 와 같아야 한다
 
 MODE=check; DRY=0
 for a in "$@"; do
@@ -51,15 +52,15 @@ check() {
     [ -f "$HOME_DIR/drone/scripts/$f" ] && ok "scripts/$f" || bad "scripts/$f 없음"
   done
   [ -f "$HOME_DIR/drone/flight_runner/node.py" ] && ok "flight_runner 패키지" || bad "flight_runner 패키지 없음 (git pull?)"
-  if [ -f "$HOME_DIR/hw/pi/common/node.py" ]; then
-    ok "공통 틀 ~/hw/pi/common/node.py"
-    grep -q "ACTIONS" "$HOME_DIR/hw/pi/common/node.py" && ok "  ACTIONS 가 보인다 (가정 A1)" || warn "  ACTIONS 가 안 보인다 — 가정 A1 을 확인할 것"
+  if [ -f "$HW_PI/common/node.py" ]; then
+    ok "공통 틀 $HW_PI/common/node.py"
+    grep -q "ACTIONS" "$HW_PI/common/node.py" && ok "  ACTIONS 가 보인다 (가정 A1)" || warn "  ACTIONS 가 안 보인다 — 가정 A1 을 확인할 것"
     # 가정 A6: 명령 서버가 명령마다 새 스레드에서 _execute(cmd, entry) 를 돈다 — node.py 가 그것을 감싸 command_id 를 얻는다
-    grep -qE "def _execute\(self, cmd" "$HOME_DIR/hw/pi/common/physical_command.py" 2>/dev/null \
-      && grep -qE "target=self\._execute" "$HOME_DIR/hw/pi/common/physical_command.py" \
+    grep -qE "def _execute\(self, cmd" "$HW_PI/common/physical_command.py" 2>/dev/null \
+      && grep -qE "target=self\._execute" "$HW_PI/common/physical_command.py" \
       && ok "  명령 서버 _execute(cmd, …) 가 보인다 (가정 A6 — command_id 를 얻는 길)" \
       || warn "  명령 서버 _execute(cmd, …) 가 안 보인다 — 가정 A6 이 깨졌다. flight_run 의 command_id 가 비어 「비행 시작」이 안 열린다"
-  else bad "공통 틀 ~/hw/pi/common/node.py 없음"; fi
+  else bad "공통 틀 $HW_PI/common/node.py 없음"; fi
 
   step "systemd"
   if [ -f "$SAR_DROPIN" ]; then bad "sar_pass 덮어쓰기($SAR_DROPIN)가 있다 — 둘 다 ExecStart 를 바꾼다. PI3_작업_261014.md §5 를 볼 것"

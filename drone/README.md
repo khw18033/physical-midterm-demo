@@ -408,8 +408,15 @@ PX4 로 기체를 움직이는 방법은 크게 둘이다.
 ├── CONTRACT_x500.md             MQTT 규약 (백엔드·웹과의 약속)
 ├── PROGRESS.md                  전체 작업 이력 (맨 뒤가 최신)
 ├── SETUP_REPORT.md              환경 세팅 결과 보고서
+├── SETUP_NEW_PI.md              ★ 새 드론 Pi 세팅 절차 (install_all.sh)
+├── install_all.sh               새 Pi 전체 설치 / 현재 Pi 점검
+├── hw_pi/                       가시화 브리지 노드 + 공통 틀 (원래 ~/hw/pi)
 ├── config/
 │   ├── drone.env → /etc/drone-node.env    장치 경로·포트·타임아웃
+│   ├── drone-node.env                     /etc/drone-node.env 정본
+│   ├── device_id                          /etc/device_id 정본
+│   ├── hw-node.env · hw-drone.env         /etc/hw-*.env 정본
+│   ├── boot/config.txt                    /boot/firmware/config.txt 정본 (UART0·카메라)
 │   ├── mavlink-router.conf                라우터 창구 설정
 │   ├── mosquitto-hw.conf                  MQTT 브로커 설정
 │   └── requirements.lock.txt              ⚠ mavsdk 업그레이드 금지 사유 포함
@@ -420,7 +427,7 @@ PX4 로 기체를 움직이는 방법은 크게 둘이다.
 └── venv/                        파이썬 환경
 ```
 
-가시화 브리지 코드만 다른 곳에 있다: `~/hw/pi/drone/` (공통 노드 틀을 상속하기 때문)
+가시화 브리지 코드는 `hw_pi/drone/` 에 있다 (공통 노드 틀 `hw_pi/common/` 을 상속한다). drone-all 브랜치 전에는 `~/hw/pi` 에 있었다.
 
 ---
 

@@ -355,7 +355,7 @@ def test_command_id_does_not_leak_between_threads(env):
         node.shutdown()
 
 
-HW_PI = Path(os.environ.get("HW_PI", "/home/physical/hw/pi"))
+HW_PI = Path(os.environ.get("HW_PI", str(Path(__file__).resolve().parents[1] / "hw_pi")))
 
 
 def _real_server():
@@ -368,7 +368,7 @@ def _real_server():
     return physical_command
 
 
-@pytest.mark.skipif(not (HW_PI / "common" / "physical_command.py").exists(), reason="공통 틀(~/hw/pi)이 없다")
+@pytest.mark.skipif(not (HW_PI / "common" / "physical_command.py").exists(), reason="공통 틀(drone/hw_pi)이 없다")
 def test_real_command_server_carries_command_id(env):
     """실물 `PhysicalCommandServer` 에 규약 봉투(protobuf)를 넣는다 — 가정 A1 · A2 · A3 · A6 을 실물로 본다."""
     pc = _real_server()

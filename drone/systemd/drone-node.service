@@ -27,7 +27,8 @@ Wants=network-online.target
 Type=simple
 User=physical
 Group=physical
-WorkingDirectory=/home/physical/hw/pi
+# 노드 코드(common · drone 패키지)는 이 저장소의 drone/hw_pi/ 에 있다 (drone-all 브랜치, 원래 ~/hw/pi 의 사본).
+WorkingDirectory=/home/physical/drone/hw_pi
 ExecStart=/home/physical/drone/venv/bin/python3 -u -m drone.drone_node
 
 EnvironmentFile=-/etc/hw-node.env
