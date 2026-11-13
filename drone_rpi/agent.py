@@ -172,8 +172,14 @@ def open_cameras(cfg_cams: list[dict]) -> list[CameraStream]:
     out = [CameraStream(int(c.get("index", 0)), int(c.get("width", 1280)),
                         int(c.get("height", 720)), int(c.get("framerate", 8)),
                         c.get("extra_args")) for c in cfg_cams]
+    # 한꺼번에 띄우지 않고 앞 카메라가 첫 프레임을 낼 때까지(최대 3초) 기다린다.
+    # rpicam-vid 두 개가 동시에 기동하면 둘 다 "Exception during zlib decompression"으로
+    # abort되어 카메라가 0대가 된다(2026-10-19 실측, arducam + imx708_wide).
     for s in out:
         s.start()
+        until = time.time() + 3.0
+        while time.time() < until and not s.available() and s.error is None:
+            time.sleep(0.1)
     deadline = time.time() + 6.0
     while time.time() < deadline and not all(s.available() for s in out):
         time.sleep(0.2)

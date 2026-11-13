@@ -38,13 +38,20 @@
     },
     "cameras": [
       {
-        "index": 1,
+        "index": 0,
         "width": 1280,
         "height": 720,
         "framerate": 8,
         "extra_args": ["--metadata", "/home/physical/flight_meta.json"]
+      },
+      {
+        "index": 1,
+        "width": 1280,
+        "height": 720,
+        "framerate": 8
       }
     ],
+    "$comment_cameras_index": "**index는 rpicam-hello --list-cameras 번호다** — 2026-10-19 기준 0 = arducam-pivariety(AR0234, CAM0 포트), 1 = imx708_wide(CAM1 포트). 두 대가 다 붙어 있을 때의 번호이며 하나가 빠지면 남은 것이 0이 된다. --metadata는 rotate_flight_meta.sh가 파일 하나만 돌리므로 cam0에만 둔다.",
     "$comment_cameras": "**카메라 1대**(사용자 2026-09-21). 2대일 때 RPN 스레드를 4→2로 나눠야 했고(4코어에 8스레드가 다투지 않게) 프레임당 310→500~590ms로 늘었다. 1대면 4스레드를 다 쓰고 CPU 부하가 절반이 된다 — 발열도 그만큼 줄어 클럭이 덜 깎인다. cameras에 항목을 추가하면 CameraWorker가 그만큼 뜬다. rpicam-vid는 프레임당 542ms인 rpicam-still 대신 MJPEG 파이프를 쓰고, 항상 **최신 프레임만** 처리한다.",
     "$comment_stereo": "두 카메라를 알려진 baseline으로 강체 고정하면 **학습 없이 기하학적 metric depth**가 나온다. baseline 0.2m·focal_px 590·매칭오차 0.2px 기준 거리오차: 20m에서 0.7m(3.4%), 50m에서 4.2m(8.5%), 100m에서 16.9m(17%). ~30m까지는 어떤 단안 모델보다 정확하므로 **엣지 depth의 스케일을 현장에서 보정하는 진실값**으로 쓸 수 있다. 지금은 두 카메라가 독립 시점으로 교대 처리되며 stereo는 구현되어 있지 않다 — baseline 실측과 캘리브레이션이 선행 조건이다."
   },
@@ -75,6 +82,6 @@
     "enabled": true,
     "host": "127.0.0.1",
     "port": 14600,
-    "camera": 1
+    "camera": 0
   }
 }
